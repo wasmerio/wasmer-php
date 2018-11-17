@@ -1,0 +1,13 @@
+[package]
+name = "php-ext-wasm"
+version = "0.1.0"
+authors = ["Ivan Enderlin <ivan.enderlin@hoa-project.net>"]
+
+[lib]
+crate-type = ["dylib", "staticlib"]
+
+[dependencies]
+wasmi = "^0.4.2"
+
+[build-dependencies]
+cbindgen = "^0.6.0"

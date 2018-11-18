@@ -12,18 +12,6 @@ php:
 		./configure --with-php-config=$PHP_PREFIX_BIN/php-config && \
 		make install
 
-c:
-	clang \
-		-Wall \
-		-o test-c \
-		test.c \
-		-L target/release/ \
-		-l php_ext_wasm \
-		-l System \
-		-l pthread \
-		-l c \
-		-l m
-
 # Local Variables:
 # mode: makefile
 # End:

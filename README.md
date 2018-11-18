@@ -27,14 +27,16 @@ Then, we can execute it in PHP (!) with the `tests/toy.php` file:
 require_once dirname(__DIR__) . '/lib/WASM.php';
 
 $instance = new WASM\Instance(__DIR__ . '/toy.wasm');
-$instance->sum(5, 37);
+$result = $instance->sum(5, 37);
+
+var_dump($result);
 ```
 
 And then, finally, enjoy by running:
 
 ```sh
 $ php -d extension=wasm tests/toy.php
-Some(I32(42))
+int(42)
 ```
 
 This is a very preliminary status, but it works!

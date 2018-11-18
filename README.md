@@ -7,7 +7,7 @@ PHP directly. So much fun coming!
 
 ## Examples
 
-There is a toy program in `tests/`, written en Rust:
+There is a toy program in `tests/`, written in Rust:
 
 ```rust
 #[no_mangle]

@@ -68,6 +68,30 @@ $ php -d extension=wasm tests/toy.php
 
 (Yes, you need [`just`](https://github.com/casey/just/)).
 
+## Planning
+
+* [x] Read a WASM binary,
+* [x] Instanciate a WASM binary,
+* [x] Arguments builder,
+* [x] Invoke function:
+  * [x] with `i32` as arguments or returned value,
+  * [x] with `i64` as arguments or returned value,
+  * [x] with `f32` as arguments or returned value,
+  * [x] with `f64` as arguments or returned value.
+* [x] User-friendly PHP API above the low-level PHP extension API,
+* [ ] Expose memory:
+  * [ ] Array view for `i32`,
+  * [ ] Array view for `i64`,
+  * [ ] Array view for `f32`,
+  * [ ] Array view for `f64`.
+  * [ ] Readable array view,
+  * [ ] Writable array view.
+* [ ] Import functions:
+  * [ ] Specify signatures,
+  * [ ] Support callable,
+  * [ ] Support closure,
+  * [ ] Support named function.
+
 ## License
 
 The entire project is under the BSD-3-Clause license. Please read the

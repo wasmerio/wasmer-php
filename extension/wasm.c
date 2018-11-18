@@ -94,6 +94,10 @@ static void wasm_invoke_arguments_builder_destructor(zend_resource *resource)
 
 PHP_FUNCTION(wasm_invoke_arguments_builder)
 {
+    if (zend_parse_parameters_none() == FAILURE) {
+        return;
+    }
+
     Vec_RuntimeValue *wasm_arguments_builder = wasm_invoke_arguments_builder();
     zend_resource *resource = zend_register_resource((void *) wasm_arguments_builder, wasm_invoke_arguments_builder_resource_number);
 

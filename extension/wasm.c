@@ -143,9 +143,19 @@ PHP_FUNCTION(wasm_invoke_function)
         wasm_invoke_arguments_builder_resource_number
     );
 
-    wasm_invoke_function(wasm_instance, function_name, wasm_arguments_builder);
+    const Value *value = wasm_invoke_function(wasm_instance, function_name, wasm_arguments_builder);
 
-    RETURN_TRUE
+    if (value->tag == I32) {
+        RETURN_LONG(value->i32._0);
+    } else if (value->tag == I64) {
+        RETURN_LONG(value->i64._0);
+    } else if (value->tag == F32) {
+        RETURN_DOUBLE(value->f32._0);
+    } else if (value->tag == F64) {
+        RETURN_DOUBLE(value->f64._0);
+    } else {
+        RETURN_FALSE
+    }
 }
 
 PHP_RINIT_FUNCTION(wasm)

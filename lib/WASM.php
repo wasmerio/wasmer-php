@@ -42,7 +42,15 @@ final class Instance
             }
         }
 
-        wasm_invoke_function($this->wasmInstance, $name, $argumentsBuilder->intoResource());
+        $out = wasm_invoke_function($this->wasmInstance, $name, $argumentsBuilder->intoResource());
+
+        if (false === $out) {
+            throw new InvocationException(
+                "Got an error when invoking `$name`."
+            );
+        }
+
+        return $out;
     }
 }
 
@@ -67,3 +75,5 @@ final class ArgumentsBuilder
         return $this->builder;
     }
 }
+
+final class InvocationException extends RuntimeException {}

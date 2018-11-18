@@ -114,12 +114,21 @@ pub mod ffi {
         }
     }
 
+    #[repr(C)]
+    pub enum Value {
+        I32(i32),
+        I64(i64),
+        F32(f32),
+        F64(f64),
+        None,
+    }
+
     #[no_mangle]
     pub extern "C" fn wasm_invoke_function(
         wasm_instance: *const WASMInstance,
         function_name: *const c_char,
         arguments: *const Vec<RuntimeValue>
-    ) {
+    ) -> *const Value {
         let wasm_instance = check_and_deref!(wasm_instance);
         let function_name = unsafe {
             assert!(!function_name.is_null());
@@ -127,7 +136,17 @@ pub mod ffi {
         };
         let arguments = check_and_deref!(arguments).as_slice();
 
-        println!("{:?}", wasm_instance.invoke(function_name, arguments));
+        let value = match wasm_instance.invoke(function_name, arguments) {
+            Some(runtime_value) => match runtime_value {
+                RuntimeValue::I32(value) => Value::I32(value),
+                RuntimeValue::I64(value) => Value::I64(value),
+                RuntimeValue::F32(value) => Value::F32(value.to_float()),
+                RuntimeValue::F64(value) => Value::F64(value.to_float()),
+            },
+            None => Value::None,
+        };
+
+        Box::into_raw(Box::new(value))
     }
 
     #[no_mangle]

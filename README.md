@@ -1,4 +1,4 @@
-# PHP `ext-wasm`
+# 🐘+🦀+🕸️ = PHP `ext-wasm`
 
 This is only experimental right now.
 
@@ -19,7 +19,7 @@ pub extern "C" fn sum(x: i32, y: i32) -> i32 {
 This program compiles to WASM, with `just compile-toy`. We end up with
 a `tests/toy.wasm` binary file.
 
-Then, we can read it with the `tests/toy.php` file:
+Then, we can execute it in PHP (!) with the `tests/toy.php` file:
 
 ```php
 <?php

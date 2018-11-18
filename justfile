@@ -2,7 +2,7 @@ compile-toy:
 	#!/usr/bin/env bash
 	set -euo pipefail
 	cd tests
-	rustc --target wasm32-unknown-unknown  -O --crate-type=cdylib toy.rs -o toy.raw.wasm
+	rustc --target wasm32-unknown-unknown -O --crate-type=cdylib toy.rs -o toy.raw.wasm
 	wasm-gc toy.raw.wasm toy.wasm
 	rm toy.raw.wasm
 

@@ -34,6 +34,8 @@ final class Instance
             foreach ($arguments as $i => $argument) {
                 if (is_int($argument)) {
                     $argumentsBuilder->addI32($argument);
+                } elseif (is_float($argument)) {
+                    $argumentsBuilder->addF32($argument);
                 } else {
                     throw new RuntimeException(
                         "Do not know how to handle argument #$i of `$name`."

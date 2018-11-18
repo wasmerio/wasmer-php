@@ -4,6 +4,9 @@ compile-toy:
 		wasm-gc toy.raw.wasm toy.wasm && \
 		rm toy.raw.wasm
 
+rust:
+	cargo build --release
+
 php:
 	cd extension && \
 		PHP_PREFIX_BIN=$(php-config --prefix)/bin && \

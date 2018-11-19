@@ -42,13 +42,15 @@ final class Instance
 
         if ($diff > 0) {
             throw new InvocationException(
-                "Missing $diff$ argument(s) when calling `$name`: " .
+                "Missing $diff argument(s) when calling `$name`: " .
                 "Expect $number_of_expected_arguments arguments, " .
                 "given $number_of_given_arguments."
             );
         } elseif ($diff < 0) {
+            $diff = abs($diff);
+
             throw new InvocationException(
-                "Given extra argument(s) when calling `$name`: " .
+                "Given $diff extra argument(s) when calling `$name`: " .
                 "Expect $number_of_expected_arguments arguments, " .
                 "given $number_of_given_arguments."
             );

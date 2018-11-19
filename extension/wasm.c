@@ -84,6 +84,37 @@ PHP_FUNCTION(wasm_new_instance)
 }
 
 
+PHP_FUNCTION(wasm_get_function_signature)
+{
+    zval *wasm_instance_resource;
+    char *function_name;
+    size_t function_name_length;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs", &wasm_instance_resource, &function_name, &function_name_length) == FAILURE) {
+        return;
+    }
+
+    WASMInstance *wasm_instance = (WASMInstance *) zend_fetch_resource(
+        Z_RES_P(wasm_instance_resource),
+        wasm_instance_resource_name,
+        wasm_instance_resource_number
+    );
+    const Signature *wasm_function_signature = wasm_get_function_signature(wasm_instance, function_name);
+
+    if (NULL == wasm_function_signature) {
+        RETURN_NULL();
+    }
+
+    array_init_size(return_value, wasm_function_signature->inputs_length + 1 /* output */);
+
+    for (uintptr_t nth = 0; nth < wasm_function_signature->inputs_length; ++nth) {
+        add_next_index_long(return_value, wasm_function_signature->inputs_buffer[nth]);
+    }
+
+    add_next_index_long(return_value, *(wasm_function_signature->output));
+}
+
+
 char* wasm_invoke_arguments_builder_resource_name;
 int wasm_invoke_arguments_builder_resource_number;
 
@@ -173,6 +204,12 @@ PHP_RINIT_FUNCTION(wasm)
 
 PHP_MINIT_FUNCTION(wasm)
 {
+    REGISTER_LONG_CONSTANT("WASM_SIGNATURE_TYPE_I32", TypeI32, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_SIGNATURE_TYPE_I64", TypeI64, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_SIGNATURE_TYPE_F32", TypeF32, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_SIGNATURE_TYPE_F64", TypeF64, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_SIGNATURE_TYPE_VOID", TypeVoid, CONST_CS | CONST_PERSISTENT);
+
     wasm_binary_resource_name = "wasm_binary";
     wasm_binary_resource_number = zend_register_list_destructors_ex(
         wasm_binary_destructor,
@@ -216,6 +253,11 @@ ZEND_BEGIN_ARG_INFO(arginfo_wasm_new_instance, 0)
     ZEND_ARG_INFO(0, wasm_binary_resource)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_function_signature, 0)
+    ZEND_ARG_INFO(0, wasm_instance)
+    ZEND_ARG_INFO(0, function_name)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_arguments_builder, 0)
 ZEND_END_ARG_INFO()
 
@@ -233,6 +275,7 @@ ZEND_END_ARG_INFO()
 static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_read_binary,						arginfo_wasm_read_binary)
     PHP_FE(wasm_new_instance,						arginfo_wasm_new_instance)
+    PHP_FE(wasm_get_function_signature,				arginfo_wasm_get_function_signature)
     PHP_FE(wasm_invoke_arguments_builder,			arginfo_wasm_invoke_arguments_builder)
     PHP_FE(wasm_invoke_arguments_builder_add_i32,	arginfo_wasm_invoke_arguments_builder_add_i32)
     PHP_FE(wasm_invoke_function,					arginfo_wasm_invoke_function)

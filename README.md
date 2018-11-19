@@ -72,6 +72,7 @@ $ php -d extension=wasm tests/toy.php
 
 * [x] Read a WASM binary,
 * [x] Instanciate a WASM binary,
+* [x] Get function signatures,
 * [x] Arguments builder,
 * [x] Invoke function:
   * [x] with `i32` as arguments or returned value,

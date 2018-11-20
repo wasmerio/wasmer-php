@@ -12,6 +12,6 @@
         ]
     },
     "scripts": {
-        "test": "php -d extension=wasm vendor/bin/atoum -d tests/units --force-terminal"
+        "test": "vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal"
     }
 }

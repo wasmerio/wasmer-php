@@ -1,0 +1,17 @@
+{
+    "require": {
+        "atoum/atoum": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "WASM\\": "lib/",
+            "WASM\\Tests\\": "tests/"
+        },
+        "files": [
+            "lib/Prelude.php"
+        ]
+    },
+    "scripts": {
+        "test": "php -d extension=wasm vendor/bin/atoum -d tests/units --force-terminal"
+    }
+}

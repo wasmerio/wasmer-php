@@ -213,7 +213,7 @@ PHP_FUNCTION(wasm_invoke_arguments_builder_add_f64)
     }
 
     Vec_RuntimeValue *wasm_arguments_builder = wasm_arguments_builder_from_resource(wasm_arguments_builder_resource);
-    wasm_invoke_arguments_builder_add_f32(wasm_arguments_builder, number);
+    wasm_invoke_arguments_builder_add_f64(wasm_arguments_builder, number);
 
     RETURN_TRUE
 }

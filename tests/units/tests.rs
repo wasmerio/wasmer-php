@@ -35,3 +35,8 @@ pub extern "C" fn f64_f64(x: f64) -> f64 {
 pub extern "C" fn i32_i64_f32_f64_f64(a: i32, b: i64, c: f32, d: f64) -> f64 {
     a as f64 + b as f64 + c as f64 + d
 }
+
+#[no_mangle]
+pub extern "C" fn bool_casted_to_i32() -> bool {
+    true
+}

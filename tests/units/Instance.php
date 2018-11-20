@@ -155,4 +155,14 @@ class Instance extends Suite
                 ->float($result)
                     ->isNearlyEqualTo(1 + 2 + 3.4 + 5.6, 64);
     }
+
+    public function test_call_bool_casted_to_i32()
+    {
+        $this
+            ->given($wasmInstance = new SUT(self::FILE_PATH))
+            ->when($result = $wasmInstance->bool_casted_to_i32())
+            ->then
+                ->integer($result)
+                    ->isEqualTo(1);
+    }
 }

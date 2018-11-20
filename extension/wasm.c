@@ -33,6 +33,15 @@ static void wasm_binary_destructor(zend_resource *resource)
     // noop
 }
 
+Vec_u8 *wasm_binary_from_resource(zval *wasm_binary_resource)
+{
+    return (Vec_u8 *) zend_fetch_resource(
+        Z_RES_P(wasm_binary_resource),
+        wasm_binary_resource_name,
+        wasm_binary_resource_number
+    );
+}
+
 PHP_FUNCTION(wasm_read_binary)
 {
     char *file_path;
@@ -57,6 +66,15 @@ static void wasm_instance_destructor(zend_resource *resource)
     // noop
 }
 
+WASMInstance *wasm_instance_from_resource(zval *wasm_instance_resource)
+{
+    return (WASMInstance *) zend_fetch_resource(
+        Z_RES_P(wasm_instance_resource),
+        wasm_instance_resource_name,
+        wasm_instance_resource_number
+    );
+}
+
 PHP_FUNCTION(wasm_new_instance)
 {
     char *file_path;
@@ -67,11 +85,7 @@ PHP_FUNCTION(wasm_new_instance)
         return;
     }
 
-    const Vec_u8 *wasm_binary = (Vec_u8 *) zend_fetch_resource(
-        Z_RES_P(wasm_binary_resource),
-        wasm_binary_resource_name,
-        wasm_binary_resource_number
-    );
+    const Vec_u8 *wasm_binary = wasm_binary_from_resource(wasm_binary_resource);
     WASMInstance *wasm_instance = wasm_new_instance(file_path, wasm_binary);
 
     if (NULL == wasm_instance) {
@@ -94,11 +108,7 @@ PHP_FUNCTION(wasm_get_function_signature)
         return;
     }
 
-    WASMInstance *wasm_instance = (WASMInstance *) zend_fetch_resource(
-        Z_RES_P(wasm_instance_resource),
-        wasm_instance_resource_name,
-        wasm_instance_resource_number
-    );
+    WASMInstance *wasm_instance = wasm_instance_from_resource(wasm_instance_resource);
     const Signature *wasm_function_signature = wasm_get_function_signature(wasm_instance, function_name);
 
     if (NULL == wasm_function_signature) {
@@ -123,6 +133,15 @@ static void wasm_invoke_arguments_builder_destructor(zend_resource *resource)
     // noop
 }
 
+Vec_RuntimeValue *wasm_arguments_builder_from_resource(zval *wasm_arguments_builder_resource)
+{
+    return (Vec_RuntimeValue *) zend_fetch_resource(
+        Z_RES_P(wasm_arguments_builder_resource),
+        wasm_invoke_arguments_builder_resource_name,
+        wasm_invoke_arguments_builder_resource_number
+    );
+}
+
 PHP_FUNCTION(wasm_invoke_arguments_builder)
 {
     if (zend_parse_parameters_none() == FAILURE) {
@@ -145,12 +164,56 @@ PHP_FUNCTION(wasm_invoke_arguments_builder_add_i32)
         return;
     }
 
-    Vec_RuntimeValue *wasm_arguments_builder = (Vec_RuntimeValue *) zend_fetch_resource(
-        Z_RES_P(wasm_arguments_builder_resource),
-        wasm_invoke_arguments_builder_resource_name,
-        wasm_invoke_arguments_builder_resource_number
-    );
+    Vec_RuntimeValue *wasm_arguments_builder = wasm_arguments_builder_from_resource(wasm_arguments_builder_resource);
     wasm_invoke_arguments_builder_add_i32(wasm_arguments_builder, (int32_t) number);
+
+    RETURN_TRUE
+}
+
+
+PHP_FUNCTION(wasm_invoke_arguments_builder_add_i64)
+{
+    zval *wasm_arguments_builder_resource;
+    zend_long number;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &wasm_arguments_builder_resource, &number) == FAILURE) {
+        return;
+    }
+
+    Vec_RuntimeValue *wasm_arguments_builder = wasm_arguments_builder_from_resource(wasm_arguments_builder_resource);
+    wasm_invoke_arguments_builder_add_i64(wasm_arguments_builder, (int64_t) number);
+
+    RETURN_TRUE
+}
+
+
+PHP_FUNCTION(wasm_invoke_arguments_builder_add_f32)
+{
+    zval *wasm_arguments_builder_resource;
+    double number;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rd", &wasm_arguments_builder_resource, &number) == FAILURE) {
+        return;
+    }
+
+    Vec_RuntimeValue *wasm_arguments_builder = wasm_arguments_builder_from_resource(wasm_arguments_builder_resource);
+    wasm_invoke_arguments_builder_add_f32(wasm_arguments_builder, (float) number);
+
+    RETURN_TRUE
+}
+
+
+PHP_FUNCTION(wasm_invoke_arguments_builder_add_f64)
+{
+    zval *wasm_arguments_builder_resource;
+    double number;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rd", &wasm_arguments_builder_resource, &number) == FAILURE) {
+        return;
+    }
+
+    Vec_RuntimeValue *wasm_arguments_builder = wasm_arguments_builder_from_resource(wasm_arguments_builder_resource);
+    wasm_invoke_arguments_builder_add_f32(wasm_arguments_builder, number);
 
     RETURN_TRUE
 }
@@ -266,6 +329,21 @@ ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_arguments_builder_add_i32, 0)
     ZEND_ARG_INFO(0, argument_value)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_arguments_builder_add_i64, 0)
+    ZEND_ARG_INFO(0, wasm_invoke_arguments_builder)
+    ZEND_ARG_INFO(0, argument_value)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_arguments_builder_add_f32, 0)
+    ZEND_ARG_INFO(0, wasm_invoke_arguments_builder)
+    ZEND_ARG_INFO(0, argument_value)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_arguments_builder_add_f64, 0)
+    ZEND_ARG_INFO(0, wasm_invoke_arguments_builder)
+    ZEND_ARG_INFO(0, argument_value)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_function, 0)
     ZEND_ARG_INFO(0, wasm_instance)
     ZEND_ARG_INFO(0, function_name)
@@ -278,6 +356,9 @@ static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_get_function_signature,				arginfo_wasm_get_function_signature)
     PHP_FE(wasm_invoke_arguments_builder,			arginfo_wasm_invoke_arguments_builder)
     PHP_FE(wasm_invoke_arguments_builder_add_i32,	arginfo_wasm_invoke_arguments_builder_add_i32)
+    PHP_FE(wasm_invoke_arguments_builder_add_i64,	arginfo_wasm_invoke_arguments_builder_add_i64)
+    PHP_FE(wasm_invoke_arguments_builder_add_f32,	arginfo_wasm_invoke_arguments_builder_add_f32)
+    PHP_FE(wasm_invoke_arguments_builder_add_f64,	arginfo_wasm_invoke_arguments_builder_add_f64)
     PHP_FE(wasm_invoke_function,					arginfo_wasm_invoke_function)
     PHP_FE_END
 };

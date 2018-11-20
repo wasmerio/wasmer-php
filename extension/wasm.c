@@ -251,6 +251,8 @@ PHP_FUNCTION(wasm_invoke_function)
         RETURN_DOUBLE(value->f32._0);
     } else if (value->tag == F64) {
         RETURN_DOUBLE(value->f64._0);
+    } else if (value->tag == None) {
+        RETURN_NULL();
     } else {
         RETURN_FALSE
     }

@@ -76,7 +76,7 @@ final class Instance
 
                 case SIGNATURE_TYPE_F32:
                     if (!is_float($argument)) {
-                        throw new InvocationException("Argument #$s of `$name` must be a `f32` (integer).");
+                        throw new InvocationException("Argument #$s of `$name` must be a `f32` (float).");
                     }
 
                     $argumentsBuilder->addF32($argument);
@@ -85,7 +85,7 @@ final class Instance
 
                 case SIGNATURE_TYPE_F64:
                     if (!is_float($argument)) {
-                        throw new InvocationException("Argument #$s of `$name` must be a `f64` (integer).");
+                        throw new InvocationException("Argument #$s of `$name` must be a `f64` (float).");
                     }
 
                     $argumentsBuilder->addF64($argument);

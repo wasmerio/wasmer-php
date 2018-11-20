@@ -27,14 +27,14 @@ final class ArgumentsBuilder
         return $this;
     }
 
-    public function addF32(int $f32): self
+    public function addF32(float $f32): self
     {
         wasm_invoke_arguments_builder_add_f32($this->builder, $f32);
 
         return $this;
     }
 
-    public function addF64(int $f64): self
+    public function addF64(float $f64): self
     {
         wasm_invoke_arguments_builder_add_f64($this->builder, $f64);
 

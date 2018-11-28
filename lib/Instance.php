@@ -4,22 +4,139 @@ declare(strict_types = 1);
 
 namespace WASM;
 
+use Closure;
+use ReflectionObject;
 use RuntimeException;
 
 final class Instance
 {
     private $filePath;
+    private $wasmRuntime;
     private $wasmBinary;
+    private $importedFunctions = [];
 
-    public function __construct(string $filePath)
+    public function __construct(string $filePath, array $importedFunctions = [])
     {
         if (false === file_exists($filePath)) {
             throw new RuntimeException("File path to WASM binary `$filePath` does not exist.");
         }
 
+        $this->buildImportedFunctions($importedFunctions);
+
         $this->filePath = $filePath;
         $this->wasmBinary = wasm_read_binary($this->filePath);
-        $this->wasmInstance = wasm_new_instance($this->filePath, $this->wasmBinary);
+        $this->wasmRuntime = wasm_new_runtime();
+
+        foreach ($this->importedFunctions as $importedFunctionName => $importedFunction) {
+            wasm_runtime_add_function(
+                $this->wasmRuntime,
+                $importedFunction['index'],
+                $importedFunctionName,
+                $importedFunction['signature'],
+                $importedFunction['implementation']
+            );
+        }
+
+        $this->wasmInstance = wasm_new_instance(
+            $this->filePath,
+            $this->wasmBinary,
+            $this->wasmRuntime
+        );
+
+        if (null === $this->wasmInstance) {
+            throw new RuntimeException("An error happened while instanciating the module `$filePath`.");
+        }
+    }
+
+    private function buildImportedFunctions(array $importedFunctions) {
+        $index = 0;
+
+        foreach ($importedFunctions as $functionName => $functionImplementation) {
+            if (!($functionImplementation instanceof Closure)) {
+                throw new RuntimeException("Import function `$functionName` must be a closure.");
+            }
+
+            $reflection = new ReflectionObject($functionImplementation);
+            $invoke = $reflection->getMethod('__invoke');
+            $inputs = $invoke->getParameters();
+
+            $signature = [];
+
+            foreach ($inputs as $input) {
+                if (true !== $input->hasType()) {
+                    throw new RuntimeException(
+                        "Argument `\${$input->getName()}` " .
+                        "of the imported function `$functionName` must have a type."
+                    );
+                }
+
+                $type = $input->getType();
+
+                if (true === $type->allowsNull()) {
+                    throw new RuntimeException(
+                        "Argument `\${$input->getName()}` " .
+                        "of the imported function `$functionName` must _not_ have a nullable type."
+                    );
+                }
+
+                switch ($type . '') {
+                    case 'int':
+                    case 'double':
+                        $signature[] = SIGNATURE_TYPE_I32;
+                        break;
+
+                    case 'float':
+                        $signature[] = SIGNATURE_TYPE_F32;
+                        break;
+
+                    default:
+                        throw new RuntimeException(
+                            "Argument `\${$input->getName()}` " .
+                            "of the imported function `$functionName` has an invalid type: " .
+                            "Only `int`, `double`, or `float` is supported."
+                        );
+                }
+            }
+
+            $output = $invoke->getReturnType();
+
+            if (null === $output) {
+                throw new RuntimeException(
+                    "The imported function `$functionName` must have a return type."
+                );
+            }
+
+            if (true === $output->allowsNull()) {
+                throw new RuntimeException(
+                    "The imported function `$functionName` must _not_ have a nullable return type."
+                );
+            }
+
+            switch ($output . '') {
+                case 'int':
+                case 'double':
+                    $signature[] = SIGNATURE_TYPE_I32;
+                    break;
+
+                case 'float':
+                    $signature[] = SIGNATURE_TYPE_F32;
+                    break;
+
+                default:
+                    throw new RuntimeException(
+                        "The imported function `$functionName` has an invalid return type: " .
+                        "Only `int`, `double`, or `float` is supported."
+                    );
+            }
+
+            $this->importedFunctions[$functionName] = [
+                'index' => $index++,
+                'signature' => $signature,
+                'implementation' => function (...$arguments) use ($functionImplementation) {
+                    return $functionImplementation(...$arguments);
+                }
+            ];
+        }
     }
 
     public function __call(string $name, array $arguments)
@@ -97,7 +214,13 @@ final class Instance
             }
         }
 
-        $result = wasm_invoke_function($this->wasmInstance, $name, $argumentsBuilder->intoResource());
+        $argumentsBuilderResource = $argumentsBuilder->intoResource();
+        $result = wasm_invoke_function(
+            $this->wasmInstance,
+            $name,
+            $argumentsBuilderResource,
+            $this->wasmRuntime
+        );
 
         if (false === $result) {
             throw new InvocationException("Got an error when invoking `$name`.");

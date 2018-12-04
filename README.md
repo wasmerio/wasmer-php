@@ -44,7 +44,7 @@ This is a very preliminary status, but it works!
 ## The whole schema
 
 The `src/` directory contains a Rust library that exposes an API to
-instanciate a WASM binary and invoke functions on it. It relies on
+instantiate a WASM binary and invoke functions on it. It relies on
 [the `wasmi` library](https://github.com/paritytech/wasmi). The `src/`
 directory also exposes a C binding.
 

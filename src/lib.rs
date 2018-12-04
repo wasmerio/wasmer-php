@@ -497,7 +497,7 @@ pub mod ffi {
         name: *const c_char,
         signature: *const ValueType,
         signature_length: usize,
-        implementation_pointer: *const fn(*const c_void, *const c_void, *const FunctionInputs) -> *const Value /*Result<Option<RuntimeValue>, Trap>*/,
+        implementation_pointer: *const fn(*const c_void, *const c_void, *const FunctionInputs) -> *const Value,
         zend_fcall_info: *const c_void,
         zend_fcall_info_cache: *const c_void,
     ) {

@@ -97,8 +97,8 @@ PHP_FUNCTION(wasm_new_runtime)
 }
 
 const Value* invoke_imported_function_from_host(
-    /*zend_fcall_info*/ const void *function_implementation,
-    /*zend_fcall_info_cache*/ const void *function_implementation_cache,
+    const /* zend_fcall_info */ void *function_implementation,
+    const /* zend_fcall_info_cache */ void *function_implementation_cache,
     const FunctionInputs *function_inputs
 ) {
     zend_fcall_info *fci = (zend_fcall_info *) function_implementation;
@@ -199,7 +199,7 @@ PHP_FUNCTION(wasm_runtime_add_function)
 
     size_t signature_length = zend_hash_num_elements(signature);
 
-    // Must at least contains the output type.
+    // Must at least contain the output type.
     if (signature_length == 0) {
         free(&function_implementation);
         free(&function_implementation_cache);

@@ -46,8 +46,11 @@ class Extension extends Suite
     public function test_wasm_new_instance()
     {
         $this
-            ->given($wasmBinary = wasm_read_binary(self::FILE_PATH))
-            ->when($result = wasm_new_instance(self::FILE_PATH, $wasmBinary))
+            ->given(
+                $wasmBinary = wasm_read_binary(self::FILE_PATH),
+                $wasmRuntime = wasm_new_runtime()
+            )
+            ->when($result = wasm_new_instance(self::FILE_PATH, $wasmBinary, $wasmRuntime))
             ->then
                 ->resource($result)
                     ->isOfType('wasm_instance');
@@ -61,7 +64,8 @@ class Extension extends Suite
         $this
             ->given(
                 $wasmBinary = wasm_read_binary(self::FILE_PATH),
-                $wasmInstance = wasm_new_instance(self::FILE_PATH, $wasmBinary)
+                $wasmRuntime = wasm_new_runtime(),
+                $wasmInstance = wasm_new_instance(self::FILE_PATH, $wasmBinary, $wasmRuntime)
             )
             ->when($result = wasm_get_function_signature($wasmInstance, $functionName))
             ->then
@@ -108,12 +112,13 @@ class Extension extends Suite
         $this
             ->given(
                 $wasmBinary = wasm_read_binary(self::FILE_PATH),
-                $wasmInstance = wasm_new_instance(self::FILE_PATH, $wasmBinary),
+                $wasmRuntime = wasm_new_runtime(),
+                $wasmInstance = wasm_new_instance(self::FILE_PATH, $wasmBinary, $wasmRuntime),
                 $wasmArguments = wasm_invoke_arguments_builder(),
                 wasm_invoke_arguments_builder_add_i32($wasmArguments, 1),
                 wasm_invoke_arguments_builder_add_i32($wasmArguments, 2)
             )
-            ->when($result = wasm_invoke_function($wasmInstance, 'sum', $wasmArguments))
+            ->when($result = wasm_invoke_function($wasmInstance, 'sum', $wasmArguments, $wasmRuntime))
             ->then
                 ->integer($result)
                     ->isEqualTo(3);
@@ -126,5 +131,45 @@ class Extension extends Suite
             ->then
                 ->resource($result)
                     ->isOfType('wasm_invoke_arguments_builder');
+    }
+
+    public function test_wasm_runtime_add_function()
+    {
+        $this
+            ->given($wasmRuntime = wasm_new_runtime())
+            ->when(
+                $result = wasm_runtime_add_function(
+                    $wasmRuntime,
+                    0,
+                    'foo',
+                    [WASM_SIGNATURE_TYPE_I32],
+                    function (): int {
+                        return 7;
+                    }
+                )
+            )
+            ->then
+                ->boolean($result)
+                    ->isTrue();
+    }
+
+    public function test_wasm_runtime_add_function_with_invalid_signature()
+    {
+        $this
+            ->given($wasmRuntime = wasm_new_runtime())
+            ->when(
+                $result = wasm_runtime_add_function(
+                    $wasmRuntime,
+                    0,
+                    'foo',
+                    [],
+                    function (): int {
+                        return 7;
+                    }
+                )
+            )
+            ->then
+                ->boolean($result)
+                    ->isFalse();
     }
 }

@@ -132,9 +132,7 @@ final class Instance
             $this->importedFunctions[$functionName] = [
                 'index' => $index++,
                 'signature' => $signature,
-                'implementation' => function (...$arguments) use ($functionImplementation) {
-                    return $functionImplementation(...$arguments);
-                }
+                'implementation' => $functionImplementation,
             ];
         }
     }

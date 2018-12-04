@@ -6,11 +6,11 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 $imports = [
     'add' => function(int $x, int $y): int {
-        return $x + $y;
+        return $x + $y + 1;
     },
 ];
-$instance = new WASM\Instance(__DIR__ . '/toy.wasm', $imports);
+$instance = new WASM\Instance(__DIR__ . '/imported_function.wasm', $imports);
+
 var_dump(
-    $instance->sum(40, 1),
-    $instance->sum(1, 1)
+    $instance->sum(5, 35) // 42
 );

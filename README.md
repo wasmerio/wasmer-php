@@ -7,7 +7,10 @@ PHP directly. So much fun coming!
 
 ## Examples
 
-There is a toy program in `tests/`, written in Rust:
+### Toy example
+
+There is a toy program in `examples/simple.rs`, written in Rust
+(or any other language that compiles to WASM):
 
 ```rust
 #[no_mangle]
@@ -16,43 +19,97 @@ pub extern "C" fn sum(x: i32, y: i32) -> i32 {
 }
 ```
 
-This program compiles to WASM, with `just compile-toy`. We end up with
-a `tests/toy.wasm` binary file.
+This program compiles to WASM, with `just compile-wasm
+examples/simple`. We end up with a `examples/simple.wasm` binary file.
 
-Then, we can execute it in PHP (!) with the `tests/toy.php` file:
+Then, we can execute it in PHP (!) with the `examples/simple.php` file:
 
 ```php
-<?php
+$instance = new WASM\Instance(__DIR__ . '/simple.wasm');
 
-require_once dirname(__DIR__) . '/lib/WASM.php';
-
-$instance = new WASM\Instance(__DIR__ . '/toy.wasm');
-$result = $instance->sum(5, 37);
-
-var_dump($result);
+var_dump(
+    $instance->sum(5, 37) // 42!
+);
 ```
 
 And then, finally, enjoy by running:
 
 ```sh
-$ php -d extension=wasm tests/toy.php
+$ php -d extension=wasm examples/simple.php
 int(42)
 ```
 
-This is a very preliminary status, but it works!
+### Imported functions
+
+There is another toy example called `examples/imported_function.rs`:
+
+```rust
+extern {
+    fn add(x: i32, y: i32) -> i32;
+}
+
+
+#[no_mangle]
+pub extern "C" fn sum(x: i32, y: i32) -> i32 {
+    unsafe {
+        add(x, y) + 1
+    }
+}
+```
+
+What happens here? The Rust program depends on an `add` function that
+is defined outside itself. This is an extern function. The magic is
+that this function implementation will be defined in PHP! The
+`examples/imported_function.php` contains this:
+
+```php
+$imports = [
+    'add' => function(int $x, int $y): int {
+        return $x + $y + 1;
+    },
+];
+$instance = new WASM\Instance(__DIR__ . '/imported_function.wasm', $imports);
+
+var_dump(
+    $instance->sum(5, 35) // 42
+);
+```
+
+The `add` function is defined in PHP itself. This kind of function is
+called an imported function.
+
+The function must be annotated with types to infer the function
+signature and check if it matches with the extern function.
+
+And then, finally, get excited by running:
+
+```sh
+$ php -d extension=wasm examples/imported_function.php
+int(42)
+```
+
+PHP calls `sum` (defined in Rust) with 5 and 35. The `sum` function
+calls `add` (defined in PHP) with 5 and 35, and adds 1. The `add`
+function adds 5 and 35, and adds 1. So 5 + 35 + 1 + 1 = 42. All
+“environments” are called. Q.E.D.
+
+Imported functions are very exciting. A program, written in Rust for
+instance, can call functions from your favorite framework or
+libraries. It increases the interoperability of your program.
 
 ## The whole schema
 
 The `src/` directory contains a Rust library that exposes an API to
 instantiate a WASM binary and invoke functions on it. It relies on
 [the `wasmi` library](https://github.com/paritytech/wasmi). The `src/`
-directory also exposes a C binding.
+directory also exposes C (FFI) bindings.
 
 The `extension/` directory contains a PHP extension, written in C, and
 exposing the C API from the Rust library to Zend Engine (the PHP
 VM). Few low-level functions are exposed, such as `wasm_read_binary`,
-`wasm_new_instance`, `wasm_invoke_arguments_builder`,
-`wasm_invoke_function` etc.
+`wasm_new_runtime`, `wasm_new_instance`,
+`wasm_invoke_arguments_builder`, `wasm_invoke_function` etc. See `php
+-d extension=wasm --re wasm` to get a full list.
 
 Then, the `lib/` directory contains a more user-friendly PHP API built
 upon the API provided by the PHP extension, with class like
@@ -63,7 +120,7 @@ To compile the entire thing, run the following commands:
 ```sh
 $ just rust
 $ just php
-$ php -d extension=wasm tests/toy.php
+$ php -d extension=wasm examples/simple.php
 ```
 
 (Yes, you need [`just`](https://github.com/casey/just/)).
@@ -88,9 +145,9 @@ $ php -d extension=wasm tests/toy.php
   * [ ] Readable array view,
   * [ ] Writable array view.
 * [ ] Import functions:
-  * [ ] Specify signatures,
+  * [x] Specify signatures,
   * [ ] Support callable,
-  * [ ] Support closure,
+  * [x] Support closure,
   * [ ] Support named function.
 
 ## License

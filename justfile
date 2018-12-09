@@ -1,4 +1,4 @@
-compile-wasm FILE='tests/toy':
+compile-wasm FILE='examples/simple':
 	#!/usr/bin/env bash
 	set -euo pipefail
 	rustc --target wasm32-unknown-unknown -O --crate-type=cdylib {{FILE}}.rs -o {{FILE}}.raw.wasm

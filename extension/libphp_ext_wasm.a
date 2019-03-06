@@ -1,1 +1,1 @@
-../target/release/libphp_ext_wasm.a
+../target/release/deps/libwasmer_runtime_c_api.a

@@ -23,7 +23,7 @@
 #include "php.h"
 #include "ext/standard/info.h"
 #include "php_wasm.h"
-#include "php-ext-wasm.h"
+#include "wasmer.h"
 
 /**
  * `wasm_read_binary`.

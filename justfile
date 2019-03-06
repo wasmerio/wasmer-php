@@ -1,3 +1,4 @@
+# Compile a Rust program to Wasm.
 compile-wasm FILE='examples/simple':
 	#!/usr/bin/env bash
 	set -euo pipefail
@@ -5,9 +6,11 @@ compile-wasm FILE='examples/simple':
 	wasm-gc {{FILE}}.raw.wasm {{FILE}}.wasm
 	rm {{FILE}}.raw.wasm
 
+# Compile the Rust part.
 rust:
 	cargo build --release
 
+# Compile the PHP part.
 php:
 	#!/usr/bin/env bash
 	set -euo pipefail
@@ -18,6 +21,7 @@ php:
 	./configure --with-php-config=$PHP_PREFIX_BIN/php-config
 	make install
 
+# Run PHP tests.
 test-php:
 	composer test
 

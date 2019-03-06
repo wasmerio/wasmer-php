@@ -1,4 +1,5 @@
 Cargo.lock
 composer.lock
-target/
-vendor/
+/target/
+/vendor/
+/extension/wasmer.h

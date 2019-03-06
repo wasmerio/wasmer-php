@@ -1,13 +1,16 @@
 [package]
 name = "php-ext-wasm"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Ivan Enderlin <ivan.enderlin@hoa-project.net>"]
+edition = "2018"
 
 [lib]
-crate-type = ["dylib", "staticlib"]
 
 [dependencies]
-wasmi = "^0.4.2"
+wasmer-runtime-c-api = { version = "^0.2.1" }
 
 [build-dependencies]
-cbindgen = "^0.6.0"
+walkdir = "2.2"
+
+[patch.crates-io]
+wasmer-runtime-c-api = { path = "/Users/hywan/Development/Wasmer/wasmer/lib/runtime-c-api/" }

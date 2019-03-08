@@ -72,41 +72,7 @@ PHP_FUNCTION(wasm_read_bytes)
 
     RETURN_RES(resource);
 }
-//
-///**
-// * `wasm_new_runtime`.
-// */
-//
-//char* wasm_runtime_resource_name;
-//int wasm_runtime_resource_number;
-//
-//Runtime *wasm_runtime_from_resource(zend_resource *wasm_runtime_resource)
-//{
-//    return (Runtime *) zend_fetch_resource(
-//        wasm_runtime_resource,
-//        wasm_runtime_resource_name,
-//        wasm_runtime_resource_number
-//    );
-//}
-//
-//static void wasm_runtime_destructor(zend_resource *resource)
-//{
-//    Runtime *wasm_runtime = wasm_runtime_from_resource(resource);
-//    drop_wasm_runtime(wasm_runtime);
-//}
-//
-//PHP_FUNCTION(wasm_new_runtime)
-//{
-//    if (zend_parse_parameters_none() == FAILURE) {
-//        return;
-//    }
-//
-//    Runtime *wasm_runtime = wasm_new_runtime();
-//    zend_resource *resource = zend_register_resource((void *) wasm_runtime, wasm_runtime_resource_number);
-//
-//    RETURN_RES(resource);
-//}
-//
+
 //const Value* invoke_imported_function_from_host(
 //    const /* zend_fcall_info */ void *function_implementation,
 //    const /* zend_fcall_info_cache */ void *function_implementation_cache,
@@ -534,9 +500,6 @@ ZEND_BEGIN_ARG_INFO(arginfo_wasm_read_bytes, 0)
     ZEND_ARG_INFO(0, file_path)
 ZEND_END_ARG_INFO()
 
-//ZEND_BEGIN_ARG_INFO(arginfo_wasm_new_runtime, 0)
-//ZEND_END_ARG_INFO()
-//
 //ZEND_BEGIN_ARG_INFO(arginfo_wasm_runtime_add_function, 0)
 //    ZEND_ARG_INFO(1, wasm_runtime)
 //    ZEND_ARG_INFO(0, index)
@@ -588,7 +551,6 @@ ZEND_END_ARG_INFO()
 
 static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_read_bytes,						arginfo_wasm_read_bytes)
-    //PHP_FE(wasm_new_runtime,						arginfo_wasm_new_runtime)
     //PHP_FE(wasm_runtime_add_function,				arginfo_wasm_runtime_add_function)
     //PHP_FE(wasm_new_instance,						arginfo_wasm_new_instance)
     //PHP_FE(wasm_get_function_signature,				arginfo_wasm_get_function_signature)

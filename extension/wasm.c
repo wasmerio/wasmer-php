@@ -363,177 +363,6 @@ PHP_FUNCTION(wasm_value)
     RETURN_RES(resource);
 }
 
-/**
- * `wasm_function_arguments_builder`.
- */
-
-char* wasm_function_arguments_builder_resource_name;
-int wasm_function_arguments_builder_resource_number;
-
-typedef struct {
-    wasmer_value_t *values;
-    uint32_t length;
-    uint32_t last_used_index;
-} wasm_value_array_t;
-
-wasm_value_array_t *wasm_function_arguments_builder_from_resource(zend_resource *wasm_function_arguments_builder_resource)
-{
-    return (wasm_value_array_t *) zend_fetch_resource(
-        wasm_function_arguments_builder_resource,
-        wasm_function_arguments_builder_resource_name,
-        wasm_function_arguments_builder_resource_number
-    );
-}
-
-static void wasm_function_arguments_builder_destructor(zend_resource *resource)
-{
-    wasm_value_array_t *wasm_function_arguments_builder = wasm_function_arguments_builder_from_resource(resource);
-    free(wasm_function_arguments_builder->values);
-    free(wasm_function_arguments_builder);
-}
-
-PHP_FUNCTION(wasm_function_arguments_builder)
-{
-    zend_long arity;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &arity) == FAILURE) {
-        return;
-    }
-
-    uint32_t length;
-
-    if (((int32_t) arity) >= 1) {
-        length = (uint32_t) arity;
-    } else {
-        length = 1;
-    }
-
-    wasm_value_array_t *wasm_function_arguments = malloc(sizeof(wasm_value_array_t));
-    wasm_function_arguments->values = malloc(sizeof(wasmer_value_t) * length);
-    wasm_function_arguments->length = length;
-    wasm_function_arguments->last_used_index = 0;
-
-    zend_resource *resource = zend_register_resource((void *) wasm_function_arguments, wasm_function_arguments_builder_resource_number);
-
-    RETURN_RES(resource);
-}
-
-/**
- * `wasm_function_arguments_builder_add_i32`.
- */
-
-PHP_FUNCTION(wasm_function_arguments_builder_add_i32)
-{
-    zval *wasm_function_arguments_builder_resource;
-    zend_long number;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &wasm_function_arguments_builder_resource, &number) == FAILURE) {
-        return;
-    }
-
-    wasm_value_array_t *wasm_function_arguments = wasm_function_arguments_builder_from_resource(Z_RES_P(wasm_function_arguments_builder_resource));
-
-    if (wasm_function_arguments->length == (wasm_function_arguments->last_used_index + 1)) {
-        RETURN_FALSE
-    }
-
-    wasmer_value_t argument;
-    argument.tag = WASM_I32;
-    argument.value.I32 = (int32_t) number;
-
-    wasm_function_arguments->values[wasm_function_arguments->last_used_index + 1] = argument;
-    wasm_function_arguments->last_used_index += 1;
-
-    RETURN_TRUE
-}
-
-/**
- * `wasm_function_arguments_builder_add_i64`.
- */
-
-PHP_FUNCTION(wasm_function_arguments_builder_add_i64)
-{
-    zval *wasm_function_arguments_builder_resource;
-    zend_long number;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rl", &wasm_function_arguments_builder_resource, &number) == FAILURE) {
-        return;
-    }
-
-    wasm_value_array_t *wasm_function_arguments = wasm_function_arguments_builder_from_resource(Z_RES_P(wasm_function_arguments_builder_resource));
-
-    if (wasm_function_arguments->length == (wasm_function_arguments->last_used_index + 1)) {
-        RETURN_FALSE
-    }
-
-    wasmer_value_t argument;
-    argument.tag = WASM_I64;
-    argument.value.I64 = (int64_t) number;
-
-    wasm_function_arguments->values[wasm_function_arguments->last_used_index + 1] = argument;
-    wasm_function_arguments->last_used_index += 1;
-
-    RETURN_TRUE
-}
-
-/**
- * `wasm_function_arguments_builder_add_f32`.
- */
-
-PHP_FUNCTION(wasm_function_arguments_builder_add_f32)
-{
-    zval *wasm_function_arguments_builder_resource;
-    double number;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rd", &wasm_function_arguments_builder_resource, &number) == FAILURE) {
-        return;
-    }
-
-    wasm_value_array_t *wasm_function_arguments = wasm_function_arguments_builder_from_resource(Z_RES_P(wasm_function_arguments_builder_resource));
-
-    if (wasm_function_arguments->length == (wasm_function_arguments->last_used_index + 1)) {
-        RETURN_FALSE
-    }
-
-    wasmer_value_t argument;
-    argument.tag = WASM_F32;
-    argument.value.F32 = (float) number;
-
-    wasm_function_arguments->values[wasm_function_arguments->last_used_index + 1] = argument;
-    wasm_function_arguments->last_used_index += 1;
-
-    RETURN_TRUE
-}
-
-/**
- * `wasm_function_arguments_builder_add_f64`.
- */
-
-PHP_FUNCTION(wasm_function_arguments_builder_add_f64)
-{
-    zval *wasm_function_arguments_builder_resource;
-    double number;
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rd", &wasm_function_arguments_builder_resource, &number) == FAILURE) {
-        return;
-    }
-
-    wasm_value_array_t *wasm_function_arguments = wasm_function_arguments_builder_from_resource(Z_RES_P(wasm_function_arguments_builder_resource));
-
-    if (wasm_function_arguments->length == (wasm_function_arguments->last_used_index + 1)) {
-        RETURN_FALSE
-    }
-
-    wasmer_value_t argument;
-    argument.tag = WASM_F64;
-    argument.value.F64 = number;
-
-    wasm_function_arguments->values[wasm_function_arguments->last_used_index + 1] = argument;
-    wasm_function_arguments->last_used_index += 1;
-
-    RETURN_TRUE
-}
-
 ///**
 // * `wasm_invoke_function`.
 // */
@@ -611,14 +440,6 @@ PHP_MINIT_FUNCTION(wasm)
         module_number
     );
 
-    wasm_function_arguments_builder_resource_name = "wasm_function_arguments_builder";
-    wasm_function_arguments_builder_resource_number = zend_register_list_destructors_ex(
-        wasm_function_arguments_builder_destructor,
-        NULL,
-        wasm_function_arguments_builder_resource_name,
-        module_number
-    );
-
     return SUCCESS;
 }
 
@@ -655,30 +476,6 @@ ZEND_BEGIN_ARG_INFO(arginfo_wasm_value, 0)
     ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_function_arguments_builder, 0)
-    ZEND_ARG_INFO(0, arity)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_function_arguments_builder_add_i32, 0)
-    ZEND_ARG_INFO(1, wasm_function_arguments_builder)
-    ZEND_ARG_INFO(0, argument_value_as_i32)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_function_arguments_builder_add_i64, 0)
-    ZEND_ARG_INFO(1, wasm_function_arguments_builder)
-    ZEND_ARG_INFO(0, argument_value_as_i64)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_function_arguments_builder_add_f32, 0)
-    ZEND_ARG_INFO(1, wasm_invoke_arguments_builder)
-    ZEND_ARG_INFO(0, argument_value_as_f32)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_function_arguments_builder_add_f64, 0)
-    ZEND_ARG_INFO(1, wasm_invoke_arguments_builder)
-    ZEND_ARG_INFO(0, argument_value)
-ZEND_END_ARG_INFO()
-
 //ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_function, 0)
 //    ZEND_ARG_INFO(1, wasm_instance)
 //    ZEND_ARG_INFO(0, function_name)
@@ -692,11 +489,6 @@ static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_new_instance,						arginfo_wasm_new_instance)
     //PHP_FE(wasm_get_function_signature,				arginfo_wasm_get_function_signature)
     PHP_FE(wasm_value,								arginfo_wasm_value)
-    PHP_FE(wasm_function_arguments_builder,			arginfo_wasm_function_arguments_builder)
-    PHP_FE(wasm_function_arguments_builder_add_i32,	arginfo_wasm_function_arguments_builder_add_i32)
-    PHP_FE(wasm_function_arguments_builder_add_i64,	arginfo_wasm_function_arguments_builder_add_i64)
-    PHP_FE(wasm_function_arguments_builder_add_f32,	arginfo_wasm_function_arguments_builder_add_f32)
-    PHP_FE(wasm_function_arguments_builder_add_f64,	arginfo_wasm_function_arguments_builder_add_f64)
     //PHP_FE(wasm_invoke_function,					arginfo_wasm_invoke_function)
     PHP_FE_END
 };

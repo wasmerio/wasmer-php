@@ -25,42 +25,53 @@
 #include "php_wasm.h"
 #include "wasmer.h"
 
-///**
-// * `wasm_read_binary`.
-// */
-//
-//char* wasm_binary_resource_name;
-//int wasm_binary_resource_number;
-//
-//Vec_u8 *wasm_binary_from_resource(zend_resource *wasm_binary_resource)
-//{
-//    return (Vec_u8 *) zend_fetch_resource(
-//        wasm_binary_resource,
-//        wasm_binary_resource_name,
-//        wasm_binary_resource_number
-//    );
-//}
-//
-//static void wasm_binary_destructor(zend_resource *resource)
-//{
-//    Vec_u8 *wasm_binary = wasm_binary_from_resource(resource);
-//    drop_wasm_binary(wasm_binary);
-//}
-//
-//PHP_FUNCTION(wasm_read_binary)
-//{
-//    char *file_path;
-//    size_t file_path_length;
-//
-//    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "p", &file_path, &file_path_length) == FAILURE) {
-//        return;
-//    }
-//
-//    const Vec_u8 *wasm_binary = wasm_read_binary(file_path);
-//    zend_resource *resource = zend_register_resource((void *) wasm_binary, wasm_binary_resource_number);
-//
-//    RETURN_RES(resource);
-//}
+/**
+ * `wasm_read_bytes`.
+ */
+
+char* wasm_bytes_resource_name;
+int wasm_bytes_resource_number;
+
+uint8_t *wasm_bytes_from_resource(zend_resource *wasm_bytes_resource)
+{
+    return (uint8_t *) zend_fetch_resource(
+        wasm_bytes_resource,
+        wasm_bytes_resource_name,
+        wasm_bytes_resource_number
+    );
+}
+
+static void wasm_bytes_destructor(zend_resource *resource)
+{
+    uint8_t *wasm_bytes = wasm_bytes_from_resource(resource);
+    free(wasm_bytes);
+}
+
+PHP_FUNCTION(wasm_read_bytes)
+{
+    char *file_path;
+    size_t file_path_length;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "p", &file_path, &file_path_length) == FAILURE) {
+        return;
+    }
+
+    // Read the Wasm file bytes.
+    FILE *wasm_file = fopen(file_path, "r");
+    fseek(wasm_file, 0, SEEK_END);
+
+    size_t wasm_file_length = ftell(wasm_file);
+    uint8_t *wasm_bytes = malloc(wasm_file_length);
+    fseek(wasm_file, 0, SEEK_SET);
+
+    fread(wasm_bytes, 1, wasm_file_length, wasm_file);
+
+    fclose(wasm_file);
+
+    zend_resource *resource = zend_register_resource((void *) wasm_bytes, wasm_bytes_resource_number);
+
+    RETURN_RES(resource);
+}
 //
 ///**
 // * `wasm_new_runtime`.
@@ -519,10 +530,10 @@ PHP_MINFO_FUNCTION(wasm)
     php_info_print_table_end();
 }
 
-//ZEND_BEGIN_ARG_INFO(arginfo_wasm_read_binary, 0)
-//    ZEND_ARG_INFO(0, file_path)
-//ZEND_END_ARG_INFO()
-//
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_read_bytes, 0)
+    ZEND_ARG_INFO(0, file_path)
+ZEND_END_ARG_INFO()
+
 //ZEND_BEGIN_ARG_INFO(arginfo_wasm_new_runtime, 0)
 //ZEND_END_ARG_INFO()
 //
@@ -576,7 +587,7 @@ PHP_MINFO_FUNCTION(wasm)
 //ZEND_END_ARG_INFO()
 
 static const zend_function_entry wasm_functions[] = {
-    //PHP_FE(wasm_read_binary,						arginfo_wasm_read_binary)
+    PHP_FE(wasm_read_bytes,						arginfo_wasm_read_bytes)
     //PHP_FE(wasm_new_runtime,						arginfo_wasm_new_runtime)
     //PHP_FE(wasm_runtime_add_function,				arginfo_wasm_runtime_add_function)
     //PHP_FE(wasm_new_instance,						arginfo_wasm_new_instance)

@@ -377,7 +377,7 @@ PHP_FUNCTION(wasm_invoke_function)
     if (
         zend_parse_parameters(
             ZEND_NUM_ARGS() TSRMLS_CC,
-            "rshr",
+            "rsh",
             &wasm_instance_resource,
             &function_name,
             &function_name_length,

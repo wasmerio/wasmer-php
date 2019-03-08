@@ -303,6 +303,67 @@ PHP_FUNCTION(wasm_new_instance)
 //}
 
 /**
+ * `wasm_value`.
+ */
+
+char* wasm_value_resource_name;
+int wasm_value_resource_number;
+
+wasmer_value_t *wasm_value_from_resource(zend_resource *wasm_value_resource)
+{
+    return (wasmer_value_t *) zend_fetch_resource(
+        wasm_value_resource,
+        wasm_value_resource_name,
+        wasm_value_resource_number
+    );
+}
+
+static void wasm_value_destructor(zend_resource *resource)
+{
+    wasmer_value_t *wasm_value = wasm_value_from_resource(resource);
+    free(wasm_value);
+}
+
+PHP_FUNCTION(wasm_value)
+{
+    zend_long value_type;
+    zval *value;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &value_type, &value) == FAILURE) {
+        return;
+    }
+
+    if (value_type < 0) {
+        RETURN_NULL();
+    }
+
+    uint32_t type = (uint32_t) value_type;
+    wasmer_value_t *wasm_value = malloc(sizeof(wasmer_value_t));
+
+    if (type == WASM_I32) {
+        wasm_value->tag = type;
+        wasm_value->value.I32 = (int32_t) value->value.lval;
+    } else if (type == WASM_I64) {
+        wasm_value->tag = type;
+        wasm_value->value.I64 = (int64_t) value->value.lval;
+    } else if (type == WASM_F32) {
+        wasm_value->tag = type;
+        wasm_value->value.F32 = (float) value->value.dval;
+    } else if (type == WASM_F64) {
+        wasm_value->tag = type;
+        wasm_value->value.F64 = (double) value->value.dval;
+    } else {
+        free(wasm_value);
+
+        RETURN_NULL();
+    }
+
+    zend_resource *resource = zend_register_resource((void *) wasm_value, wasm_value_resource_number);
+
+    RETURN_RES(resource);
+}
+
+/**
  * `wasm_function_arguments_builder`.
  */
 
@@ -542,6 +603,14 @@ PHP_MINIT_FUNCTION(wasm)
         module_number
     );
 
+    wasm_value_resource_name = "wasm_value";
+    wasm_value_resource_number = zend_register_list_destructors_ex(
+        wasm_value_destructor,
+        NULL,
+        wasm_value_resource_name,
+        module_number
+    );
+
     wasm_function_arguments_builder_resource_name = "wasm_function_arguments_builder";
     wasm_function_arguments_builder_resource_number = zend_register_list_destructors_ex(
         wasm_function_arguments_builder_destructor,
@@ -581,6 +650,11 @@ ZEND_END_ARG_INFO()
 //    ZEND_ARG_INFO(0, function_name)
 //ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_value, 0)
+    ZEND_ARG_INFO(0, type)
+    ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO(arginfo_wasm_function_arguments_builder, 0)
     ZEND_ARG_INFO(0, arity)
 ZEND_END_ARG_INFO()
@@ -617,6 +691,7 @@ static const zend_function_entry wasm_functions[] = {
     //PHP_FE(wasm_runtime_add_function,				arginfo_wasm_runtime_add_function)
     PHP_FE(wasm_new_instance,						arginfo_wasm_new_instance)
     //PHP_FE(wasm_get_function_signature,				arginfo_wasm_get_function_signature)
+    PHP_FE(wasm_value,								arginfo_wasm_value)
     PHP_FE(wasm_function_arguments_builder,			arginfo_wasm_function_arguments_builder)
     PHP_FE(wasm_function_arguments_builder_add_i32,	arginfo_wasm_function_arguments_builder_add_i32)
     PHP_FE(wasm_function_arguments_builder_add_i64,	arginfo_wasm_function_arguments_builder_add_i64)

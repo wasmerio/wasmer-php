@@ -272,35 +272,91 @@ PHP_FUNCTION(wasm_new_instance)
     RETURN_RES(resource);
 }
 
-///**
-// * `wasm_get_function_signature`.
-// */
-//
-//PHP_FUNCTION(wasm_get_function_signature)
-//{
-//    zval *wasm_instance_resource;
-//    char *function_name;
-//    size_t function_name_length;
-//
-//    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs", &wasm_instance_resource, &function_name, &function_name_length) == FAILURE) {
-//        return;
-//    }
-//
-//    Instance *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
-//    const Signature *wasm_function_signature = wasm_get_function_signature(wasm_instance, function_name);
-//
-//    if (NULL == wasm_function_signature) {
-//        RETURN_NULL();
-//    }
-//
-//    array_init_size(return_value, wasm_function_signature->inputs_length + 1 /* output */);
-//
-//    for (uintptr_t nth = 0; nth < wasm_function_signature->inputs_length; ++nth) {
-//        add_next_index_long(return_value, wasm_function_signature->inputs_buffer[nth]);
-//    }
-//
-//    add_next_index_long(return_value, *(wasm_function_signature->output));
-//}
+/**
+ * `wasm_get_function_signature`.
+ */
+
+PHP_FUNCTION(wasm_get_function_signature)
+{
+    zval *wasm_instance_resource;
+    char *function_name;
+    size_t function_name_length;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs", &wasm_instance_resource, &function_name, &function_name_length) == FAILURE) {
+        return;
+    }
+
+    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
+    wasmer_exports_t *wasm_exports = NULL;
+
+    wasmer_instance_exports(wasm_instance, &wasm_exports);
+
+    int number_of_exports = wasmer_exports_len(wasm_exports);
+
+    if (number_of_exports == 0) {
+        wasmer_exports_destroy(wasm_exports);
+
+        RETURN_NULL();
+    }
+
+    const wasmer_export_func_t *wasm_function = NULL;
+
+    for (uint32_t nth = 0; nth < number_of_exports; ++nth) {
+        wasmer_export_t *wasm_export = wasmer_exports_get(wasm_exports, nth);
+        wasmer_import_export_kind wasm_export_kind = wasmer_export_kind(wasm_export);
+
+        if (wasm_export_kind != WASM_FUNCTION) {
+            continue;
+        }
+
+        wasmer_byte_array wasm_export_name = wasmer_export_name(wasm_export);
+
+        if (wasm_export_name.bytes_len != function_name_length) {
+            continue;
+        }
+
+        if (strncmp(function_name, (const char *) wasm_export_name.bytes, wasm_export_name.bytes_len) == 0) {
+            wasm_function = wasmer_export_to_func(wasm_export);
+
+            break;
+        }
+    }
+
+    if (wasm_function == NULL) {
+        wasmer_exports_destroy(wasm_exports);
+
+        RETURN_NULL();
+    }
+
+    uint32_t wasm_function_inputs_arity;
+    wasmer_export_func_params_arity(wasm_function, &wasm_function_inputs_arity);
+
+    array_init_size(return_value, wasm_function_inputs_arity + /* output */ 1);
+
+    wasmer_value_tag *wasm_function_input_signatures = malloc(sizeof(wasmer_value_tag) * wasm_function_inputs_arity);
+    wasmer_export_func_params(wasm_function, wasm_function_input_signatures, wasm_function_inputs_arity);
+
+    for (uint32_t nth = 0; nth < wasm_function_inputs_arity; ++nth) {
+        add_next_index_long(return_value, wasm_function_input_signatures[nth]);
+    }
+
+    free(wasm_function_input_signatures);
+
+    uint32_t wasm_function_outputs_arity;
+    wasmer_export_func_returns_arity(wasm_function, &wasm_function_outputs_arity);
+
+    if (wasm_function_outputs_arity == 0) {
+        RETURN_NULL();
+    }
+
+    wasmer_value_tag *wasm_function_output_signatures = malloc(sizeof(wasmer_value_tag) * wasm_function_outputs_arity);
+    wasmer_export_func_returns(wasm_function, wasm_function_output_signatures, wasm_function_outputs_arity);
+
+    add_next_index_long(return_value, wasm_function_output_signatures[0]);
+
+    free(wasm_function_output_signatures);
+    wasmer_exports_destroy(wasm_exports);
+}
 
 /**
  * `wasm_value`.
@@ -499,10 +555,10 @@ ZEND_BEGIN_ARG_INFO(arginfo_wasm_new_instance, 0)
     ZEND_ARG_INFO(0, wasm_bytes)
 ZEND_END_ARG_INFO()
 
-//ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_function_signature, 0)
-//    ZEND_ARG_INFO(1, wasm_instance)
-//    ZEND_ARG_INFO(0, function_name)
-//ZEND_END_ARG_INFO()
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_function_signature, 0)
+    ZEND_ARG_INFO(1, wasm_instance)
+    ZEND_ARG_INFO(0, function_name)
+ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO(arginfo_wasm_value, 0)
     ZEND_ARG_INFO(0, type)
@@ -519,7 +575,7 @@ static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_read_bytes,					arginfo_wasm_read_bytes)
     //PHP_FE(wasm_runtime_add_function,		arginfo_wasm_runtime_add_function)
     PHP_FE(wasm_new_instance,				arginfo_wasm_new_instance)
-    //PHP_FE(wasm_get_function_signature,	arginfo_wasm_get_function_signature)
+    PHP_FE(wasm_get_function_signature,		arginfo_wasm_get_function_signature)
     PHP_FE(wasm_value,						arginfo_wasm_value)
     PHP_FE(wasm_invoke_function,			arginfo_wasm_invoke_function)
     PHP_FE_END

@@ -252,14 +252,15 @@ static void wasm_function_import_destructor(zend_resource *resource)
 }
 
 typedef struct {
+    zend_llist imported_function_implementations;
     int i;
-} foobar;
+} wasm_instance_context_data;
 
 int32_t foo(const wasmer_instance_context_t *context, int32_t x, int32_t y)
 {
-    foobar *foobar = wasmer_instance_context_data_get(context);
+    wasm_instance_context_data *wasm_context_data = wasmer_instance_context_data_get(context);
     printf("here %d %d!\n", x, y);
-    printf("foobar %d\n", foobar->i);
+    printf("context %d\n", wasm_context_data->i);
     return x + y + 1;
 }
 
@@ -401,10 +402,10 @@ PHP_FUNCTION(wasm_new_instance)
         RETURN_NULL();
     }
 
-    foobar *foobar = malloc(sizeof(foobar));
-    foobar->i = 42;
+    wasm_instance_context_data *wasm_context_data = malloc(sizeof(wasm_instance_context_data));
+    wasm_context_data->i = 42;
 
-    wasmer_instance_context_data_set(wasm_instance, foobar);
+    wasmer_instance_context_data_set(wasm_instance, wasm_context_data);
 
     zend_resource *resource = zend_register_resource((void *) wasm_instance, wasm_instance_resource_number);
 

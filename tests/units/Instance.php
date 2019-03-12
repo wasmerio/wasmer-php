@@ -1,11 +1,11 @@
 <?php
 
-namespace WASM\Tests\Units;
+namespace Wasm\Tests\Units;
 
 use RuntimeException;
-use WASM\Instance as SUT;
-use WASM\InvocationException;
-use WASM\Tests\Suite;
+use Wasm\Instance as SUT;
+use Wasm\InvocationException;
+use Wasm\Tests\Suite;
 
 class Instance extends Suite
 {
@@ -87,16 +87,6 @@ class Instance extends Suite
             ->then
                 ->integer($result)
                     ->isEqualTo(42);
-    }
-
-    public function test_call_return_void()
-    {
-        $this
-            ->given($wasmInstance = new SUT(self::FILE_PATH))
-            ->when($result = $wasmInstance->void())
-            ->then
-                ->variable($result)
-                    ->isNull();
     }
 
     public function test_call_i32_i32()

@@ -1,6 +1,6 @@
 <?php
 
-namespace WASM\Tests;
+namespace Wasm\Tests;
 
 use atoum;
 

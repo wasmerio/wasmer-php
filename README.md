@@ -60,19 +60,13 @@ versions](https://getcomposer.org/doc/04-schema.md#package-links) (see
 
 ### As fast as possible
 
-Right now, `php-ext-wasm` uses [the wasmi
-library](https://github.com/paritytech/wasmi). No benchmark has been
-run yet, but we know this is not the fastest WebAssembly interpreter:
-It is safe, it is solid, it is well-tested, it provides a neat and
-flexible API, and this is what we need for the first version of this
-project.
+Since version 0.2.0, `php-ext-wasm` uses [the `wasmer`
+library](https://github.com/wasmerio/wasmer). It is 28x times faster than the
+previous library, which was [`wasmi`](https://github.com/paritytech/wasmi) (see
+[#5](https://github.com/wasmerio/php-ext-wasm/pull/5#issuecomment-470958749) for more
+information).
 
-It is expected to add
-[Cranelift](https://github.com/CraneStation/cranelift), and its
-[Just-In-Time library](https://crates.io/crates/cranelift-simplejit),
-at some point in the future. We are already experimenting with it. The
-hope is to reach similar performance than PHP extensions written in C,
-or to be very close to it.
+It is still possible to improve the performance. We are working on it.
 
 ### Safety first
 

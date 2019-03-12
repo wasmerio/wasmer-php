@@ -4,8 +4,8 @@
     },
     "autoload": {
         "psr-4": {
-            "WASM\\": "lib/",
-            "WASM\\Tests\\": "tests/"
+            "Wasm\\": "lib/",
+            "Wasm\\Tests\\": "tests/"
         },
         "files": [
             "lib/Prelude.php"

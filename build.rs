@@ -36,19 +36,19 @@ fn main() {
         .filter_entry(|entry| !is_hidden(entry))
         .filter_map(|entry| entry.ok())
         .filter(|entry| entry.metadata().is_ok())
-        .filter(|entry| entry.file_name().to_string_lossy() == "wasmer.h");
+        .filter(|entry| entry.file_name().to_string_lossy() == "wasmer.hh");
 
     if let Some(entry) = walker.next() {
         let cargo_directory = var("CARGO_MANIFEST_DIR")
             .expect("The `CARGO_MANIFEST_DIR` environment variable is not found.");
         let mut header_destination = PathBuf::from(&cargo_directory);
         header_destination.push("extension");
-        header_destination.push("wasmer.h");
-        header_destination.set_extension("h");
+        header_destination.push("wasmer");
+        header_destination.set_extension("hh");
 
         copy(entry.path(), header_destination)
-            .expect("Cannot copy the `wasmer.h` C header file from `wasmer-runtime-c-api`.");
+            .expect("Cannot copy the `wasmer.hh` C header file from `wasmer-runtime-c-api`.");
     } else {
-        panic!("The `wasmer.h` file is not found.");
+        panic!("The `wasmer.hh` file is not found.");
     }
 }

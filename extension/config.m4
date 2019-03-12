@@ -7,5 +7,5 @@ if test "$PHP_WASM" != "no"; then
   PHP_SUBST(WASM_SHARED_LIBADD)
   PHP_ADD_LIBRARY_WITH_PATH(wasmer_runtime_c_api, ., WASM_SHARED_LIBADD)
 
-  PHP_NEW_EXTENSION(wasm, wasm.c, $ext_shared)
+  PHP_NEW_EXTENSION(wasm, wasm.cc, $ext_shared)
 fi

@@ -23,13 +23,25 @@
 #include "php.h"
 #include "ext/standard/info.h"
 #include "php_wasm.h"
-#include "wasmer.h"
+#include "wasmer.hh"
+
+/**
+ * Utils.
+ */
+wasmer_value_tag from_zend_long_to_wasmer_value_tag(zend_long x)
+{
+    if (x > 0) {
+        return (wasmer_value_tag) (uint32_t) x;
+    } else {
+        return wasmer_value_tag::WASM_I32;
+    }
+}
 
 /**
  * `wasm_read_bytes`.
  */
 
-char* wasm_bytes_resource_name;
+const char* wasm_bytes_resource_name;
 int wasm_bytes_resource_number;
 
 wasmer_byte_array *wasm_bytes_from_resource(zend_resource *wasm_bytes_resource)
@@ -61,14 +73,14 @@ PHP_FUNCTION(wasm_read_bytes)
     fseek(wasm_file, 0, SEEK_END);
 
     size_t wasm_file_length = ftell(wasm_file);
-    const uint8_t *wasm_bytes = malloc(wasm_file_length);
+    const uint8_t *wasm_bytes = (const uint8_t *) malloc(wasm_file_length);
     fseek(wasm_file, 0, SEEK_SET);
 
     fread((uint8_t *) wasm_bytes, 1, wasm_file_length, wasm_file);
 
     fclose(wasm_file);
 
-    wasmer_byte_array *wasm_byte_array = malloc(sizeof(wasmer_byte_array));
+    wasmer_byte_array *wasm_byte_array = (wasmer_byte_array *) malloc(sizeof(wasmer_byte_array));
     wasm_byte_array->bytes = wasm_bytes;
     wasm_byte_array->bytes_len = (uint32_t) wasm_file_length;
 
@@ -223,7 +235,7 @@ PHP_FUNCTION(wasm_read_bytes)
  * `wasm_new_function_import`.
  */
 
-char* wasm_function_import_resource_name;
+const char* wasm_function_import_resource_name;
 int wasm_function_import_resource_number;
 
 typedef struct {
@@ -258,7 +270,7 @@ typedef struct {
 
 int32_t foo(const wasmer_instance_context_t *context, int32_t x, int32_t y)
 {
-    wasm_instance_context_data *wasm_context_data = wasmer_instance_context_data_get(context);
+    wasm_instance_context_data *wasm_context_data = (wasm_instance_context_data *) wasmer_instance_context_data_get(context);
     printf("here %d %d!\n", x, y);
     printf("context %d\n", wasm_context_data->i);
     return x + y + 1;
@@ -270,8 +282,8 @@ PHP_FUNCTION(wasm_new_function_import)
     size_t function_name_length;
     HashTable *inputs_signature;
     zend_long *output_signature;
-    zend_fcall_info *function_implementation = malloc(sizeof(zend_fcall_info));
-    zend_fcall_info_cache *function_implementation_cache = malloc(sizeof(zend_fcall_info_cache));
+    zend_fcall_info *function_implementation = (zend_fcall_info *) malloc(sizeof(zend_fcall_info));
+    zend_fcall_info_cache *function_implementation_cache = (zend_fcall_info_cache *) malloc(sizeof(zend_fcall_info_cache));
 
     if (
         zend_parse_parameters(
@@ -291,15 +303,15 @@ PHP_FUNCTION(wasm_new_function_import)
     size_t inputs_signature_length = zend_hash_num_elements(inputs_signature);
     size_t outputs_signature_length = 1;
 
-    wasmer_value_tag *wasm_function_inputs_signature = malloc(sizeof(wasmer_value_tag) * inputs_signature_length);
-    wasmer_value_tag wasm_function_outputs_signature[] = {(uint32_t) output_signature};
+    wasmer_value_tag *wasm_function_inputs_signature = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * inputs_signature_length);
+    wasmer_value_tag wasm_function_outputs_signature[] = {from_zend_long_to_wasmer_value_tag(*output_signature)};
 
     {
         zend_ulong key;
         zval *value;
 
         ZEND_HASH_FOREACH_NUM_KEY_VAL(inputs_signature, key, value)
-            wasm_function_inputs_signature[key] = value->value.lval;
+            wasm_function_inputs_signature[key] = from_zend_long_to_wasmer_value_tag(value->value.lval);
         ZEND_HASH_FOREACH_END();
     }
 
@@ -320,13 +332,13 @@ PHP_FUNCTION(wasm_new_function_import)
     wasm_function_name.bytes = (const uint8_t *) function_name;
     wasm_function_name.bytes_len = function_name_length;
 
-    wasmer_import_t *wasm_import = malloc(sizeof(wasmer_import_t));
+    wasmer_import_t *wasm_import = (wasmer_import_t *) malloc(sizeof(wasmer_import_t));
     wasm_import->module_name = wasm_module_name;
     wasm_import->import_name = wasm_function_name;
-    wasm_import->tag = WASM_FUNCTION;
+    wasm_import->tag = wasmer_import_export_kind::WASM_FUNCTION;
     wasm_import->value.func = wasm_function_import;
 
-    wasm_function_import_t *function_import = malloc(sizeof(wasm_function_import_t));
+    wasm_function_import_t *function_import = (wasm_function_import_t *) malloc(sizeof(wasm_function_import_t));
     function_import->wasmer_import = wasm_import;
     function_import->function_implementation = function_implementation;
     function_import->function_implementation_cache = function_implementation_cache;
@@ -340,7 +352,7 @@ PHP_FUNCTION(wasm_new_function_import)
  * `wasm_new_instance`.
  */
 
-char* wasm_instance_resource_name;
+const char* wasm_instance_resource_name;
 int wasm_instance_resource_number;
 
 wasmer_instance_t *wasm_instance_from_resource(zend_resource *wasm_instance_resource)
@@ -375,7 +387,7 @@ PHP_FUNCTION(wasm_new_instance)
         wasm_imports = NULL;
     } else {
         number_of_imports = zend_hash_num_elements(imports);
-        wasm_imports = malloc(sizeof(wasmer_import_t) * number_of_imports);
+        wasm_imports = (wasmer_import_t *) malloc(sizeof(wasmer_import_t) * number_of_imports);
 
         {
             zend_ulong key;
@@ -396,13 +408,13 @@ PHP_FUNCTION(wasm_new_instance)
         number_of_imports
     );
 
-    if (wasm_instantiation_result != WASMER_OK) {
+    if (wasm_instantiation_result != wasmer_result_t::WASMER_OK) {
         free(wasm_instance);
 
         RETURN_NULL();
     }
 
-    wasm_instance_context_data *wasm_context_data = malloc(sizeof(wasm_instance_context_data));
+    wasm_instance_context_data *wasm_context_data = (wasm_instance_context_data *) malloc(sizeof(wasm_instance_context_data));
     wasm_context_data->i = 42;
 
     wasmer_instance_context_data_set(wasm_instance, wasm_context_data);
@@ -445,7 +457,7 @@ PHP_FUNCTION(wasm_get_function_signature)
         wasmer_export_t *wasm_export = wasmer_exports_get(wasm_exports, nth);
         wasmer_import_export_kind wasm_export_kind = wasmer_export_kind(wasm_export);
 
-        if (wasm_export_kind != WASM_FUNCTION) {
+        if (wasm_export_kind != wasmer_import_export_kind::WASM_FUNCTION) {
             continue;
         }
 
@@ -473,11 +485,11 @@ PHP_FUNCTION(wasm_get_function_signature)
 
     array_init_size(return_value, wasm_function_inputs_arity + /* output */ 1);
 
-    wasmer_value_tag *wasm_function_input_signatures = malloc(sizeof(wasmer_value_tag) * wasm_function_inputs_arity);
+    wasmer_value_tag *wasm_function_input_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_inputs_arity);
     wasmer_export_func_params(wasm_function, wasm_function_input_signatures, wasm_function_inputs_arity);
 
     for (uint32_t nth = 0; nth < wasm_function_inputs_arity; ++nth) {
-        add_next_index_long(return_value, wasm_function_input_signatures[nth]);
+        add_next_index_long(return_value, (zend_long) wasm_function_input_signatures[nth]);
     }
 
     free(wasm_function_input_signatures);
@@ -489,10 +501,10 @@ PHP_FUNCTION(wasm_get_function_signature)
         RETURN_NULL();
     }
 
-    wasmer_value_tag *wasm_function_output_signatures = malloc(sizeof(wasmer_value_tag) * wasm_function_outputs_arity);
+    wasmer_value_tag *wasm_function_output_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_outputs_arity);
     wasmer_export_func_returns(wasm_function, wasm_function_output_signatures, wasm_function_outputs_arity);
 
-    add_next_index_long(return_value, wasm_function_output_signatures[0]);
+    add_next_index_long(return_value, (zend_long) wasm_function_output_signatures[0]);
 
     free(wasm_function_output_signatures);
     wasmer_exports_destroy(wasm_exports);
@@ -502,7 +514,7 @@ PHP_FUNCTION(wasm_get_function_signature)
  * `wasm_value`.
  */
 
-char* wasm_value_resource_name;
+const char* wasm_value_resource_name;
 int wasm_value_resource_number;
 
 wasmer_value_t *wasm_value_from_resource(zend_resource *wasm_value_resource)
@@ -533,19 +545,19 @@ PHP_FUNCTION(wasm_value)
         RETURN_NULL();
     }
 
-    uint32_t type = (uint32_t) value_type;
-    wasmer_value_t *wasm_value = malloc(sizeof(wasmer_value_t));
+    wasmer_value_tag type = (wasmer_value_tag) (uint32_t) value_type;
+    wasmer_value_t *wasm_value = (wasmer_value_t *) malloc(sizeof(wasmer_value_t));
 
-    if (type == WASM_I32) {
+    if (type == wasmer_value_tag::WASM_I32) {
         wasm_value->tag = type;
         wasm_value->value.I32 = (int32_t) value->value.lval;
-    } else if (type == WASM_I64) {
+    } else if (type == wasmer_value_tag::WASM_I64) {
         wasm_value->tag = type;
         wasm_value->value.I64 = (int64_t) value->value.lval;
-    } else if (type == WASM_F32) {
+    } else if (type == wasmer_value_tag::WASM_F32) {
         wasm_value->tag = type;
         wasm_value->value.F32 = (float) value->value.dval;
-    } else if (type == WASM_F64) {
+    } else if (type == wasmer_value_tag::WASM_F64) {
         wasm_value->tag = type;
         wasm_value->value.F64 = (double) value->value.dval;
     } else {
@@ -586,7 +598,7 @@ PHP_FUNCTION(wasm_invoke_function)
     wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
 
     size_t function_input_length = zend_hash_num_elements(inputs);
-    wasmer_value_t *function_inputs = malloc(sizeof(wasmer_value_t) * function_input_length);
+    wasmer_value_t *function_inputs = (wasmer_value_t *) malloc(sizeof(wasmer_value_t) * function_input_length);
 
     {
         zend_ulong key;
@@ -610,19 +622,19 @@ PHP_FUNCTION(wasm_invoke_function)
         function_output_length
     );
 
-    if (function_call_result != WASMER_OK) {
+    if (function_call_result != wasmer_result_t::WASMER_OK) {
         RETURN_FALSE
     }
 
     wasmer_value_t function_output = function_outputs[0];
 
-    if (function_output.tag == WASM_I32) {
+    if (function_output.tag == wasmer_value_tag::WASM_I32) {
         RETURN_LONG(function_output.value.I32);
-    } else if (function_output.tag == WASM_I64) {
+    } else if (function_output.tag == wasmer_value_tag::WASM_I64) {
         RETURN_LONG(function_output.value.I64);
-    } else if (function_output.tag == WASM_F32) {
+    } else if (function_output.tag == wasmer_value_tag::WASM_F32) {
         RETURN_DOUBLE(function_output.value.F32);
-    } else if (function_output.tag == WASM_F64) {
+    } else if (function_output.tag == wasmer_value_tag::WASM_F64) {
         RETURN_DOUBLE(function_output.value.F64);
     } else {
         RETURN_NULL();
@@ -640,10 +652,10 @@ PHP_RINIT_FUNCTION(wasm)
 
 PHP_MINIT_FUNCTION(wasm)
 {
-    REGISTER_LONG_CONSTANT("WASM_TYPE_I32", WASM_I32, CONST_CS | CONST_PERSISTENT);
-    REGISTER_LONG_CONSTANT("WASM_TYPE_I64", WASM_I64, CONST_CS | CONST_PERSISTENT);
-    REGISTER_LONG_CONSTANT("WASM_TYPE_F32", WASM_F32, CONST_CS | CONST_PERSISTENT);
-    REGISTER_LONG_CONSTANT("WASM_TYPE_F64", WASM_F64, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_TYPE_I32", (zend_long) wasmer_value_tag::WASM_I32, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_TYPE_I64", (zend_long) wasmer_value_tag::WASM_I64, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_TYPE_F32", (zend_long) wasmer_value_tag::WASM_F32, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_TYPE_F64", (zend_long) wasmer_value_tag::WASM_F64, CONST_CS | CONST_PERSISTENT);
 
     wasm_bytes_resource_name = "wasm_bytes";
     wasm_bytes_resource_number = zend_register_list_destructors_ex(

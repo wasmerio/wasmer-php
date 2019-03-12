@@ -2,4 +2,4 @@ Cargo.lock
 composer.lock
 /target/
 /vendor/
-/extension/wasmer.h
+/extension/wasmer.hh

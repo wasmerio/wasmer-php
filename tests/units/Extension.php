@@ -68,12 +68,13 @@ class Extension extends Suite
             ->when($result = $reflection->getFunctions())
             ->then
                 ->array($result)
-                    ->hasSize(5)
+                    ->hasSize(6)
                     ->object['wasm_read_bytes']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_new_instance']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_get_function_signature']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_value']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_invoke_function']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_get_last_error']->isInstanceOf(ReflectionFunction::class)
 
             ->when($_result = $result['wasm_read_bytes'])
             ->then
@@ -174,7 +175,13 @@ class Extension extends Suite
                 ->string($parameters[2]->getType() . '')
                     ->isEqualTo('array')
                 ->boolean($parameters[2]->getType()->allowsNull())
-                    ->isFalse();
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_get_last_error'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(0)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters());
     }
 
     public function test_reflection_ini_entries()
@@ -429,5 +436,31 @@ class Extension extends Suite
             [],
             1
         ];
+    }
+
+    public function test_wasm_get_last_error()
+    {
+        $this
+            ->given(
+                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmInstance = wasm_new_instance($wasmBytes),
+                $wasmArguments = []
+            )
+            ->when($result = wasm_invoke_function($wasmInstance, 'sum', $wasmArguments))
+            ->then
+                ->boolean($result)
+                    ->isFalse()
+
+            ->when($result = wasm_get_last_error())
+                ->string($result)
+                    ->isEqualTo('Call error: Parameters of type [] did not match signature [I32, I32] -> [I32]');
+    }
+
+    public function test_wasm_get_last_error_without_any_error()
+    {
+        $this
+            ->when($result = wasm_get_last_error())
+                ->variable($result)
+                    ->isNull();
     }
 }

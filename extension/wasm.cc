@@ -60,14 +60,18 @@ static void wasm_bytes_destructor(zend_resource *resource)
     free(wasm_byte_array);
 }
 
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_read_bytes, 0)
+    ZEND_ARG_TYPE_INFO(0, file_path, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 PHP_FUNCTION(wasm_read_bytes)
 {
-    char *file_path;
-    size_t file_path_length;
+    char *file_path = NULL;
+    size_t file_path_length = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "p", &file_path, &file_path_length) == FAILURE) {
-        return;
-    }
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1);
+        Z_PARAM_PATH(file_path, file_path_length);
+    ZEND_PARSE_PARAMETERS_END();
 
     FILE *wasm_file = fopen(file_path, "r");
     fseek(wasm_file, 0, SEEK_END);
@@ -414,10 +418,6 @@ PHP_MINFO_FUNCTION(wasm)
     php_info_print_table_header(2, "wasm support", "enabled");
     php_info_print_table_end();
 }
-
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_read_bytes, 0)
-    ZEND_ARG_TYPE_INFO(0, file_path, IS_STRING, 0)
-ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_new_instance, 0, 0, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)

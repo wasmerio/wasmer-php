@@ -74,6 +74,11 @@ PHP_FUNCTION(wasm_read_bytes)
     ZEND_PARSE_PARAMETERS_END();
 
     FILE *wasm_file = fopen(file_path, "r");
+
+    if (wasm_file == NULL) {
+        RETURN_NULL();
+    }
+
     fseek(wasm_file, 0, SEEK_END);
 
     size_t wasm_file_length = ftell(wasm_file);

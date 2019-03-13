@@ -154,7 +154,7 @@ static void wasm_instance_destructor(zend_resource *resource)
  * Declare the parameter information for the `wasm_new_instance`
  * function.
  */
- ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_new_instance, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_new_instance, 0, 0, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 

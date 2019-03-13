@@ -120,13 +120,17 @@ static void wasm_instance_destructor(zend_resource *resource)
     wasmer_instance_destroy(wasm_instance);
 }
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_new_instance, 0, 0, 1)
+    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
+ZEND_END_ARG_INFO()
+
 PHP_FUNCTION(wasm_new_instance)
 {
     zval *wasm_bytes_resource;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &wasm_bytes_resource) == FAILURE) {
-        return;
-    }
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1);
+        Z_PARAM_RESOURCE(wasm_bytes_resource);
+    ZEND_PARSE_PARAMETERS_END();
 
     wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
     wasmer_instance_t *wasm_instance = NULL;
@@ -423,10 +427,6 @@ PHP_MINFO_FUNCTION(wasm)
     php_info_print_table_header(2, "wasm support", "enabled");
     php_info_print_table_end();
 }
-
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_new_instance, 0, 0, 1)
-    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
-ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_function_signature, 0)
     ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, 0)

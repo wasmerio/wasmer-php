@@ -48,10 +48,17 @@ final class Instance
         $this->filePath = $filePath;
         $wasmBytes = wasm_read_bytes($this->filePath);
 
+        if (null === $wasmBytes) {
+            throw new RuntimeException("An error happened while reading the module `$filePath`.");
+        }
+
         $this->wasmInstance = wasm_new_instance($wasmBytes);
 
         if (null === $this->wasmInstance) {
-            throw new RuntimeException("An error happened while instanciating the module `$filePath`.");
+            throw new RuntimeException(
+                "An error happened while instanciating the module `$filePath`:\n    " .
+                str_replace("\n", "\n    ", wasm_get_last_error())
+            );
         }
     }
 
@@ -85,7 +92,13 @@ final class Instance
         $signature = wasm_get_function_signature($this->wasmInstance, $name);
 
         if (null === $signature) {
-            throw new InvocationException("Function `$name` does not exist.");
+            $error = wasm_get_last_error();
+
+            if (null === $error) {
+                throw new InvocationException("Function `$name` does not exist.");
+            } else {
+                throw new InvocationException("Cannot invoke the function `$name` because: $error.");
+            }
         }
 
         $number_of_expected_arguments = count($signature) - 1;

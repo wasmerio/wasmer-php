@@ -69,8 +69,8 @@ PHP_FUNCTION(wasm_read_bytes)
     char *file_path;
     size_t file_path_length;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1);
-        Z_PARAM_PATH(file_path, file_path_length);
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_PATH(file_path, file_path_length)
     ZEND_PARSE_PARAMETERS_END();
 
     FILE *wasm_file = fopen(file_path, "r");
@@ -128,8 +128,8 @@ PHP_FUNCTION(wasm_new_instance)
 {
     zval *wasm_bytes_resource;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1);
-        Z_PARAM_RESOURCE(wasm_bytes_resource);
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_bytes_resource)
     ZEND_PARSE_PARAMETERS_END();
 
     wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
@@ -168,9 +168,9 @@ PHP_FUNCTION(wasm_get_function_signature)
     char *function_name;
     size_t function_name_length;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2);
-        Z_PARAM_RESOURCE(wasm_instance_resource);
-        Z_PARAM_STRING(function_name, function_name_length);
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
+        Z_PARAM_RESOURCE(wasm_instance_resource)
+        Z_PARAM_STRING(function_name, function_name_length)
     ZEND_PARSE_PARAMETERS_END();
 
     wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
@@ -277,9 +277,9 @@ PHP_FUNCTION(wasm_value)
     zend_long value_type;
     zval *value;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2);
-        Z_PARAM_LONG(value_type);
-        Z_PARAM_ZVAL(value);
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
+        Z_PARAM_LONG(value_type)
+        Z_PARAM_ZVAL(value)
     ZEND_PARSE_PARAMETERS_END();
 
     if (value_type < 0) {

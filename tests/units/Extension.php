@@ -2,6 +2,8 @@
 
 namespace Wasm\Tests\Units;
 
+use ReflectionExtension;
+use ReflectionFunction;
 use RuntimeException;
 use Wasm\Tests\Suite;
 
@@ -19,17 +21,190 @@ class Extension extends Suite
         return '\\';
     }
 
-    public function test_constants()
+    public function test_reflection_classes()
     {
         $this
-            ->integer(WASM_TYPE_I32)
-                ->isEqualTo(0)
-            ->integer(WASM_TYPE_I64)
-                ->isEqualTo(1)
-            ->integer(WASM_TYPE_F32)
-                ->isEqualTo(2)
-            ->integer(WASM_TYPE_F64)
-                ->isEqualTo(3);
+            ->given($reflection = new ReflectionExtension('wasm'))
+            ->when($result = $reflection->getClasses())
+            ->then
+                ->array($result)
+                    ->isEmpty()
+
+            ->when($result = $reflection->getClassNames())
+            ->then
+                ->array($result)
+                    ->isEmpty();
+    }
+
+    public function test_reflection_constants()
+    {
+        $this
+            ->given($reflection = new ReflectionExtension('wasm'))
+            ->when($result = $reflection->getConstants())
+            ->then
+                ->array($result)
+                    ->isEqualTo([
+                        'WASM_TYPE_I32' => 0,
+                        'WASM_TYPE_I64' => 1,
+                        'WASM_TYPE_F32' => 2,
+                        'WASM_TYPE_F64' => 3,
+                    ]);
+    }
+
+    public function test_reflection_dependencies()
+    {
+        $this
+            ->given($reflection = new ReflectionExtension('wasm'))
+            ->when($result = $reflection->getDependencies())
+            ->then
+                ->array($result)
+                    ->isEmpty();
+    }
+
+    public function test_reflection_functions()
+    {
+        $this
+            ->given($reflection = new ReflectionExtension('wasm'))
+            ->when($result = $reflection->getFunctions())
+            ->then
+                ->array($result)
+                    ->hasSize(5)
+                    ->object['wasm_read_bytes']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_new_instance']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_get_function_signature']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_value']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_invoke_function']->isInstanceOf(ReflectionFunction::class)
+
+            ->when($_result = $result['wasm_read_bytes'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(1)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('file_path')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('string')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_new_instance'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(1)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('wasm_bytes')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('resource')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_get_function_signature'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(2)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('wasm_instance')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('resource')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+                ->string($parameters[1]->getName())
+                    ->isEqualTo('function_name')
+                ->string($parameters[1]->getType() . '')
+                    ->isEqualTo('string')
+                ->boolean($parameters[1]->getType()->allowsNull())
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_value'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(2)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('type')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('int')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+                ->string($parameters[1]->getName())
+                    ->isEqualTo('value')
+                ->boolean($parameters[1]->hasType())
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_invoke_function'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(3)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('wasm_instance')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('resource')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+                ->string($parameters[1]->getName())
+                    ->isEqualTo('function_name')
+                ->string($parameters[1]->getType() . '')
+                    ->isEqualTo('string')
+                ->boolean($parameters[1]->getType()->allowsNull())
+                    ->isFalse()
+
+                ->string($parameters[2]->getName())
+                    ->isEqualTo('inputs')
+                ->string($parameters[2]->getType() . '')
+                    ->isEqualTo('array')
+                ->boolean($parameters[2]->getType()->allowsNull())
+                    ->isFalse();
+    }
+
+    public function test_reflection_ini_entries()
+    {
+        $this
+            ->given($reflection = new ReflectionExtension('wasm'))
+            ->when($result = $reflection->getINIEntries())
+            ->then
+                ->array($result)
+                    ->isEmpty();
+    }
+
+    public function test_reflection_name()
+    {
+        $this
+            ->given($reflection = new ReflectionExtension('wasm'))
+            ->when($result = $reflection->getName())
+            ->then
+                ->string($result)
+                    ->isEqualTo('wasm');
+    }
+
+    public function test_reflection_version()
+    {
+        $this
+            ->given($reflection = new ReflectionExtension('wasm'))
+            ->when($result = $reflection->getVersion())
+            ->then
+                ->string($result)
+                    ->isEqualTo('0.2.0');
     }
 
     public function test_wasm_read_bytes()

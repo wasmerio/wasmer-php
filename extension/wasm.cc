@@ -293,14 +293,22 @@ PHP_FUNCTION(wasm_get_function_signature)
 
     // Read the number of inputs.
     uint32_t wasm_function_inputs_arity;
-    wasmer_export_func_params_arity(wasm_function, &wasm_function_inputs_arity);
+
+    if (wasmer_export_func_params_arity(wasm_function, &wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
 
     // Prepare the result of this function.
     array_init_size(return_value, wasm_function_inputs_arity + /* output */ 1);
 
     // Read the input types.
     wasmer_value_tag *wasm_function_input_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_inputs_arity);
-    wasmer_export_func_params(wasm_function, wasm_function_input_signatures, wasm_function_inputs_arity);
+
+    if (wasmer_export_func_params(wasm_function, wasm_function_input_signatures, wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
+        free(wasm_function_input_signatures);
+
+        RETURN_NULL();
+    }
 
     for (uint32_t nth = 0; nth < wasm_function_inputs_arity; ++nth) {
         // Add to the result.
@@ -311,7 +319,10 @@ PHP_FUNCTION(wasm_get_function_signature)
 
     // Read the number of outputs.
     uint32_t wasm_function_outputs_arity;
-    wasmer_export_func_returns_arity(wasm_function, &wasm_function_outputs_arity);
+
+    if (wasmer_export_func_returns_arity(wasm_function, &wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
 
     // PHP only expects one output, i.e. out returned value.
     if (wasm_function_outputs_arity == 0) {
@@ -320,7 +331,12 @@ PHP_FUNCTION(wasm_get_function_signature)
 
     // Read the output types.
     wasmer_value_tag *wasm_function_output_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_outputs_arity);
-    wasmer_export_func_returns(wasm_function, wasm_function_output_signatures, wasm_function_outputs_arity);
+
+    if (wasmer_export_func_returns(wasm_function, wasm_function_output_signatures, wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
+        free(wasm_function_output_signatures);
+
+        RETURN_NULL();
+    }
 
     // Add to the result.
     add_next_index_long(return_value, (zend_long) wasm_function_output_signatures[0]);

@@ -8,16 +8,41 @@ use Closure;
 use ReflectionObject;
 use RuntimeException;
 
+/**
+ * The `Instance` class allows to compile and instantiate WebAssembly code.
+ */
 final class Instance
 {
+    /**
+     * The file path to the Wasm binary file.
+     */
     private $filePath;
-    private $wasmRuntime;
-    private $importedFunctions = [];
 
+    /**
+     * Compiles and instantiates a WebAssembly binary file.
+     *
+     * The constructor throws a `RuntimeException` when the given file does
+     * not exist, or is not readable.
+     *
+     * The constructor also throws a `RuntimeException` when the instantiation
+     * failed.
+     *
+     * # Examples
+     *
+     * ```php,ignore
+     * $instance = new Wasm\Instance('my_program.wasm');
+     * ```
+     *
+     * That simple.
+     */
     public function __construct(string $filePath)
     {
         if (false === file_exists($filePath)) {
             throw new RuntimeException("File path to WASM binary `$filePath` does not exist.");
+        }
+
+        if (false === is_readable($filePath)) {
+            throw new RuntimeException("File `$filePath` is not readable.");
         }
 
         $this->filePath = $filePath;
@@ -30,6 +55,31 @@ final class Instance
         }
     }
 
+    /**
+     * Calls an exported function.
+     *
+     * An exported function is a function that is exported by the WebAssembly
+     * binary.
+     *
+     * The provided arguments are automatically converted to WebAssembly
+     * compliant values. If arguments are missing, or if too much arguments
+     * are given, an `InvocationException` exception will be thrown. If one
+     * argument has a non-compliant type, an `InvocationException` exception
+     * will also be thrown.
+     *
+     * **Reminder**: Value types are given by the following constants:
+     *  * `Wasm\I32` for integer on 32 bits,
+     *  * `Wasm\I64` for integer on 64 bits,
+     *  * `Wasm\F32` for float on 32 bits,
+     *  * `Wasm\F64` for float on 64 bits.
+     *
+     * # Examples
+     *
+     * ```php,ignore
+     * $instance = new Wasm\Instance('my_program.wasm');
+     * $value = $instance->sum(1, 2);
+     * ```
+     */
     public function __call(string $name, array $arguments)
     {
         $signature = wasm_get_function_signature($this->wasmInstance, $name);
@@ -119,4 +169,8 @@ final class Instance
     }
 }
 
+/**
+ * An `InvocationException` exception is thrown when a function is invoked on
+ * a Wasm instance, and failed.
+ */
 final class InvocationException extends RuntimeException {}

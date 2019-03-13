@@ -1,6 +1,7 @@
 {
     "require": {
-        "atoum/atoum": "^3.3"
+        "atoum/atoum": "^3.3",
+        "hoa/kitab": "^0.12"
     },
     "autoload": {
         "psr-4": {
@@ -12,6 +13,7 @@
         ]
     },
     "scripts": {
-        "test": "vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal"
+        "test": "vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal",
+        "doc": "php -d extension=wasm vendor/bin/kitab compile --with-composer --with-project-name=php-ext-wasm --output-directory doc lib"
     }
 }

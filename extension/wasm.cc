@@ -66,8 +66,8 @@ ZEND_END_ARG_INFO()
 
 PHP_FUNCTION(wasm_read_bytes)
 {
-    char *file_path = NULL;
-    size_t file_path_length = 0;
+    char *file_path;
+    size_t file_path_length;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1);
         Z_PARAM_PATH(file_path, file_path_length);
@@ -267,14 +267,20 @@ static void wasm_value_destructor(zend_resource *resource)
     free(wasm_value);
 }
 
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_value, 0)
+    ZEND_ARG_TYPE_INFO(0, type, IS_LONG, 0)
+    ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
 PHP_FUNCTION(wasm_value)
 {
     zend_long value_type;
     zval *value;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &value_type, &value) == FAILURE) {
-        return;
-    }
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2);
+        Z_PARAM_LONG(value_type);
+        Z_PARAM_ZVAL(value);
+    ZEND_PARSE_PARAMETERS_END();
 
     if (value_type < 0) {
         RETURN_NULL();
@@ -433,11 +439,6 @@ PHP_MINFO_FUNCTION(wasm)
     php_info_print_table_header(2, "wasm support", "enabled");
     php_info_print_table_end();
 }
-
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_value, 0)
-    ZEND_ARG_TYPE_INFO(0, type, IS_LONG, 0)
-    ZEND_ARG_INFO(0, value)
-ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_function, 0)
     ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, 0)

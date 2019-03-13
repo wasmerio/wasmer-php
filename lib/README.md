@@ -100,3 +100,26 @@ $result = wasm_invoke_function(
 ```
 
 This function returns the result of the invoked function.
+
+### Function `wasm_get_last_error`
+
+Reads the last error if any:
+
+```php
+$bytes = wasm_read_bytes('my_program.wasm');
+$instance = wasm_new_instance($bytes);
+
+// sum(1) — one argument is missing!
+$result = wasm_invoke_function(
+    $instance,
+    'sum',
+    [wasm_value(WASM_TYPE_I32, 1)]
+);
+
+if (false === $result) {
+    echo wasm_get_last_error();
+    // Call error: Parameters of type [I32] did not match signature [I32, I32] -> [I32]
+}
+```
+
+This function returns the error message if any.

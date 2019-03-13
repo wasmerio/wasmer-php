@@ -157,15 +157,21 @@ PHP_FUNCTION(wasm_new_instance)
  * `wasm_get_function_signature`.
  */
 
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_function_signature, 0)
+    ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, 0)
+    ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
 PHP_FUNCTION(wasm_get_function_signature)
 {
     zval *wasm_instance_resource;
     char *function_name;
     size_t function_name_length;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs", &wasm_instance_resource, &function_name, &function_name_length) == FAILURE) {
-        return;
-    }
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2);
+        Z_PARAM_RESOURCE(wasm_instance_resource);
+        Z_PARAM_STRING(function_name, function_name_length);
+    ZEND_PARSE_PARAMETERS_END();
 
     wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
     wasmer_exports_t *wasm_exports = NULL;
@@ -427,11 +433,6 @@ PHP_MINFO_FUNCTION(wasm)
     php_info_print_table_header(2, "wasm support", "enabled");
     php_info_print_table_end();
 }
-
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_function_signature, 0)
-    ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, 0)
-    ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, 0)
-ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO(arginfo_wasm_value, 0)
     ZEND_ARG_TYPE_INFO(0, type, IS_LONG, 0)

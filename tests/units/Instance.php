@@ -24,6 +24,39 @@ class Instance extends Suite
                 ->hasMessage("File path to WASM binary `$filePath` does not exist.");
     }
 
+    public function test_constructor_invalid_bytes()
+    {
+        $this
+            ->given(
+                $filePath = __DIR__ . '/foo',
+                $this->function->file_exists = true,
+                $this->function->is_readable = true
+            )
+            ->exception(
+                function () use ($filePath) {
+                    new SUT($filePath);
+                }
+            )
+                ->isInstanceOf(RuntimeException::class)
+                ->hasMessage("An error happened while reading the module `$filePath`.");
+    }
+
+    public function test_constructor_invalid_instantiation()
+    {
+        $this
+            ->given($filePath = __DIR__ . '/empty.wasm')
+            ->exception(
+                function () use ($filePath) {
+                    new SUT($filePath);
+                }
+            )
+                ->isInstanceOf(RuntimeException::class)
+                ->hasMessage(
+                    "An error happened while instanciating the module `$filePath`:\n" .
+                    "    error instantiating"
+                );
+    }
+
     public function test_basic_sum()
     {
         $this

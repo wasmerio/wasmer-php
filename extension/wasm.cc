@@ -526,6 +526,38 @@ PHP_FUNCTION(wasm_invoke_function)
     }
 }
 
+/**
+ * Declare the parameter information for the `wasm_get_last_error`
+ * function.
+ */
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_last_error, 0)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_get_last_error` function.
+ *
+ * # Usage
+ *
+ * ```php
+ $ $error = wasm_get_last_error();
+ * ```
+ */
+PHP_FUNCTION(wasm_get_last_error)
+{
+    ZEND_PARSE_PARAMETERS_NONE();
+
+    int error_message_length = wasmer_last_error_length();
+
+    if (error_message_length == 0) {
+        RETURN_NULL();
+    }
+
+    char *error_message = (char *) malloc(error_message_length);
+    wasmer_last_error_message(error_message, error_message_length);
+
+    ZVAL_STRINGL(return_value, error_message, error_message_length - 1);
+}
+
 // Zend extension boilerplate.
 PHP_RINIT_FUNCTION(wasm)
 {
@@ -588,6 +620,7 @@ static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_get_function_signature,	arginfo_wasm_get_function_signature)
     PHP_FE(wasm_value,					arginfo_wasm_value)
     PHP_FE(wasm_invoke_function,		arginfo_wasm_invoke_function)
+    PHP_FE(wasm_get_last_error,			arginfo_wasm_get_last_error)
     PHP_FE_END
 };
 

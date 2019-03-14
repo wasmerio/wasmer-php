@@ -3,10 +3,8 @@
 The `Wasm` library is a layer on top of the `php-ext-wasm` extension
 that brings more safety and a more user-friendly API.
 
-## `Wasm` API
-
-This documentation lists API provided by the `Wasm` namespace. The
-entry is `Wasm\Instance`.
+This section lists API provided by the `Wasm` library. The entry is
+`Wasm\Instance`.
 
 Let's go through a very basic example. Let's assume this Rust program:
 
@@ -30,10 +28,10 @@ var_dump($result); // int(3)
 This example above calls a function `sum` that is exported from
 `my_program.wasm`.
 
-## Raw API
+# The `php-ext-wasm` raw API
 
 This section presents the raw API provided by the `php-ext-wasm`
-extension. The entire `Wasm` library is based on this raw API.
+extension. The entire `Wasm` library is based on this API.
 
 ### Function `wasm_read_bytes`
 

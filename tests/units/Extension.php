@@ -68,10 +68,11 @@ class Extension extends Suite
             ->when($result = $reflection->getFunctions())
             ->then
                 ->array($result)
-                    ->hasSize(8)
+                    ->hasSize(9)
                     ->object['wasm_read_bytes']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_validate']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_compile']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_module_new_instance']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_new_instance']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_get_function_signature']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_value']->isInstanceOf(ReflectionFunction::class)
@@ -118,6 +119,21 @@ class Extension extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_bytes')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('resource')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_module_new_instance'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(1)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('wasm_module')
                 ->string($parameters[0]->getType() . '')
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
@@ -304,6 +320,19 @@ class Extension extends Suite
                     ->isNull()
                 ->string(wasm_get_last_error())
                     ->isEqualTo('Validation error "Invalid type"');
+    }
+
+    public function test_wasm_module_new_instance()
+    {
+        $this
+            ->given(
+                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmModule = wasm_compile($wasmBytes)
+            )
+            ->when($result = wasm_module_new_instance($wasmModule))
+            ->then
+                ->resource($result)
+                    ->isOfType('wasm_instance');
     }
 
     public function test_wasm_new_instance()

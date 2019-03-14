@@ -45,7 +45,7 @@ This function returns a resource of type `wasm_bytes`.
 
 ### Function `wasm_validate`
 
-Validate bytes from the `wasm_read_bytes` function:
+Validates bytes from the `wasm_read_bytes` function:
 
 ```php
 $bytes = wasm_read_bytes('my_program.wasm');
@@ -57,6 +57,17 @@ if (false === wasm_validate($bytes)) {
 
 This function returns `true` when the bytes are valid, `false`
 otherwise.
+
+### Function `wasm_compile`
+
+Compiles bytes into a WebAssembly module.
+
+```php
+$bytes = wasm_read_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+```
+
+This function returns a resource of type `wasm_module`.
 
 ### Function `wasm_new_instance`
 

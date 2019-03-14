@@ -45,6 +45,21 @@ $bytes = wasm_read_bytes('my_program.wasm');
 
 This function returns a resource of type `wasm_bytes`.
 
+### Function `wasm_validate`
+
+Validate bytes from the `wasm_read_bytes` function:
+
+```php
+$bytes = wasm_read_bytes('my_program.wasm');
+
+if (false === wasm_validate($bytes)) {
+    echo 'The program seems corrupted.';
+}
+```
+
+This function returns `true` when the bytes are valid, `false`
+otherwise.
+
 ### Function `wasm_new_instance`
 
 Compiles and instantiates WebAssembly bytes:

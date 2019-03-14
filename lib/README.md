@@ -69,6 +69,18 @@ $module = wasm_compile($bytes);
 
 This function returns a resource of type `wasm_module`.
 
+### Function `wasm_module_new_instance`
+
+Instantiates a WebAssembly module:
+
+```php
+$bytes = wasm_read_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+$instance = wasm_module_new_instance($module);
+```
+
+This function returns a resource of type `wasm_instance`.
+
 ### Function `wasm_new_instance`
 
 Compiles and instantiates WebAssembly bytes:
@@ -80,6 +92,8 @@ $instance = wasm_new_instance($bytes);
 
 This function returns a resource of type `wasm_instance`.
 
+This function combines `wasm_compile` and
+`wasm_module_new_instance`. It “hides” the module.
 
 ### Function `wasm_get_function_signature`
 

@@ -9,7 +9,9 @@ use ReflectionObject;
 use RuntimeException;
 
 /**
- * The `Instance` class allows to compile and instantiate WebAssembly code.
+ * The `Instance` class allows to compile WebAssembly bytes into a module, and
+ * instantiate the module directly. Then, it is possible to call exported
+ * functions with a user-friendly API.
  */
 final class Instance
 {
@@ -17,6 +19,11 @@ final class Instance
      * The file path to the Wasm binary file.
      */
     private $filePath;
+
+    /**
+     * The Wasm instance.
+     */
+    private $wasmInstance;
 
     /**
      * Compiles and instantiates a WebAssembly binary file.

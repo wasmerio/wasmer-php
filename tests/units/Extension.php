@@ -68,8 +68,9 @@ class Extension extends Suite
             ->when($result = $reflection->getFunctions())
             ->then
                 ->array($result)
-                    ->hasSize(6)
+                    ->hasSize(7)
                     ->object['wasm_read_bytes']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_validate']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_new_instance']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_get_function_signature']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_value']->isInstanceOf(ReflectionFunction::class)
@@ -88,6 +89,21 @@ class Extension extends Suite
                     ->isEqualTo('file_path')
                 ->string($parameters[0]->getType() . '')
                     ->isEqualTo('string')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_validate'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(1)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('wasm_bytes')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
@@ -230,6 +246,26 @@ class Extension extends Suite
             ->then
                 ->variable($result)
                    ->isNull();
+    }
+
+    public function test_wasm_validate()
+    {
+        $this
+            ->given($wasmBytes = wasm_read_bytes(self::FILE_PATH))
+            ->when($result = wasm_validate($wasmBytes))
+            ->then
+                ->boolean($result)
+                    ->isTrue();
+    }
+
+    public function test_wasm_validate_nop()
+    {
+        $this
+            ->given($wasmBytes = wasm_read_bytes(__DIR__ . '/invalid.wasm'))
+            ->when($result = wasm_validate($wasmBytes))
+            ->then
+                ->boolean($result)
+                    ->isFalse();
     }
 
     public function test_wasm_new_instance()

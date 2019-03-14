@@ -38,7 +38,7 @@ final class Instance
     public function __construct(string $filePath)
     {
         if (false === file_exists($filePath)) {
-            throw new RuntimeException("File path to WASM binary `$filePath` does not exist.");
+            throw new RuntimeException("File path to Wasm binary `$filePath` does not exist.");
         }
 
         if (false === is_readable($filePath)) {
@@ -50,6 +50,10 @@ final class Instance
 
         if (null === $wasmBytes) {
             throw new RuntimeException("An error happened while reading the module `$filePath`.");
+        }
+
+        if (false === wasm_validate($wasmBytes)) {
+            throw new RuntimeException("Bytes in `$filePath` are invalid.");
         }
 
         $this->wasmInstance = wasm_new_instance($wasmBytes);

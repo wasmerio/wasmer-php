@@ -123,6 +123,41 @@ PHP_FUNCTION(wasm_read_bytes)
 }
 
 /**
+ * Declare the parameter information for the `wasm_validate`
+ * function.
+ */
+ZEND_BEGIN_ARG_INFO(arginfo_wasm_validate, 0)
+    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_validate` function.
+ *
+ * # Usage
+ *
+ * ```php
+ $ $bytes = wasm_read_bytes('my_program.wasm');
+ * $valid = wasm_validate($bytes);
+ * ```
+ */
+PHP_FUNCTION(wasm_validate)
+{
+    zval *wasm_bytes_resource;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_bytes_resource)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the bytes from the resource.
+    wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
+
+    // Check whether the bytes are valid or not.
+    bool is_valid = wasmer_validate(wasm_byte_array->bytes, wasm_byte_array->bytes_len);
+
+    RETURN_BOOL(is_valid);
+}
+
+/**
  * Resource information for the `wasm_new_instance` function.
  */
 
@@ -632,6 +667,7 @@ PHP_MINFO_FUNCTION(wasm)
 // Export the functions with their information.
 static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_read_bytes,				arginfo_wasm_read_bytes)
+    PHP_FE(wasm_validate,				arginfo_wasm_validate)
     PHP_FE(wasm_new_instance,			arginfo_wasm_new_instance)
     PHP_FE(wasm_get_function_signature,	arginfo_wasm_get_function_signature)
     PHP_FE(wasm_value,					arginfo_wasm_value)

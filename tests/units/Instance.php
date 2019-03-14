@@ -21,10 +21,10 @@ class Instance extends Suite
                 }
             )
                 ->isInstanceOf(RuntimeException::class)
-                ->hasMessage("File path to WASM binary `$filePath` does not exist.");
+                ->hasMessage("File path to Wasm binary `$filePath` does not exist.");
     }
 
-    public function test_constructor_invalid_bytes()
+    public function test_constructor_cannot_read_the_module()
     {
         $this
             ->given(
@@ -41,10 +41,26 @@ class Instance extends Suite
                 ->hasMessage("An error happened while reading the module `$filePath`.");
     }
 
+    public function test_constructor_invalid_bytes()
+    {
+        $this
+            ->given($filePath = __DIR__ . '/invalid.wasm')
+            ->exception(
+                function () use ($filePath) {
+                    new SUT($filePath);
+                }
+            )
+                ->isInstanceOf(RuntimeException::class)
+                ->hasMessage("Bytes in `$filePath` are invalid.");
+    }
+
     public function test_constructor_invalid_instantiation()
     {
         $this
-            ->given($filePath = __DIR__ . '/empty.wasm')
+            ->given(
+                $filePath = __DIR__ . '/empty.wasm',
+                $this->function->wasm_validate = true
+            )
             ->exception(
                 function () use ($filePath) {
                     new SUT($filePath);

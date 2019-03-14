@@ -264,6 +264,70 @@ static void wasm_instance_destructor(zend_resource *resource)
 }
 
 /**
+ * Declare the parameter information for the
+ * `wasm_module_new_instance` function.
+ */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_module_new_instance, 0, 0, 1)
+    ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, 0)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_module_new_instance` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_read_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes);
+ * $instance = wasm_module_new_instance($module);
+ * // `$instance` is of type `resource of type (wasm_instance)`.
+ * ```
+ *
+ * It is similar to running:
+ *
+ * ```php
+ * $bytes = wasm_read_bytes('my_program.wasm');
+ * $instance = wasm_new_instance($bytes);
+ * ```
+ */
+PHP_FUNCTION(wasm_module_new_instance)
+{
+    zval *wasm_module_resource;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_module_resource)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the module from the resource.
+    wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
+
+    // Create a new Wasm instance.
+    wasmer_instance_t *wasm_instance = NULL;
+    wasmer_result_t wasm_instantiation_result = wasmer_module_instantiate(
+        // Module.
+        wasm_module,
+        // Instance.
+        &wasm_instance,
+        // Imports.
+        {},
+        // Imports length.
+        0
+    );
+
+    // Instantiation failed.
+    if (wasm_instantiation_result != wasmer_result_t::WASMER_OK) {
+        free(wasm_instance);
+
+        RETURN_NULL();
+    }
+
+    // Store in and return the result as a resource.
+    zend_resource *resource = zend_register_resource((void *) wasm_instance, wasm_instance_resource_number);
+
+    RETURN_RES(resource);
+}
+
+/**
  * Declare the parameter information for the `wasm_new_instance`
  * function.
  */
@@ -281,6 +345,9 @@ ZEND_END_ARG_INFO()
  * $instance = wasm_new_instance($bytes);
  * // `$instance` is of type `resource of type (wasm_instance)`.
  * ```
+ *
+ * This function is a shortcut of `wasm_compile` +
+ * `wasm_module_new_instance`. It “hides” the module compilation step.
  */
 PHP_FUNCTION(wasm_new_instance)
 {
@@ -754,6 +821,7 @@ static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_read_bytes,				arginfo_wasm_read_bytes)
     PHP_FE(wasm_validate,				arginfo_wasm_validate)
     PHP_FE(wasm_compile,				arginfo_wasm_compile)
+    PHP_FE(wasm_module_new_instance,	arginfo_wasm_module_new_instance)
     PHP_FE(wasm_new_instance,			arginfo_wasm_new_instance)
     PHP_FE(wasm_get_function_signature,	arginfo_wasm_get_function_signature)
     PHP_FE(wasm_value,					arginfo_wasm_value)

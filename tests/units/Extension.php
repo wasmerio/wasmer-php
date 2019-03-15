@@ -68,10 +68,12 @@ class Extension extends Suite
             ->when($result = $reflection->getFunctions())
             ->then
                 ->array($result)
-                    ->hasSize(9)
+                    ->hasSize(11)
                     ->object['wasm_read_bytes']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_validate']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_compile']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_module_serialize']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_module_deserialize']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_module_new_instance']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_new_instance']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_get_function_signature']->isInstanceOf(ReflectionFunction::class)
@@ -121,6 +123,36 @@ class Extension extends Suite
                     ->isEqualTo('wasm_bytes')
                 ->string($parameters[0]->getType() . '')
                     ->isEqualTo('resource')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_module_serialize'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(1)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('wasm_module')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('resource')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+            ->when($_result = $result['wasm_module_deserialize'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(1)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('wasm_serialized_module')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('string')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
@@ -320,6 +352,58 @@ class Extension extends Suite
                     ->isNull()
                 ->string(wasm_get_last_error())
                     ->isEqualTo('Validation error "Invalid type"');
+    }
+
+    public function test_wasm_module_serialize()
+    {
+        $this
+            ->given(
+                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmModule = wasm_compile($wasmBytes)
+            )
+            ->when($result = wasm_module_serialize($wasmModule))
+            ->then
+                ->string($result)
+                    ->isNotEmpty()
+                    ->startWith("WASMER\0\0");
+    }
+
+    public function test_wasm_module_deserialize()
+    {
+        $this
+            ->given(
+                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmModule = wasm_compile($wasmBytes),
+                $wasmSerializedModule = wasm_module_serialize($wasmModule)
+            )
+            ->when($result = wasm_module_deserialize($wasmSerializedModule))
+            ->then
+                ->resource($result)
+                    ->isOfType('wasm_module')
+
+            ->given(
+                $wasmInstance = wasm_module_new_instance($result),
+                $wasmArguments = [
+                    wasm_value(WASM_TYPE_I32, 1),
+                    wasm_value(WASM_TYPE_I32, 2),
+                ]
+            )
+            ->when($result = wasm_invoke_function($wasmInstance, 'sum', $wasmArguments))
+            ->then
+                ->integer($result)
+                    ->isEqualTo(3);
+    }
+
+    public function test_wasm_module_deserialize_failed()
+    {
+        $this
+            ->given($wasmSerializedModule = 'foobar')
+            ->when($result = wasm_module_deserialize($wasmSerializedModule))
+            ->then
+                ->variable($result)
+                    ->isNull()
+                ->string(wasm_get_last_error())
+                    ->isEqualTo('Failed to deserialize the module');
     }
 
     public function test_wasm_module_new_instance()

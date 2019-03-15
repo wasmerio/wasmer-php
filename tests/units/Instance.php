@@ -68,7 +68,7 @@ class Instance extends Suite
             )
                 ->isInstanceOf(RuntimeException::class)
                 ->hasMessage(
-                    "An error happened while instanciating the module `$filePath`:\n" .
+                    "An error happened while compiling or instanciating the module `$filePath`:\n" .
                     "    error instantiating"
                 );
     }

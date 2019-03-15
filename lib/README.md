@@ -105,6 +105,37 @@ $module = wasm_compile($bytes);
 
 This function returns a resource of type `wasm_module`.
 
+### Function `wasm_module_serialize`
+
+Serializes a module into a PHP string (technically a sequence of
+bytes):
+
+```php
+$bytes = wasm_read_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+$serialized_module = wasm_module_serialize($module);
+```
+
+This function returns a string.
+
+### Function `wasm_module_deserialize`
+
+Deserializes a module from a PHP string (technically a sequence of
+bytes):
+
+```php
+$bytes = wasm_read_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+$serialized_module = wasm_module_serialize($module);
+unset($module);
+
+$module = wasm_module_deserialize($module);
+$instance = wasm_module_new_instance($module);
+// life continues.
+```
+
+This function returns a resource of type `wasm_module`.
+
 ### Function `wasm_module_new_instance`
 
 Instantiates a WebAssembly module:

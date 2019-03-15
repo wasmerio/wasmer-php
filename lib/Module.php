@@ -9,6 +9,19 @@ use RuntimeException;
 /**
  * The `Module` class allows to compile WebAssembly bytes into a WebAssembly
  * module.
+ *
+ * To get a ready to use WebAssembly program, one first needs to compile the
+ * bytes into a module, and second to instantiate the module. This class
+ * addresses the first step. To instantiate the module, call the `instantiate`
+ * method.
+ *
+ * # Examples
+ *
+ * ```php,ignore
+ * $module = new Wasm\Module('my_program.wasm');
+ * $instance = $module->instantiate();
+ * $result = $instance->sum(1, 2);
+ * ```
  */
 class Module
 {
@@ -23,6 +36,13 @@ class Module
     private $wasmModule;
 
     /**
+     * Compiles WebAssembly bytes from a file into a module.
+     *
+     * The constructor throws a `RuntimeException` when the given file does
+     * not exist, or is not readable.
+     *
+     * The constructor also throws a `RuntimeException` when the compilation
+     * failed.
      */
     public function __construct(string $filePath)
     {
@@ -55,6 +75,25 @@ class Module
         }
     }
 
+    /**
+     * Instantiates the module.
+     *
+     * # Examples
+     *
+     * The following code:
+     *
+     * ```php,ignore
+     * $module = new Wasm\Module('my_program.wasm');
+     * $instance = $module->instantiate();
+     * ```
+     *
+     * is a shortcut to:
+     *
+     * ```php,ignore
+     * $module = new Wasm\Module('my_program.wasm');
+     * $instance = Wasm\Instance::fromModule($module);
+     * ```
+     */
     public function instantiate(): Instance
     {
         return Instance::fromModule($this);

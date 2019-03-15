@@ -12,6 +12,20 @@ use RuntimeException;
  * The `Instance` class allows to compile WebAssembly bytes into a module, and
  * instantiate the module directly. Then, it is possible to call exported
  * functions with a user-friendly API.
+ *
+ * To get a ready to use WebAssembly program, one first needs to compile the
+ * bytes into a module, and second to instantiate the module. This class
+ * allows to combine these two steps: The constructor compiles and
+ * instantiates the module in a single-pass.
+ *
+ * # Examples
+ *
+ * ```php,ignore
+ * $instance = new Wasm\Instance('my_program.wasm');
+ * $result = $instance->sum(1, 2);
+ * ```
+ *
+ * That simple.
  */
 class Instance
 {
@@ -33,14 +47,6 @@ class Instance
      *
      * The constructor also throws a `RuntimeException` when the compilation
      * or the instantiation failed.
-     *
-     * # Examples
-     *
-     * ```php,ignore
-     * $instance = new Wasm\Instance('my_program.wasm');
-     * ```
-     *
-     * That simple.
      */
     public function __construct(string $filePath)
     {
@@ -77,9 +83,20 @@ class Instance
      * Instantiates a WebAssembly module.
      *
      * This method throws a `RuntimeException` when the instantiation failed.
+     *
+     * # Examples
+     *
+     * ```php,ignore
+     * $module = new Wasm\Module('my_program.wasm');
+     * $instance = Wasm\Instance::fromModule($module);
+     * $result = $instance->sum(1, 2);
+     * ```
      */
     public static function fromModule(Module $module): self
     {
+        // Using an anonymous class allows to overwrite the constructor,
+        // and to inject the `wasm_instance` resource and the file path.
+        // From a type point of view, there is no difference.
         return new class($module) extends Instance {
             public function __construct(Module $module) {
                 $this->filePath = $module->getFilePath();

@@ -6,7 +6,9 @@ that brings more safety and a more user-friendly API.
 This section lists API provided by the `Wasm` library. The entry is
 `Wasm\Instance`.
 
-Let's go through a very basic example. Let's assume this Rust program:
+## Quick example
+
+Let's go through a very quick example. Let's assume this Rust program:
 
 ```rust
 #[no_mangle]
@@ -27,6 +29,40 @@ var_dump($result); // int(3)
 
 This example above calls a function `sum` that is exported from
 `my_program.wasm`.
+
+## The life pattern of a WebAssembly binary, and the API
+
+A WebAssembly file is only a sequence of bytes. In order to get a
+running WebAssembly program:
+
+ 1. These bytes must be compiled into a module,
+ 2. The module must be instantiate.
+ 
+The `Wasm\Module` represents a module. The `Wasm\Instance` represents
+an instance of a module.
+
+So, one can write:
+
+```php
+$module = new Wasm\Module('my_program.wasm');
+$instance = $module->instantiate();
+$result = $instance->sum(1, 2);
+```
+
+Or, alternatively, when having a module is not necessary, one can
+write:
+
+```php
+$instance = new Wasm\Instance('my_program.wasm');
+$result = $instance->sum(1, 2);
+```
+
+Why would one want to get a module? Because it's serializable, and
+thus can be stored in a cache. The bytes compilation to a module can
+be costly depending of the size of your WebAssembly program, and the
+[runtime
+backend](https://github.com/wasmerio/wasmer/tree/master/lib#backends)
+(LLVM, Cranelift etc.).
 
 # The `php-ext-wasm` raw API
 

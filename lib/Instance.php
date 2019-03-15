@@ -13,17 +13,17 @@ use RuntimeException;
  * instantiate the module directly. Then, it is possible to call exported
  * functions with a user-friendly API.
  */
-final class Instance
+class Instance
 {
     /**
      * The file path to the Wasm binary file.
      */
-    private $filePath;
+    protected $filePath;
 
     /**
      * The Wasm instance.
      */
-    private $wasmInstance;
+    protected $wasmInstance;
 
     /**
      * Compiles and instantiates a WebAssembly binary file.
@@ -31,8 +31,8 @@ final class Instance
      * The constructor throws a `RuntimeException` when the given file does
      * not exist, or is not readable.
      *
-     * The constructor also throws a `RuntimeException` when the instantiation
-     * failed.
+     * The constructor also throws a `RuntimeException` when the compilation
+     * or the instantiation failed.
      *
      * # Examples
      *
@@ -67,10 +67,32 @@ final class Instance
 
         if (null === $this->wasmInstance) {
             throw new RuntimeException(
-                "An error happened while instanciating the module `$filePath`:\n    " .
+                "An error happened while compiling or instanciating the module `$filePath`:\n    " .
                 str_replace("\n", "\n    ", wasm_get_last_error())
             );
         }
+    }
+
+    /**
+     * Instantiates a WebAssembly module.
+     *
+     * This method throws a `RuntimeException` when the instantiation failed.
+     */
+    public static function fromModule(Module $module): self
+    {
+        return new class($module) extends Instance {
+            public function __construct(Module $module) {
+                $this->filePath = $module->getFilePath();
+                $this->wasmInstance = wasm_module_new_instance($module->intoResource());
+
+                if (null === $this->wasmInstance) {
+                    throw new RuntimeException(
+                        "An error happened while instanciating the module `$filePath`:\n    " .
+                        str_replace("\n", "\n    ", wasm_get_last_error())
+                    );
+                }
+            }
+        };
     }
 
     /**

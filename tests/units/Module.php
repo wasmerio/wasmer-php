@@ -87,19 +87,6 @@ class Module extends Suite
                     ->isEqualTo(3);
     }
 
-    public function test_get_file_path()
-    {
-        $this
-            ->given(
-                $filePath = static::FILE_PATH,
-                $module = new SUT($filePath)
-            )
-            ->when($result = $module->getFilePath())
-            ->then
-                ->string($result)
-                    ->isEqualTo($filePath);
-    }
-
     public function test_into_resource()
     {
         $this

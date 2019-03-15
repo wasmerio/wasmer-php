@@ -14,6 +14,6 @@
     },
     "scripts": {
         "test": "vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal",
-        "doc": "php -d extension=wasm vendor/bin/kitab compile --with-composer --with-project-name=php-ext-wasm --output-directory doc lib"
+        "doc": "php -d extension=wasm vendor/bin/kitab compile --with-composer --with-project-name=php-ext-wasm --with-logo-url='https://github.com/wasmerio.png' --output-directory doc lib"
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Wasm;
 
 use RuntimeException;
+use Serializable;
 
 /**
  * The `Module` class allows to compile WebAssembly bytes into a WebAssembly
@@ -23,7 +24,7 @@ use RuntimeException;
  * $result = $instance->sum(1, 2);
  * ```
  */
-class Module
+class Module implements Serializable
 {
     /**
      * The Wasm module.
@@ -99,5 +100,55 @@ class Module
     public function intoResource()
     {
         return $this->wasmModule;
+    }
+
+    /**
+     * Serializes this module with the standard `serialize` PHP function.
+     *
+     * # Examples
+     *
+     * ```php,ignore
+     * $module = new Wasm\Module('my_program.wasm');
+     * $serialized_module = serialize($module);
+     * ```
+     */
+    public function serialize(): string
+    {
+        $serializedModule = wasm_module_serialize($this->intoResource());
+
+        if (null === $serializedModule) {
+            throw new RuntimeException('Failed to serialize the module.');
+        }
+
+        return $serializedModule;
+    }
+
+    /**
+     * Deserializes a (supposedly) serialized module, with the standard
+     * `unserialize` PHP function.
+     *
+     * This method throws a `RuntimeException` if the deserialization failed.
+     *
+     * # Examples
+     *
+     * ```php,ignore
+     * $module = new Wasm\Module('my_program.wasm');
+     * $serialized_module = serialize($module);
+     * unset($module);
+     *
+     * $module = unserialize($serialized_module);
+     * $instance = $module->instantiate();
+     * $result = $instance->sum(1, 2);
+     * ```
+     */
+    public function unserialize($serializedModule)
+    {
+        $module = wasm_module_deserialize($serializedModule);
+
+        if (null === $module) {
+            throw new RuntimeException('Failed to deserialize the module.');
+        }
+
+        $this->wasmModule = $module;
     }
 }

@@ -237,6 +237,92 @@ PHP_FUNCTION(wasm_compile)
 }
 
 /**
+ * Declare the parameter information for the `wasm_module_serialize`
+ * function.
+ */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_module_serialize, 0, 0, 1)
+    ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, 0)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_module_serialize` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_read_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes);
+ * $serialized_module = wasm_module_serialize($module);
+ * // `$serialized_module` is of type `string`.
+ * ```
+ */
+PHP_FUNCTION(wasm_module_serialize)
+{
+    zval *wasm_module_resource;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_module_resource)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the module from the resource.
+    wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
+
+    // Let's serialize the module.
+    wasmer_byte_array *wasm_serialized_module = NULL;
+
+    if (wasmer_module_serialize(&wasm_serialized_module, wasm_module) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
+
+    ZVAL_STRINGL(
+        return_value,
+        (char *) (uint8_t *) wasm_serialized_module->bytes,
+        wasm_serialized_module->bytes_len
+    );
+}
+
+/**
+ * Declare the parameter information for the `wasm_module_deserialize`
+ * function.
+ */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_module_deserialize, 0, 0, 1)
+    ZEND_ARG_TYPE_INFO(0, wasm_serialized_module, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_module_deserialize` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_read_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes);
+ * $serialized_module = wasm_module_serialize($module);
+ * $module = wasm_module_deserialize($serialized_module);
+ * ```
+ */
+PHP_FUNCTION(wasm_module_deserialize)
+{
+    char *wasm_serialized_module;
+    size_t wasm_serialized_module_length;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_STRING(wasm_serialized_module, wasm_serialized_module_length)
+    ZEND_PARSE_PARAMETERS_END();
+
+    wasmer_module_t *wasm_module = NULL;
+
+    if (wasmer_module_deserialize(&wasm_module, (const uint8_t *) wasm_serialized_module, wasm_serialized_module_length) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
+
+    // Store in and return the result as a resource.
+    zend_resource *resource = zend_register_resource((void *) wasm_module, wasm_module_resource_number);
+
+    RETURN_RES(resource);
+}
+
+/**
  * Information for the `wasm_instance` resource.
  */
 const char* wasm_instance_resource_name;
@@ -822,6 +908,8 @@ static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_validate,				arginfo_wasm_validate)
     PHP_FE(wasm_compile,				arginfo_wasm_compile)
     PHP_FE(wasm_module_new_instance,	arginfo_wasm_module_new_instance)
+    PHP_FE(wasm_module_serialize,		arginfo_wasm_module_serialize)
+    PHP_FE(wasm_module_deserialize,		arginfo_wasm_module_deserialize)
     PHP_FE(wasm_new_instance,			arginfo_wasm_new_instance)
     PHP_FE(wasm_get_function_signature,	arginfo_wasm_get_function_signature)
     PHP_FE(wasm_value,					arginfo_wasm_value)

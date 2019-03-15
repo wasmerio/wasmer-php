@@ -26,11 +26,6 @@ use RuntimeException;
 class Module
 {
     /**
-     * The file path to the Wasm binary file.
-     */
-    private $filePath;
-
-    /**
      * The Wasm module.
      */
     private $wasmModule;
@@ -54,8 +49,7 @@ class Module
             throw new RuntimeException("File `$filePath` is not readable.");
         }
 
-        $this->filePath = $filePath;
-        $wasmBytes = wasm_read_bytes($this->filePath);
+        $wasmBytes = wasm_read_bytes($filePath);
 
         if (null === $wasmBytes) {
             throw new RuntimeException("An error happened while reading the module `$filePath`.");
@@ -97,14 +91,6 @@ class Module
     public function instantiate(): Instance
     {
         return Instance::fromModule($this);
-    }
-
-    /**
-     * Returns the file path given to the constructor.
-     */
-    public function getFilePath(): string
-    {
-        return $this->filePath;
     }
 
     /**

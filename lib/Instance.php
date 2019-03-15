@@ -30,11 +30,6 @@ use RuntimeException;
 class Instance
 {
     /**
-     * The file path to the Wasm binary file.
-     */
-    protected $filePath;
-
-    /**
      * The Wasm instance.
      */
     protected $wasmInstance;
@@ -58,8 +53,7 @@ class Instance
             throw new RuntimeException("File `$filePath` is not readable.");
         }
 
-        $this->filePath = $filePath;
-        $wasmBytes = wasm_read_bytes($this->filePath);
+        $wasmBytes = wasm_read_bytes($filePath);
 
         if (null === $wasmBytes) {
             throw new RuntimeException("An error happened while reading the module `$filePath`.");
@@ -99,12 +93,11 @@ class Instance
         // From a type point of view, there is no difference.
         return new class($module) extends Instance {
             public function __construct(Module $module) {
-                $this->filePath = $module->getFilePath();
                 $this->wasmInstance = wasm_module_new_instance($module->intoResource());
 
                 if (null === $this->wasmInstance) {
                     throw new RuntimeException(
-                        "An error happened while instanciating the module `$filePath`:\n    " .
+                        "An error happened while instanciating the module:\n    " .
                         str_replace("\n", "\n    ", wasm_get_last_error())
                     );
                 }

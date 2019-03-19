@@ -306,20 +306,16 @@ ZEND_END_ARG_INFO()
  */
 PHP_FUNCTION(wasm_module_deserialize)
 {
-    char *serialized_module;
-    size_t serialized_module_length;
+    char *wasm_serialized_module_bytes;
+    size_t wasm_serialized_module_bytes_length;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_STRING(serialized_module, serialized_module_length)
+        Z_PARAM_STRING(wasm_serialized_module_bytes, wasm_serialized_module_bytes_length)
     ZEND_PARSE_PARAMETERS_END();
-
-    wasmer_byte_array wasm_serialized_module_bytes;
-    wasm_serialized_module_bytes.bytes = (const uint8_t *) serialized_module;
-    wasm_serialized_module_bytes.bytes_len = serialized_module_length;
 
     wasmer_serialized_module_t *wasm_serialized_module = NULL;
 
-    if (wasmer_serialized_module_from_bytes(&wasm_serialized_module, &wasm_serialized_module_bytes) != wasmer_result_t::WASMER_OK) {
+    if (wasmer_serialized_module_from_bytes(&wasm_serialized_module, (const uint8_t *) wasm_serialized_module_bytes, wasm_serialized_module_bytes_length) != wasmer_result_t::WASMER_OK) {
         RETURN_NULL();
     }
 

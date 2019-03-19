@@ -268,16 +268,19 @@ PHP_FUNCTION(wasm_module_serialize)
     wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
 
     // Let's serialize the module.
-    wasmer_byte_array *wasm_serialized_module = NULL;
+    wasmer_serialized_module_t *wasm_serialized_module = NULL;
 
     if (wasmer_module_serialize(&wasm_serialized_module, wasm_module) != wasmer_result_t::WASMER_OK) {
         RETURN_NULL();
     }
 
+    // Extract the bytes from the serialized module.
+    wasmer_byte_array wasm_serialized_module_bytes = wasmer_serialized_module_bytes(wasm_serialized_module);
+
     ZVAL_STRINGL(
         return_value,
-        (char *) (uint8_t *) wasm_serialized_module->bytes,
-        wasm_serialized_module->bytes_len
+        (char *) (uint8_t *) wasm_serialized_module_bytes.bytes,
+        wasm_serialized_module_bytes.bytes_len
     );
 }
 
@@ -303,16 +306,26 @@ ZEND_END_ARG_INFO()
  */
 PHP_FUNCTION(wasm_module_deserialize)
 {
-    char *wasm_serialized_module;
-    size_t wasm_serialized_module_length;
+    char *serialized_module;
+    size_t serialized_module_length;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_STRING(wasm_serialized_module, wasm_serialized_module_length)
+        Z_PARAM_STRING(serialized_module, serialized_module_length)
     ZEND_PARSE_PARAMETERS_END();
+
+    wasmer_byte_array wasm_serialized_module_bytes;
+    wasm_serialized_module_bytes.bytes = (const uint8_t *) serialized_module;
+    wasm_serialized_module_bytes.bytes_len = serialized_module_length;
+
+    wasmer_serialized_module_t *wasm_serialized_module = NULL;
+
+    if (wasmer_serialized_module_from_bytes(&wasm_serialized_module, &wasm_serialized_module_bytes) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
 
     wasmer_module_t *wasm_module = NULL;
 
-    if (wasmer_module_deserialize(&wasm_module, (const uint8_t *) wasm_serialized_module, wasm_serialized_module_length) != wasmer_result_t::WASMER_OK) {
+    if (wasmer_module_deserialize(&wasm_module, wasm_serialized_module) != wasmer_result_t::WASMER_OK) {
         RETURN_NULL();
     }
 

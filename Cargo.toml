@@ -7,10 +7,7 @@ edition = "2018"
 [lib]
 
 [dependencies]
-wasmer-runtime-c-api = { version = "^0.2.1" }
+wasmer-runtime-c-api = { git = "https://github.com/wasmerio/wasmer", branch = "master" }
 
 [build-dependencies]
 walkdir = "2.2"
-
-[patch.crates-io]
-wasmer-runtime-c-api = { path = "/Users/hywan/Development/Wasmer/wasmer/lib/runtime-c-api/" }

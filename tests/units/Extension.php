@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wasm\Tests\Units;
 
 use ReflectionExtension;
@@ -96,6 +98,13 @@ class Extension extends Suite
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('resource')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
+
             ->when($_result = $result['wasm_validate'])
             ->then
                 ->integer($_result->getNumberOfParameters())
@@ -109,6 +118,13 @@ class Extension extends Suite
                 ->string($parameters[0]->getType() . '')
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('bool')
+                ->boolean($return_type->allowsNull())
                     ->isFalse()
 
             ->when($_result = $result['wasm_compile'])
@@ -126,6 +142,13 @@ class Extension extends Suite
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('resource')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
+
             ->when($_result = $result['wasm_module_serialize'])
             ->then
                 ->integer($_result->getNumberOfParameters())
@@ -140,6 +163,13 @@ class Extension extends Suite
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
+
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('string')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
 
             ->when($_result = $result['wasm_module_deserialize'])
             ->then
@@ -156,6 +186,13 @@ class Extension extends Suite
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('resource')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
+
             ->when($_result = $result['wasm_module_new_instance'])
             ->then
                 ->integer($_result->getNumberOfParameters())
@@ -171,6 +208,13 @@ class Extension extends Suite
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('resource')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
+
             ->when($_result = $result['wasm_new_instance'])
             ->then
                 ->integer($_result->getNumberOfParameters())
@@ -185,6 +229,13 @@ class Extension extends Suite
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
+
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('resource')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
 
             ->when($_result = $result['wasm_get_function_signature'])
             ->then
@@ -208,6 +259,13 @@ class Extension extends Suite
                 ->boolean($parameters[1]->getType()->allowsNull())
                     ->isFalse()
 
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('array')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
+
             ->when($_result = $result['wasm_value'])
             ->then
                 ->integer($_result->getNumberOfParameters())
@@ -227,6 +285,13 @@ class Extension extends Suite
                     ->isEqualTo('value')
                 ->boolean($parameters[1]->hasType())
                     ->isFalse()
+
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('resource')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
 
             ->when($_result = $result['wasm_invoke_function'])
             ->then
@@ -257,11 +322,25 @@ class Extension extends Suite
                 ->boolean($parameters[2]->getType()->allowsNull())
                     ->isFalse()
 
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('number')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
+
             ->when($_result = $result['wasm_get_last_error'])
             ->then
                 ->integer($_result->getNumberOfParameters())
                     ->isEqualTo(0)
-                    ->isEqualTo($_result->getNumberOfRequiredParameters());
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('string')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue();
     }
 
     public function test_reflection_ini_entries()

@@ -141,7 +141,7 @@ PHP_FUNCTION(wasm_read_bytes)
  * Declare the parameter information for the `wasm_validate`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_validate, BY_COPY, ARITY(1), _IS_BOOL, NULLABLE)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_validate, BY_COPY, ARITY(1), _IS_BOOL, NOT_NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 

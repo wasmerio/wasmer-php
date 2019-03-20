@@ -68,7 +68,7 @@ static void wasm_bytes_destructor(zend_resource *resource)
 /**
  * Declare the parameter information for the `wasm_read_bytes` function.
  */
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_read_bytes, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_read_bytes, 0, 1, IS_RESOURCE, 1)
     ZEND_ARG_TYPE_INFO(0, file_path, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
@@ -125,7 +125,7 @@ PHP_FUNCTION(wasm_read_bytes)
  * Declare the parameter information for the `wasm_validate`
  * function.
  */
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_validate, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_validate, 0, 1, _IS_BOOL, 0)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -187,7 +187,7 @@ static void wasm_module_destructor(zend_resource *resource)
  * Declare the parameter information for the `wasm_compile`
  * function.
  */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_compile, 0, 0, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_compile, 0, 1, IS_RESOURCE, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -240,7 +240,7 @@ PHP_FUNCTION(wasm_compile)
  * Declare the parameter information for the `wasm_module_serialize`
  * function.
  */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_module_serialize, 0, 0, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_serialize, 0, 1, IS_STRING, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -288,7 +288,7 @@ PHP_FUNCTION(wasm_module_serialize)
  * Declare the parameter information for the `wasm_module_deserialize`
  * function.
  */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_module_deserialize, 0, 0, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_deserialize, 0, 1, IS_RESOURCE, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_serialized_module, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
@@ -362,7 +362,7 @@ static void wasm_instance_destructor(zend_resource *resource)
  * Declare the parameter information for the
  * `wasm_module_new_instance` function.
  */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_module_new_instance, 0, 0, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_new_instance, 0, 1, IS_RESOURCE, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -426,7 +426,7 @@ PHP_FUNCTION(wasm_module_new_instance)
  * Declare the parameter information for the `wasm_new_instance`
  * function.
  */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_new_instance, 0, 0, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_new_instance, 0, 1, IS_RESOURCE, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -486,7 +486,7 @@ PHP_FUNCTION(wasm_new_instance)
  * Declare the parameter information for the
  * `wasm_get_function_signature` function.
  */
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_function_signature, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_function_signature, 0, 2, IS_ARRAY, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, 0)
     ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -652,7 +652,7 @@ static void wasm_value_destructor(zend_resource *resource)
 /**
  * Declare the parameter information for the `wasm_value` function.
  */
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_value, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_value, 0, 2, IS_RESOURCE, 1)
     ZEND_ARG_TYPE_INFO(0, type, IS_LONG, 0)
     ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
@@ -717,7 +717,7 @@ PHP_FUNCTION(wasm_value)
  * Declare the parameter information for the `wasm_invoke_function`
  * function.
  */
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_invoke_function, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_invoke_function, 0, 3, _IS_NUMBER, 1)
     ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, 0)
     ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, 0)
     ZEND_ARG_ARRAY_INFO(0, inputs, 0)
@@ -795,7 +795,7 @@ PHP_FUNCTION(wasm_invoke_function)
 
     // Failed to call the Wasm function.
     if (function_call_result != wasmer_result_t::WASMER_OK) {
-        RETURN_FALSE
+        RETURN_NULL();
     }
 
     // Read the first output, because PHP expects only one output, as
@@ -820,7 +820,7 @@ PHP_FUNCTION(wasm_invoke_function)
  * Declare the parameter information for the `wasm_get_last_error`
  * function.
  */
-ZEND_BEGIN_ARG_INFO(arginfo_wasm_get_last_error, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_last_error, 0, 0, IS_STRING, 1)
 ZEND_END_ARG_INFO()
 
 /**

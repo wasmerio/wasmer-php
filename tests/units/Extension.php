@@ -546,8 +546,10 @@ class Extension extends Suite
             )
             ->when($result = wasm_invoke_function($wasmInstance, 'i64_i64', $wasmArguments))
             ->then
-                ->boolean($result)
-                    ->isFalse();
+                ->variable($result)
+                    ->isNull()
+                ->string(wasm_get_last_error())
+                    ->isEqualTo('Call error: Parameters of type [I32] did not match signature [I64] -> [I64]');
     }
 
     /**
@@ -635,8 +637,8 @@ class Extension extends Suite
             )
             ->when($result = wasm_invoke_function($wasmInstance, 'sum', $wasmArguments))
             ->then
-                ->boolean($result)
-                    ->isFalse()
+                ->variable($result)
+                    ->isNull()
 
             ->when($result = wasm_get_last_error())
                 ->string($result)

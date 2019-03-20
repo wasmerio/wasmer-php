@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Wasm\Tests\Units;
 
 use RuntimeException;
+use Serializable;
 use Wasm as LUT;
 use Wasm\Module as SUT;
 use Wasm\Tests\Suite;
@@ -95,5 +96,38 @@ class Module extends Suite
             ->then
                 ->resource($result)
                     ->isOfType('wasm_module');
+    }
+
+    public function test_serializable()
+    {
+        $this
+            ->when($module = new SUT(static::FILE_PATH))
+            ->then
+                ->object($module)
+                    ->isInstanceOf(Serializable::class);
+    }
+
+    public function test_serialize()
+    {
+        $this
+            ->given($module = new SUT(static::FILE_PATH))
+            ->when($result = serialize($module))
+            ->then
+                ->string($result);
+    }
+
+    public function test_unserialize()
+    {
+        $this
+            ->given(
+                $module = new SUT(static::FILE_PATH),
+                $serializedModule = serialize($module)
+            )
+            ->when($result = unserialize($serializedModule, [SUT::class]))
+            ->then
+                ->object($result)
+                    ->isInstanceOf(SUT::class)
+                ->integer($result->instantiate()->sum(1, 2))
+                    ->isEqualTo(3);
     }
 }

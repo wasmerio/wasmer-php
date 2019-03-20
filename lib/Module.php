@@ -136,7 +136,7 @@ class Module implements Serializable
      * $serialized_module = serialize($module);
      * unset($module);
      *
-     * $module = unserialize($serialized_module);
+     * $module = unserialize($serialized_module, [Wasm\Module::class]);
      * $instance = $module->instantiate();
      * $result = $instance->sum(1, 2);
      * ```

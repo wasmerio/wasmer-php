@@ -25,6 +25,22 @@
 #include "php_wasm.h"
 #include "wasmer.hh"
 
+// Constant to represent a (returned) value passed by copy.
+#define BY_COPY 0
+
+// Constant to represent a (returned) value passed by reference.
+#define BY_REFERENCE 0
+
+// Constant to represent a not nullable (return) type.
+#define NOT_NULLABLE 0
+
+// Constant to represent a nullable (return) type.
+#define NULLABLE 1
+
+// Syntactic sugar to represent the arity of a function in
+// `ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX`.
+#define ARITY(n) n
+
 /**
  * Utils.
  */
@@ -68,7 +84,7 @@ static void wasm_bytes_destructor(zend_resource *resource)
 /**
  * Declare the parameter information for the `wasm_read_bytes` function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_read_bytes, 0, 1, IS_RESOURCE, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_read_bytes, BY_COPY, ARITY(1), IS_RESOURCE, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, file_path, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
@@ -125,7 +141,7 @@ PHP_FUNCTION(wasm_read_bytes)
  * Declare the parameter information for the `wasm_validate`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_validate, 0, 1, _IS_BOOL, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_validate, BY_COPY, ARITY(1), _IS_BOOL, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -187,7 +203,7 @@ static void wasm_module_destructor(zend_resource *resource)
  * Declare the parameter information for the `wasm_compile`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_compile, 0, 1, IS_RESOURCE, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_compile, BY_COPY, ARITY(1), IS_RESOURCE, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -240,7 +256,7 @@ PHP_FUNCTION(wasm_compile)
  * Declare the parameter information for the `wasm_module_serialize`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_serialize, 0, 1, IS_STRING, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_serialize, BY_COPY, ARITY(1), IS_STRING, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -288,7 +304,7 @@ PHP_FUNCTION(wasm_module_serialize)
  * Declare the parameter information for the `wasm_module_deserialize`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_deserialize, 0, 1, IS_RESOURCE, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_deserialize, BY_COPY, ARITY(1), IS_RESOURCE, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_serialized_module, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
@@ -362,7 +378,7 @@ static void wasm_instance_destructor(zend_resource *resource)
  * Declare the parameter information for the
  * `wasm_module_new_instance` function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_new_instance, 0, 1, IS_RESOURCE, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_new_instance, BY_COPY, ARITY(1), IS_RESOURCE, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -426,7 +442,7 @@ PHP_FUNCTION(wasm_module_new_instance)
  * Declare the parameter information for the `wasm_new_instance`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_new_instance, 0, 1, IS_RESOURCE, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_new_instance, BY_COPY, ARITY(1), IS_RESOURCE, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
 ZEND_END_ARG_INFO()
 
@@ -486,7 +502,7 @@ PHP_FUNCTION(wasm_new_instance)
  * Declare the parameter information for the
  * `wasm_get_function_signature` function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_function_signature, 0, 2, IS_ARRAY, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_function_signature, BY_COPY, ARITY(2), IS_ARRAY, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, 0)
     ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, 0)
 ZEND_END_ARG_INFO()
@@ -652,7 +668,7 @@ static void wasm_value_destructor(zend_resource *resource)
 /**
  * Declare the parameter information for the `wasm_value` function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_value, 0, 2, IS_RESOURCE, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_value, BY_COPY, ARITY(2), IS_RESOURCE, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, type, IS_LONG, 0)
     ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
@@ -717,7 +733,7 @@ PHP_FUNCTION(wasm_value)
  * Declare the parameter information for the `wasm_invoke_function`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_invoke_function, 0, 3, _IS_NUMBER, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_invoke_function, BY_COPY, ARITY(3), _IS_NUMBER, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, 0)
     ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, 0)
     ZEND_ARG_ARRAY_INFO(0, inputs, 0)
@@ -820,7 +836,7 @@ PHP_FUNCTION(wasm_invoke_function)
  * Declare the parameter information for the `wasm_get_last_error`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_last_error, 0, 0, IS_STRING, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_last_error, BY_COPY, ARITY(0), IS_STRING, NULLABLE)
 ZEND_END_ARG_INFO()
 
 /**

@@ -53,16 +53,69 @@ wasmer_value_tag from_zend_long_to_wasmer_value_tag(zend_long x)
 const char* wasm_bytes_resource_name;
 int wasm_bytes_resource_number;
 
+// Represents a `wasmer_byte_array` that is filled lazily. The bytes
+// are read from `file_path`.
+typedef struct wasm_lazy_byte_array_t wasm_lazy_byte_array;
+struct wasm_lazy_byte_array_t {
+private:
+    char* file_path;
+    wasmer_byte_array *byte_array;
+
+public:
+    wasm_lazy_byte_array_t(char* file_path) :
+        file_path(file_path),
+        byte_array(NULL)
+    {}
+
+    ~wasm_lazy_byte_array_t()
+    {
+        free((uint8_t *) byte_array->bytes);
+    }
+
+    wasmer_byte_array *get_bytes()
+    {
+        if (byte_array == NULL) {
+            // Open the file.
+            FILE *wasm_file = fopen(file_path, "r");
+
+            if (wasm_file == NULL) {
+                return NULL;
+            }
+
+            // Read the file content.
+            fseek(wasm_file, 0, SEEK_END);
+
+            size_t wasm_file_length = ftell(wasm_file);
+            const uint8_t *wasm_bytes = (const uint8_t *) malloc(wasm_file_length);
+            fseek(wasm_file, 0, SEEK_SET);
+
+            fread((uint8_t *) wasm_bytes, 1, wasm_file_length, wasm_file);
+
+            // Close the file.
+            fclose(wasm_file);
+
+            // Store the bytes of the Wasm file into a `wasmer_byte_array` structure.
+            byte_array = (wasmer_byte_array *) malloc(sizeof(wasmer_byte_array));
+            byte_array->bytes = wasm_bytes;
+            byte_array->bytes_len = (uint32_t) wasm_file_length;
+        }
+
+        return byte_array;
+    }
+};
+
 /**
  * Extract the data structure inside the `wasm_bytes` resource.
  */
 wasmer_byte_array *wasm_bytes_from_resource(zend_resource *wasm_bytes_resource)
 {
-    return (wasmer_byte_array *) zend_fetch_resource(
+    wasm_lazy_byte_array *lazy_byte_array = (wasm_lazy_byte_array *) zend_fetch_resource(
         wasm_bytes_resource,
         wasm_bytes_resource_name,
         wasm_bytes_resource_number
     );
+
+    return lazy_byte_array->get_bytes();
 }
 
 /**
@@ -70,9 +123,12 @@ wasmer_byte_array *wasm_bytes_from_resource(zend_resource *wasm_bytes_resource)
  */
 static void wasm_bytes_destructor(zend_resource *resource)
 {
-    wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(resource);
-    free((uint8_t *) wasm_byte_array->bytes);
-    free(wasm_byte_array);
+    wasm_lazy_byte_array *lazy_byte_array = (wasm_lazy_byte_array *) zend_fetch_resource(
+        resource,
+        wasm_bytes_resource_name,
+        wasm_bytes_resource_number
+    );
+    free(lazy_byte_array);
 }
 
 /**
@@ -101,32 +157,10 @@ PHP_FUNCTION(wasm_read_bytes)
         Z_PARAM_PATH(file_path, file_path_length)
     ZEND_PARSE_PARAMETERS_END();
 
-    // Open the file.
-    FILE *wasm_file = fopen(file_path, "r");
-
-    if (wasm_file == NULL) {
-        RETURN_NULL();
-    }
-
-    // Read the file content.
-    fseek(wasm_file, 0, SEEK_END);
-
-    size_t wasm_file_length = ftell(wasm_file);
-    const uint8_t *wasm_bytes = (const uint8_t *) malloc(wasm_file_length);
-    fseek(wasm_file, 0, SEEK_SET);
-
-    fread((uint8_t *) wasm_bytes, 1, wasm_file_length, wasm_file);
-
-    // Close the file.
-    fclose(wasm_file);
-
-    // Store the bytes of the Wasm file into a `wasmer_byte_array` structure.
-    wasmer_byte_array *wasm_byte_array = (wasmer_byte_array *) malloc(sizeof(wasmer_byte_array));
-    wasm_byte_array->bytes = wasm_bytes;
-    wasm_byte_array->bytes_len = (uint32_t) wasm_file_length;
+    wasm_lazy_byte_array *wasm_lazy_byte_array = new ::wasm_lazy_byte_array(file_path);
 
     // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_byte_array, wasm_bytes_resource_number);
+    zend_resource *resource = zend_register_resource((void *) wasm_lazy_byte_array, wasm_bytes_resource_number);
 
     RETURN_RES(resource);
 }

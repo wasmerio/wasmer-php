@@ -220,28 +220,40 @@ PHP_FUNCTION(wasm_compile)
         Z_PARAM_RESOURCE(wasm_bytes_resource)
     ZEND_PARSE_PARAMETERS_END();
 
-    // Extract the bytes from the resource.
-    wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
+    zend_string *key = zend_string_init("foo", 3, 0);
+    zend_resource *resource = (zend_resource *) zend_hash_find_ptr(&EG(persistent_list), key);
 
-    // Create a new Wasm module.
-    wasmer_module_t *wasm_module = NULL;
-    wasmer_result_t wasm_compilation_result = wasmer_compile(
-        &wasm_module,
-        // Bytes.
-        (uint8_t *) wasm_byte_array->bytes,
-        // Bytes length.
-        wasm_byte_array->bytes_len
-    );
+    // The resource is not registered.
+    if (resource == NULL) {
+        // Extract the bytes from the resource.
+        wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
 
-    // Compilation failed.
-    if (wasm_compilation_result != wasmer_result_t::WASMER_OK) {
-        free(wasm_module);
+        // Create a new Wasm module.
+        wasmer_module_t *wasm_module = NULL;
+        wasmer_result_t wasm_compilation_result = wasmer_compile(
+            &wasm_module,
+            // Bytes.
+            (uint8_t *) wasm_byte_array->bytes,
+            // Bytes length.
+            wasm_byte_array->bytes_len
+        );
 
-        RETURN_NULL();
+        // Compilation failed.
+        if (wasm_compilation_result != wasmer_result_t::WASMER_OK) {
+            free(wasm_module);
+
+            RETURN_NULL();
+        }
+
+        // Store the module in a persistent resource.
+        resource = zend_register_persistent_resource_ex(key, (void *) wasm_module, wasm_module_resource_number);
+
+        if (resource == NULL) {
+            RETURN_NULL();
+        }
     }
-
-    // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_module, wasm_module_resource_number);
+    // The resource is already registered.
+    else {}
 
     RETURN_RES(resource);
 }
@@ -858,17 +870,7 @@ PHP_FUNCTION(wasm_get_last_error)
     ZVAL_STRINGL(return_value, error_message, error_message_length - 1);
 }
 
-// Zend extension boilerplate.
-PHP_RINIT_FUNCTION(wasm)
-{
-#if defined(ZTS) && defined(COMPILE_DL_WASM)
-    ZEND_TSRMLS_CACHE_UPDATE();
-#endif
-
-    return SUCCESS;
-}
-
-// Initialize the module.
+// Module initialization event.
 PHP_MINIT_FUNCTION(wasm)
 {
     // Declare the constants.
@@ -913,12 +915,50 @@ PHP_MINIT_FUNCTION(wasm)
     return SUCCESS;
 }
 
-// Zend extension boilerplate.
+// Initialize the module information.
 PHP_MINFO_FUNCTION(wasm)
 {
     php_info_print_table_start();
     php_info_print_table_header(2, "wasm support", "enabled");
     php_info_print_table_end();
+}
+
+// Request initialization event.
+PHP_RINIT_FUNCTION(wasm)
+{
+#if defined(ZTS) && defined(COMPILE_DL_WASM)
+    ZEND_TSRMLS_CACHE_UPDATE();
+#endif
+
+    return SUCCESS;
+}
+
+// Request shutdown event.
+PHP_RSHUTDOWN_FUNCTION(wasm)
+{
+	return SUCCESS;
+}
+
+// Clean up all persistent resources registered by this module.
+static int clean_up_persistent_resources(zval *hashmap_item)
+{
+	zend_resource *resource = Z_RES_P(hashmap_item);
+
+	if (resource->type == wasm_module_resource_number) {
+        wasm_module_destructor(resource);
+        return ZEND_HASH_APPLY_REMOVE;
+    }
+
+    return ZEND_HASH_APPLY_KEEP;
+}
+
+// Module shutdown  event.
+PHP_MSHUTDOWN_FUNCTION(wasm)
+{
+    // Clean up persistent resources.
+	zend_hash_apply(&EG(persistent_list), (apply_func_t) clean_up_persistent_resources);
+
+    return SUCCESS;
 }
 
 // Export the functions with their information.
@@ -943,9 +983,9 @@ zend_module_entry wasm_module_entry = {
     "wasm",					/* Extension name */
     wasm_functions,			/* zend_function_entry */
     PHP_MINIT(wasm),		/* PHP_MINIT - Module initialization */
-    NULL,					/* PHP_MSHUTDOWN - Module shutdown */
+    PHP_MSHUTDOWN(wasm),	/* PHP_MSHUTDOWN - Module shutdown */
     PHP_RINIT(wasm),		/* PHP_RINIT - Request initialization */
-    NULL,					/* PHP_RSHUTDOWN - Request shutdown */
+    PHP_RSHUTDOWN(wasm),	/* PHP_RSHUTDOWN - Request shutdown */
     PHP_MINFO(wasm),		/* PHP_MINFO - Module info */
     PHP_WASM_VERSION,		/* Version */
     STANDARD_MODULE_PROPERTIES

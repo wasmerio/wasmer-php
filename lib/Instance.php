@@ -51,11 +51,7 @@ class Instance
             throw new RuntimeException("File `$filePath` is not readable.");
         }
 
-        $wasmBytes = wasm_read_bytes($filePath);
-
-        if (null === $wasmBytes) {
-            throw new RuntimeException("An error happened while reading the module `$filePath`.");
-        }
+        $wasmBytes = wasm_fetch_bytes($filePath);
 
         if (false === wasm_validate($wasmBytes)) {
             throw new RuntimeException("Bytes in `$filePath` are invalid.");

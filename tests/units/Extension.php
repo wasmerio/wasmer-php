@@ -71,7 +71,7 @@ class Extension extends Suite
             ->then
                 ->array($result)
                     ->hasSize(11)
-                    ->object['wasm_read_bytes']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_fetch_bytes']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_validate']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_compile']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_module_serialize']->isInstanceOf(ReflectionFunction::class)
@@ -83,7 +83,7 @@ class Extension extends Suite
                     ->object['wasm_invoke_function']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_get_last_error']->isInstanceOf(ReflectionFunction::class)
 
-            ->when($_result = $result['wasm_read_bytes'])
+            ->when($_result = $result['wasm_fetch_bytes'])
             ->then
                 ->integer($_result->getNumberOfParameters())
                     ->isEqualTo(1)
@@ -103,7 +103,7 @@ class Extension extends Suite
                 ->string($return_type . '')
                     ->isEqualTo('resource')
                 ->boolean($return_type->allowsNull())
-                    ->isTrue()
+                    ->isFalse()
 
             ->when($_result = $result['wasm_validate'])
             ->then
@@ -373,28 +373,19 @@ class Extension extends Suite
                     ->isEqualTo('0.2.0');
     }
 
-    public function test_wasm_read_bytes()
+    public function test_wasm_fetch_bytes()
     {
         $this
-            ->when($result = wasm_read_bytes(self::FILE_PATH))
+            ->when($result = wasm_fetch_bytes(self::FILE_PATH))
             ->then
                 ->resource($result)
                     ->isOfType('wasm_bytes');
     }
 
-    public function test_wasm_read_bytes_unknown_file()
-    {
-        $this
-            ->when($result = wasm_read_bytes(__FILE__ . 'foobar'))
-            ->then
-                ->variable($result)
-                   ->isNull();
-    }
-
     public function test_wasm_validate()
     {
         $this
-            ->given($wasmBytes = wasm_read_bytes(self::FILE_PATH))
+            ->given($wasmBytes = wasm_fetch_bytes(self::FILE_PATH))
             ->when($result = wasm_validate($wasmBytes))
             ->then
                 ->boolean($result)
@@ -404,7 +395,17 @@ class Extension extends Suite
     public function test_wasm_validate_nop()
     {
         $this
-            ->given($wasmBytes = wasm_read_bytes(__DIR__ . '/invalid.wasm'))
+            ->given($wasmBytes = wasm_fetch_bytes(__DIR__ . '/invalid.wasm'))
+            ->when($result = wasm_validate($wasmBytes))
+            ->then
+                ->boolean($result)
+                    ->isFalse();
+    }
+
+    public function test_wasm_validate_unknown_file()
+    {
+        $this
+            ->given($wasmBytes = wasm_fetch_bytes('foo'))
             ->when($result = wasm_validate($wasmBytes))
             ->then
                 ->boolean($result)
@@ -414,7 +415,7 @@ class Extension extends Suite
     public function test_wasm_compile()
     {
         $this
-            ->given($wasmBytes = wasm_read_bytes(self::FILE_PATH))
+            ->given($wasmBytes = wasm_fetch_bytes(self::FILE_PATH))
             ->when($result = wasm_compile($wasmBytes))
             ->then
                 ->resource($result)
@@ -424,7 +425,7 @@ class Extension extends Suite
     public function test_wasm_compile_invalid_bytes()
     {
         $this
-            ->given($wasmBytes = wasm_read_bytes(__DIR__ . '/invalid.wasm'))
+            ->given($wasmBytes = wasm_fetch_bytes(__DIR__ . '/invalid.wasm'))
             ->when($result = wasm_compile($wasmBytes))
             ->then
                 ->variable($result)
@@ -433,11 +434,21 @@ class Extension extends Suite
                     ->isEqualTo('Validation error "Invalid type"');
     }
 
+    public function test_wasm_compile_unknown_file()
+    {
+        $this
+            ->given($wasmBytes = wasm_fetch_bytes('foo'))
+            ->when($result = wasm_compile($wasmBytes))
+            ->then
+                ->variable($result)
+                    ->isNull();
+    }
+
     public function test_wasm_module_serialize()
     {
         $this
             ->given(
-                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
                 $wasmModule = wasm_compile($wasmBytes)
             )
             ->when($result = wasm_module_serialize($wasmModule))
@@ -451,7 +462,7 @@ class Extension extends Suite
     {
         $this
             ->given(
-                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
                 $wasmModule = wasm_compile($wasmBytes),
                 $wasmSerializedModule = wasm_module_serialize($wasmModule)
             )
@@ -489,7 +500,7 @@ class Extension extends Suite
     {
         $this
             ->given(
-                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
                 $wasmModule = wasm_compile($wasmBytes)
             )
             ->when($result = wasm_module_new_instance($wasmModule))
@@ -501,17 +512,27 @@ class Extension extends Suite
     public function test_wasm_new_instance()
     {
         $this
-            ->given($wasmBytes = wasm_read_bytes(self::FILE_PATH))
+            ->given($wasmBytes = wasm_fetch_bytes(self::FILE_PATH))
             ->when($result = wasm_new_instance($wasmBytes))
             ->then
                 ->resource($result)
                     ->isOfType('wasm_instance');
     }
 
+    public function test_wasm_new_instance_unknown_file()
+    {
+        $this
+            ->given($wasmBytes = wasm_fetch_bytes('foo'))
+            ->when($result = wasm_new_instance($wasmBytes))
+            ->then
+                ->variable($result)
+                    ->isNull();
+    }
+
     public function test_wasm_new_instance_failed_to_compile()
     {
         $this
-            ->given($wasmBytes = wasm_read_bytes(__DIR__ . '/empty.wasm'))
+            ->given($wasmBytes = wasm_fetch_bytes(__DIR__ . '/empty.wasm'))
             ->when($result = wasm_new_instance($wasmBytes))
             ->then
                 ->variable($result)
@@ -525,7 +546,7 @@ class Extension extends Suite
     {
         $this
             ->given(
-                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
                 $wasmInstance = wasm_new_instance($wasmBytes)
             )
             ->when($result = wasm_get_function_signature($wasmInstance, $functionName))
@@ -602,7 +623,7 @@ class Extension extends Suite
     {
         $this
             ->given(
-                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
                 $wasmInstance = wasm_new_instance($wasmBytes),
                 $wasmArguments = [
                     wasm_value(WASM_TYPE_I32, 1),
@@ -619,7 +640,7 @@ class Extension extends Suite
     {
         $this
             ->given(
-                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
                 $wasmInstance = wasm_new_instance($wasmBytes),
                 $wasmArguments = [wasm_value(WASM_TYPE_I32, 1)]
             )
@@ -638,7 +659,7 @@ class Extension extends Suite
     {
         $this
             ->given(
-                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
                 $wasmInstance = wasm_new_instance($wasmBytes),
                 $wasmArguments = $inputs
             )
@@ -710,7 +731,7 @@ class Extension extends Suite
     {
         $this
             ->given(
-                $wasmBytes = wasm_read_bytes(self::FILE_PATH),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
                 $wasmInstance = wasm_new_instance($wasmBytes),
                 $wasmArguments = []
             )

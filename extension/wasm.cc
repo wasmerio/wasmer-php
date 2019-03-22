@@ -132,23 +132,23 @@ static void wasm_bytes_destructor(zend_resource *resource)
 }
 
 /**
- * Declare the parameter information for the `wasm_read_bytes` function.
+ * Declare the parameter information for the `wasm_fetch_bytes` function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_read_bytes, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_fetch_bytes, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NOT_NULLABLE)
     ZEND_ARG_TYPE_INFO(0, file_path, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 /**
- * Declare the `wasm_read_bytes` function.
+ * Declare the `wasm_fetch_bytes` function.
  *
  * # Usage
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * // `$bytes` is of type `resource of type (wasm_bytes)`.
  * ```
  */
-PHP_FUNCTION(wasm_read_bytes)
+PHP_FUNCTION(wasm_fetch_bytes)
 {
     char *file_path;
     size_t file_path_length;
@@ -179,7 +179,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $bytes = wasm_read_bytes('my_program.wasm');
+ $ $bytes = wasm_fetch_bytes('my_program.wasm');
  * $valid = wasm_validate($bytes);
  * ```
  */
@@ -245,7 +245,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $module = wasm_compile($bytes);
  * // `$module` is of type `resource of type (wasm_module)`.
  * ```
@@ -314,7 +314,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $module = wasm_compile($bytes);
  * $serialized_module = wasm_module_serialize($module);
  * // `$serialized_module` is of type `string`.
@@ -362,7 +362,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $module = wasm_compile($bytes);
  * $serialized_module = wasm_module_serialize($module);
  * $module = wasm_module_deserialize($serialized_module);
@@ -436,7 +436,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $module = wasm_compile($bytes);
  * $instance = wasm_module_new_instance($module);
  * // `$instance` is of type `resource of type (wasm_instance)`.
@@ -445,7 +445,7 @@ ZEND_END_ARG_INFO()
  * It is similar to running:
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $instance = wasm_new_instance($bytes);
  * ```
  */
@@ -500,7 +500,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $instance = wasm_new_instance($bytes);
  * // `$instance` is of type `resource of type (wasm_instance)`.
  * ```
@@ -565,7 +565,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $instance = wasm_new_instance($bytes);
  * $signature = wasm_get_function_signature($instance, 'function_name');
  * // `$signature` is an array of `WASM_TYPE_*` constants. The first
@@ -797,7 +797,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- * $bytes = wasm_read_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $instance = wasm_new_instance($bytes);
  *
  * // sum(1, 2)
@@ -1009,7 +1009,7 @@ PHP_MSHUTDOWN_FUNCTION(wasm)
 
 // Export the functions with their information.
 static const zend_function_entry wasm_functions[] = {
-    PHP_FE(wasm_read_bytes,				arginfo_wasm_read_bytes)
+    PHP_FE(wasm_fetch_bytes,			arginfo_wasm_fetch_bytes)
     PHP_FE(wasm_validate,				arginfo_wasm_validate)
     PHP_FE(wasm_compile,				arginfo_wasm_compile)
     PHP_FE(wasm_module_new_instance,	arginfo_wasm_module_new_instance)

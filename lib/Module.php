@@ -50,7 +50,7 @@ class Module implements Serializable
             throw new RuntimeException("File `$filePath` is not readable.");
         }
 
-        $wasmBytes = wasm_read_bytes($filePath);
+        $wasmBytes = wasm_fetch_bytes($filePath);
 
         if (null === $wasmBytes) {
             throw new RuntimeException("An error happened while reading the module `$filePath`.");

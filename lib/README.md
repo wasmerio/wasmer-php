@@ -69,22 +69,22 @@ backend](https://github.com/wasmerio/wasmer/tree/master/lib#backends)
 This section presents the raw API provided by the `php-ext-wasm`
 extension. The entire `Wasm` library is based on this API.
 
-### Function `wasm_read_bytes`
+### Function `wasm_fetch_bytes`
 
 Reads bytes from a WebAssembly file:
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 ```
 
 This function returns a resource of type `wasm_bytes`.
 
 ### Function `wasm_validate`
 
-Validates bytes from the `wasm_read_bytes` function:
+Validates bytes from the `wasm_fetch_bytes` function:
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 
 if (false === wasm_validate($bytes)) {
     echo 'The program seems corrupted.';
@@ -99,7 +99,7 @@ otherwise.
 Compiles bytes into a WebAssembly module.
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 $module = wasm_compile($bytes);
 ```
 
@@ -111,7 +111,7 @@ Serializes a module into a PHP string (technically a sequence of
 bytes):
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 $module = wasm_compile($bytes);
 $serialized_module = wasm_module_serialize($module);
 ```
@@ -124,7 +124,7 @@ Deserializes a module from a PHP string (technically a sequence of
 bytes):
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 $module = wasm_compile($bytes);
 $serialized_module = wasm_module_serialize($module);
 unset($module);
@@ -141,7 +141,7 @@ This function returns a resource of type `wasm_module`.
 Instantiates a WebAssembly module:
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 $module = wasm_compile($bytes);
 $instance = wasm_module_new_instance($module);
 ```
@@ -153,7 +153,7 @@ This function returns a resource of type `wasm_instance`.
 Compiles and instantiates WebAssembly bytes:
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 $instance = wasm_new_instance($bytes);
 ```
 
@@ -167,7 +167,7 @@ This function combines `wasm_compile` and
 Returns the signature of an exported function:
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 $instance = wasm_new_instance($bytes);
 $signature = wasm_get_function_signature($instance, 'function_name');
 ```
@@ -190,7 +190,7 @@ This function returns a resource of type `wasm_value`.
 Invokes a function that lives in the WebAssembly program.
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 $instance = wasm_new_instance($bytes);
 
 // sum(1, 2)
@@ -211,7 +211,7 @@ This function returns the result of the invoked function.
 Reads the last error if any:
 
 ```php
-$bytes = wasm_read_bytes('my_program.wasm');
+$bytes = wasm_fetch_bytes('my_program.wasm');
 $instance = wasm_new_instance($bytes);
 
 // sum(1) — one argument is missing!

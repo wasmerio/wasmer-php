@@ -17,7 +17,7 @@ class Module extends Suite
     public function test_constructor_invalid_path()
     {
         $this
-            ->given($filePath = '/foo/bar')
+            ->given($filePath = __DIR__ . '/foo')
             ->exception(
                 function () use ($filePath) {
                     new SUT($filePath);
@@ -41,7 +41,7 @@ class Module extends Suite
                 }
             )
                 ->isInstanceOf(RuntimeException::class)
-                ->hasMessage("An error happened while reading the module `$filePath`.");
+                ->hasMessage("Bytes in `$filePath` are invalid.");
     }
 
     public function test_constructor_invalid_bytes()

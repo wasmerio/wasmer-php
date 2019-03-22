@@ -194,6 +194,10 @@ PHP_FUNCTION(wasm_validate)
     // Extract the bytes from the resource.
     wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
 
+    if (NULL == wasm_byte_array) {
+        RETURN_FALSE;
+    }
+
     // Check whether the bytes are valid or not.
     bool is_valid = wasmer_validate(wasm_byte_array->bytes, wasm_byte_array->bytes_len);
 
@@ -261,6 +265,10 @@ PHP_FUNCTION(wasm_compile)
     if (resource == NULL) {
         // Extract the bytes from the resource.
         wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
+
+        if (NULL == wasm_byte_array) {
+            RETURN_NULL();
+        }
 
         // Create a new Wasm module.
         wasmer_module_t *wasm_module = NULL;
@@ -510,6 +518,10 @@ PHP_FUNCTION(wasm_new_instance)
 
     // Extract the bytes from the resource.
     wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
+
+    if (NULL == wasm_byte_array) {
+        RETURN_NULL();
+    }
 
     // Create a new Wasm instance.
     wasmer_instance_t *wasm_instance = NULL;

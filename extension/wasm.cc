@@ -354,6 +354,61 @@ PHP_FUNCTION(wasm_compile)
 }
 
 /**
+ * Clean up all persistent resources registered by this module.
+ */
+static int clean_up_persistent_resources(zval *hashmap_item)
+{
+    zend_resource *resource = Z_RES_P(hashmap_item);
+
+    if (resource->type == wasm_module_resource_number) {
+        wasm_module_destructor(resource);
+        return ZEND_HASH_APPLY_REMOVE;
+    }
+
+    return ZEND_HASH_APPLY_KEEP;
+}
+
+/**
+ * Iterate over the persistent resources list to clean up Wasm
+ * persistent resources.
+ */
+static void php_wasm_module_clean_up_persistent_resources()
+{
+    zend_hash_apply(&EG(persistent_list), (apply_func_t) clean_up_persistent_resources);
+}
+
+/**
+ * Declare the parameter information for the `wasm_module_clean_up_persistent_resources`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_clean_up_persistence_resources, ZEND_RETURN_VALUE, ARITY(0), IS_VOID, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_module_clean_up_persistent_resources` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes, 'foo');
+ * // The module is registered as a persistent resource.
+ *
+ * wasm_module_clean_up_persistent_resource();
+ *
+ * $module = wasm_compile($bytes, 'foo');
+ * // The module is registered as a persistent resource, again.
+ * ```
+ */
+PHP_FUNCTION(wasm_module_clean_up_persistent_resources)
+{
+    ZEND_PARSE_PARAMETERS_NONE();
+
+    // Clean up persistent resources.
+    php_wasm_module_clean_up_persistent_resources();
+}
+
+/**
  * Declare the parameter information for the `wasm_module_serialize`
  * function.
  */
@@ -1064,41 +1119,29 @@ PHP_RSHUTDOWN_FUNCTION(wasm)
 	return SUCCESS;
 }
 
-// Clean up all persistent resources registered by this module.
-static int clean_up_persistent_resources(zval *hashmap_item)
-{
-	zend_resource *resource = Z_RES_P(hashmap_item);
-
-	if (resource->type == wasm_module_resource_number) {
-        wasm_module_destructor(resource);
-        return ZEND_HASH_APPLY_REMOVE;
-    }
-
-    return ZEND_HASH_APPLY_KEEP;
-}
-
-// Module shutdown  event.
+// Module shutdown event.
 PHP_MSHUTDOWN_FUNCTION(wasm)
 {
     // Clean up persistent resources.
-	zend_hash_apply(&EG(persistent_list), (apply_func_t) clean_up_persistent_resources);
+    php_wasm_module_clean_up_persistent_resources();
 
     return SUCCESS;
 }
 
 // Export the functions with their information.
 static const zend_function_entry wasm_functions[] = {
-    PHP_FE(wasm_fetch_bytes,			arginfo_wasm_fetch_bytes)
-    PHP_FE(wasm_validate,				arginfo_wasm_validate)
-    PHP_FE(wasm_compile,				arginfo_wasm_compile)
-    PHP_FE(wasm_module_new_instance,	arginfo_wasm_module_new_instance)
-    PHP_FE(wasm_module_serialize,		arginfo_wasm_module_serialize)
-    PHP_FE(wasm_module_deserialize,		arginfo_wasm_module_deserialize)
-    PHP_FE(wasm_new_instance,			arginfo_wasm_new_instance)
-    PHP_FE(wasm_get_function_signature,	arginfo_wasm_get_function_signature)
-    PHP_FE(wasm_value,					arginfo_wasm_value)
-    PHP_FE(wasm_invoke_function,		arginfo_wasm_invoke_function)
-    PHP_FE(wasm_get_last_error,			arginfo_wasm_get_last_error)
+    PHP_FE(wasm_fetch_bytes,							arginfo_wasm_fetch_bytes)
+    PHP_FE(wasm_validate,								arginfo_wasm_validate)
+    PHP_FE(wasm_compile,								arginfo_wasm_compile)
+    PHP_FE(wasm_module_clean_up_persistent_resources,	arginfo_wasm_compile)
+    PHP_FE(wasm_module_new_instance,					arginfo_wasm_module_new_instance)
+    PHP_FE(wasm_module_serialize,						arginfo_wasm_module_serialize)
+    PHP_FE(wasm_module_deserialize,						arginfo_wasm_module_deserialize)
+    PHP_FE(wasm_new_instance,							arginfo_wasm_new_instance)
+    PHP_FE(wasm_get_function_signature,					arginfo_wasm_get_function_signature)
+    PHP_FE(wasm_value,									arginfo_wasm_value)
+    PHP_FE(wasm_invoke_function,						arginfo_wasm_invoke_function)
+    PHP_FE(wasm_get_last_error,							arginfo_wasm_get_last_error)
     PHP_FE_END
 };
 

@@ -71,13 +71,17 @@ extension. The entire `Wasm` library is based on this API.
 
 ### Function `wasm_fetch_bytes`
 
-Reads bytes from a WebAssembly file:
+Fetches bytes from a WebAssembly file:
 
 ```php
 $bytes = wasm_fetch_bytes('my_program.wasm');
 ```
 
 This function returns a resource of type `wasm_bytes`.
+
+**⚠️ Important note**: Bytes are not read when the function is called,
+but when the resource is used, for instance in functions like
+`wasm_validate`, `wasm_compile` or `wasm_instance`.
 
 ### Function `wasm_validate`
 
@@ -104,6 +108,55 @@ $module = wasm_compile($bytes);
 ```
 
 This function returns a resource of type `wasm_module`.
+
+#### Persistent modules
+
+By default, each call reads the bytes and compiles them to a new
+WebAssembly module. To avoid compiling several times the same module,
+one can use the second argument:
+`$wasm_module_unique_identifier`. When this argument is a non-null
+string, then the returned resource will be persistent across PHP
+requests. It means that n+1 calls to `wasm_compile` with the same
+value for `$wasm_module_unique_identifier` will return the same module
+resource as the first call. Modules are destroyed when PHP is
+interrupted, so when `php` terminates, or when `php-cgi` or `php-fpm`
+restart for instance.
+
+Let's see:
+
+```php
+$bytes = wasm_fetch_bytes('my_program.wasm');
+$module_unique_identifier = 'foobar';
+$module = wasm_compile($bytes, $module_unique_identifier);
+// All executions will return the exact same resource of type `wasm_module`.
+```
+
+Because bytes are read lazily, the `my_program.wasm` file will be
+opened and read only once for the first call, and not read for the
+next calls (because the resource is persistent, and the bytes are not
+needed if the module already exists). A side-effect is that if the
+file changes, it will have no effect, i.e. it will ignored.
+
+See also the `wasm_module_clean_up_persistent_resources` function.
+
+### Function `wasm_module_clean_up_persistent_resources`
+
+Cleans up the persistent `wasm_module` resources (see the
+`wasm_compile` function and its second argument
+`$wasm_module_unique_identifier`).
+
+```php
+wasm_module_clean_up_persistent_resources();
+```
+
+**⚠️ Important note**: This function calls the destructor of all
+persistent `wasm_module` resources. It means that all resources will
+be destructed across all PHP request executions. In other words, if a
+PHP request execution runs concurrently to another one, then this
+other execution will see its modules destructed during its execution,
+which is… bad and can lead to unexpected dramatic behaviors. This
+function must be used in rare cases when one need to reset the
+persistent resources, and when **zero PHP requests are running**.
 
 ### Function `wasm_module_serialize`
 

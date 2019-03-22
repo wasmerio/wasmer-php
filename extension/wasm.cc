@@ -233,6 +233,11 @@ wasmer_module_t *wasm_module_from_resource(zend_resource *wasm_module_resource)
 static void wasm_module_destructor(zend_resource *resource)
 {
     wasmer_module_t *wasm_module = wasm_module_from_resource(resource);
+
+    if (wasm_module == NULL) {
+        return;
+    }
+
     wasmer_module_destroy(wasm_module);
 }
 
@@ -379,6 +384,10 @@ PHP_FUNCTION(wasm_module_serialize)
     // Extract the module from the resource.
     wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
 
+    if (wasm_module == NULL) {
+        RETURN_NULL();
+    }
+
     // Let's serialize the module.
     wasmer_serialized_module_t *wasm_serialized_module = NULL;
 
@@ -467,6 +476,11 @@ wasmer_instance_t *wasm_instance_from_resource(zend_resource *wasm_instance_reso
 static void wasm_instance_destructor(zend_resource *resource)
 {
     wasmer_instance_t *wasm_instance = wasm_instance_from_resource(resource);
+
+    if (wasm_instance == NULL) {
+        return;
+    }
+
     wasmer_instance_destroy(wasm_instance);
 }
 
@@ -507,6 +521,10 @@ PHP_FUNCTION(wasm_module_new_instance)
 
     // Extract the module from the resource.
     wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
+
+    if (wasm_module == NULL) {
+        RETURN_NULL();
+    }
 
     // Create a new Wasm instance.
     wasmer_instance_t *wasm_instance = NULL;
@@ -633,6 +651,10 @@ PHP_FUNCTION(wasm_get_function_signature)
 
     // Extract the Wasm instance from the resource.
     wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
+
+    if (NULL == wasm_instance) {
+        RETURN_NULL();
+    }
 
     // Read all the export definitions (of all kinds).
     wasmer_exports_t *wasm_exports = NULL;
@@ -762,6 +784,11 @@ wasmer_value_t *wasm_value_from_resource(zend_resource *wasm_value_resource)
 static void wasm_value_destructor(zend_resource *resource)
 {
     wasmer_value_t *wasm_value = wasm_value_from_resource(resource);
+
+    if (wasm_value == NULL) {
+        return;
+    }
+
     free(wasm_value);
 }
 
@@ -874,6 +901,10 @@ PHP_FUNCTION(wasm_invoke_function)
 
     // Extract the Wasm instance from the resource.
     wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
+
+    if (NULL == wasm_instance) {
+        RETURN_NULL();
+    }
 
     // Read the number of inputs.
     size_t function_input_length = zend_hash_num_elements(inputs);

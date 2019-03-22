@@ -36,7 +36,7 @@ A WebAssembly file is only a sequence of bytes. In order to get a
 running WebAssembly program:
 
  1. These bytes must be compiled into a module,
- 2. The module must be instantiate.
+ 2. The module must be instantiated.
  
 The `Wasm\Module` represents a module. The `Wasm\Instance` represents
 an instance of a module.
@@ -57,12 +57,26 @@ $instance = new Wasm\Instance('my_program.wasm');
 $result = $instance->sum(1, 2);
 ```
 
-Why would one want to get a module? Because it's serializable, and
-thus can be stored in a cache. The bytes compilation to a module can
-be costly depending of the size of your WebAssembly program, and the
-[runtime
-backend](https://github.com/wasmerio/wasmer/tree/master/lib#backends)
-(LLVM, Cranelift etc.).
+Why would one want to get a module? For two reasons:
+
+  1. It can be persistent across multiple PHP requests, thus saving the cost of
+     the compilation,
+  2. It can be serialized, and thus can be stored in a cache, also to save the
+     cost of the compilation but with the cost of the deserialization.
+
+The bytes compilation to a module can be costly depending of the size of your
+WebAssembly program, and the [runtime
+backend](https://github.com/wasmerio/wasmer/tree/master/lib#backends) (LLVM,
+Cranelift etc.).
+
+See the `Wasm\Module` constructor to see how to get a persistent module; hint:
+
+```php
+$module = new Wasm\Module('my_program.wasm.', Wasm\Module::PERSISTENT);
+```
+
+See [the cache API](./wasm/cache/index.html) to learn about how to serialize a
+module.
 
 # The `php-ext-wasm` raw API
 

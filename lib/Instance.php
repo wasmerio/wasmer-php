@@ -52,16 +52,11 @@ class Instance
         }
 
         $wasmBytes = wasm_fetch_bytes($filePath);
-
-        if (false === wasm_validate($wasmBytes)) {
-            throw new RuntimeException("Bytes in `$filePath` are invalid.");
-        }
-
         $this->wasmInstance = wasm_new_instance($wasmBytes);
 
         if (null === $this->wasmInstance) {
             throw new RuntimeException(
-                "An error happened while compiling or instanciating the module `$filePath`:\n    " .
+                "An error happened while compiling or instantiating the module `$filePath`:\n    " .
                 str_replace("\n", "\n    ", wasm_get_last_error())
             );
         }

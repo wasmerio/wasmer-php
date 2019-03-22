@@ -50,7 +50,10 @@ class Module extends Suite
                 }
             )
                 ->isInstanceOf(RuntimeException::class)
-                ->hasMessage("Bytes in `$filePath` are invalid.");
+                ->hasMessage(
+                    "An error happened while compiling the module `$filePath`:\n" .
+                    "    "
+                );
     }
 
     public function test_constructor_invalid_bytes()
@@ -63,7 +66,10 @@ class Module extends Suite
                 }
             )
                 ->isInstanceOf(RuntimeException::class)
-                ->hasMessage("Bytes in `$filePath` are invalid.");
+                ->hasMessage(
+                    "An error happened while compiling the module `$filePath`:\n" .
+                    "    Validation error \"Invalid type\""
+                );
     }
 
     public function test_constructor_invalid_compilation()

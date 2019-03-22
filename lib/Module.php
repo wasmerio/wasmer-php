@@ -90,14 +90,6 @@ class Module implements Serializable
 
         if (self::PERSISTENT === $persistence) {
             $wasmModuleUniqueIdentifier = $this->getUniqueIdentifier($filePath);
-        } else {
-            // Validating WebAssembly bytes forces the `wasm_bytes` resource to
-            // be read. In the case of a persistent module, we don't want to
-            // read the bytes. That's why `wasm_validate` is called only when
-            // the module is not persistent.
-            if (false === wasm_validate($wasmBytes)) {
-                throw new RuntimeException("Bytes in `$filePath` are invalid.");
-            }
         }
 
         $this->wasmModule = wasm_compile($wasmBytes, $wasmModuleUniqueIdentifier);

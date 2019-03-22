@@ -40,7 +40,7 @@ class Instance extends Suite
                 }
             )
                 ->isInstanceOf(RuntimeException::class)
-                ->hasMessage("Bytes in `$filePath` are invalid.");
+                ->hasMessage("An error happened while compiling or instantiating the module `$filePath`:\n    ");
     }
 
     public function test_constructor_invalid_bytes()
@@ -53,7 +53,10 @@ class Instance extends Suite
                 }
             )
                 ->isInstanceOf(RuntimeException::class)
-                ->hasMessage("Bytes in `$filePath` are invalid.");
+                ->hasMessage(
+                    "An error happened while compiling or instantiating the module `$filePath`:\n" .
+                    "    error instantiating"
+                );
     }
 
     public function test_constructor_invalid_instantiation()
@@ -70,7 +73,7 @@ class Instance extends Suite
             )
                 ->isInstanceOf(RuntimeException::class)
                 ->hasMessage(
-                    "An error happened while compiling or instanciating the module `$filePath`:\n" .
+                    "An error happened while compiling or instantiating the module `$filePath`:\n" .
                     "    error instantiating"
                 );
     }

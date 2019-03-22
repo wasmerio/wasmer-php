@@ -289,10 +289,12 @@ PHP_FUNCTION(wasm_compile)
         Z_PARAM_STR_EX(wasm_module_unique_identifier, NULLABLE, 0);
     ZEND_PARSE_PARAMETERS_END();
 
-    // The Wasm module resource will be persistent if there is a unique identifier.
+    zend_string *resource_key = NULL;
     bool persistent_wasm_module = false;
 
+    // The Wasm module resource will be persistent if there is a unique identifier.
     if (wasm_module_unique_identifier != NULL) {
+        resource_key = zend_string_copy(wasm_module_unique_identifier);
         persistent_wasm_module = true;
     }
 
@@ -300,7 +302,7 @@ PHP_FUNCTION(wasm_compile)
 
     // Wasm module persistent resource look up.
     if (persistent_wasm_module) {
-        resource = (zend_resource *) zend_hash_find_ptr(&EG(persistent_list), wasm_module_unique_identifier);
+        resource = (zend_resource *) zend_hash_find_ptr(&EG(persistent_list), resource_key);
     }
 
     // Wasm module persistent resource is disabled, or it is not
@@ -333,7 +335,7 @@ PHP_FUNCTION(wasm_compile)
         // Store the module in a persistent resource.
         if (persistent_wasm_module) {
             resource = zend_register_persistent_resource_ex(
-                wasm_module_unique_identifier,
+                resource_key,
                 (void *) wasm_module,
                 wasm_module_resource_number
             );

@@ -147,6 +147,11 @@ ZEND_END_ARG_INFO()
  * $bytes = wasm_fetch_bytes('my_program.wasm');
  * // `$bytes` is of type `resource of type (wasm_bytes)`.
  * ```
+ *
+ * Important note: The bytes are fetched, not read, when the function
+ * is called. It means that the bytes are lazily read when other
+ * functions need it, like `wasm_validate`, `wasm_compile` and
+ * `wasm_instance`.
  */
 PHP_FUNCTION(wasm_fetch_bytes)
 {
@@ -245,11 +250,28 @@ ZEND_END_ARG_INFO()
  *
  * # Usage
  *
+ * Classical usage:
+ *
  * ```php
  * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $module = wasm_compile($bytes);
  * // `$module` is of type `resource of type (wasm_module)`.
  * ```
+ *
+ * If one wants to avoid to recompile the module each time, it is
+ * possible to compute a persistent resource by passing a module
+ * unique identifier string, e.g.:
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes, 'foo');
+ * // `$module` is of type `resource of type (wasm_module)`, and persistent.
+ * ```
+ *
+ * In the case above, further execution will **not** fetch the bytes
+ * nor compile the module. Indeed, bytes are not fetched because they
+ * are lazily fetch on-demand, and the module will not be re-compiled
+ * because the resource is persistent.
  */
 PHP_FUNCTION(wasm_compile)
 {

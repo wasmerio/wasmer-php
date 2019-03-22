@@ -381,7 +381,7 @@ static void php_wasm_module_clean_up_persistent_resources()
  * Declare the parameter information for the `wasm_module_clean_up_persistent_resources`
  * function.
  */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_clean_up_persistence_resources, ZEND_RETURN_VALUE, ARITY(0), IS_VOID, NOT_NULLABLE)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_clean_up_persistent_resources, ZEND_RETURN_VALUE, ARITY(0), IS_VOID, NOT_NULLABLE)
 ZEND_END_ARG_INFO()
 
 /**
@@ -1133,7 +1133,7 @@ static const zend_function_entry wasm_functions[] = {
     PHP_FE(wasm_fetch_bytes,							arginfo_wasm_fetch_bytes)
     PHP_FE(wasm_validate,								arginfo_wasm_validate)
     PHP_FE(wasm_compile,								arginfo_wasm_compile)
-    PHP_FE(wasm_module_clean_up_persistent_resources,	arginfo_wasm_compile)
+    PHP_FE(wasm_module_clean_up_persistent_resources,	arginfo_wasm_module_clean_up_persistent_resources)
     PHP_FE(wasm_module_new_instance,					arginfo_wasm_module_new_instance)
     PHP_FE(wasm_module_serialize,						arginfo_wasm_module_serialize)
     PHP_FE(wasm_module_deserialize,						arginfo_wasm_module_deserialize)

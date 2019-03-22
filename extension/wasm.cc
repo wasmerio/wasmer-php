@@ -151,7 +151,7 @@ ZEND_END_ARG_INFO()
  * Important note: The bytes are fetched, not read, when the function
  * is called. It means that the bytes are lazily read when other
  * functions need it, like `wasm_validate`, `wasm_compile` and
- * `wasm_instance`.
+ * `wasm_new_instance`.
  */
 PHP_FUNCTION(wasm_fetch_bytes)
 {

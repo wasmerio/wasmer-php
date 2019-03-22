@@ -70,10 +70,11 @@ class Extension extends Suite
             ->when($result = $reflection->getFunctions())
             ->then
                 ->array($result)
-                    ->hasSize(11)
+                    ->hasSize(12)
                     ->object['wasm_fetch_bytes']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_validate']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_compile']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_module_clean_up_persistent_resources']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_module_serialize']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_module_deserialize']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_module_new_instance']->isInstanceOf(ReflectionFunction::class)
@@ -130,8 +131,9 @@ class Extension extends Suite
             ->when($_result = $result['wasm_compile'])
             ->then
                 ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(2)
+                ->integer($_result->getNumberOfRequiredParameters())
                     ->isEqualTo(1)
-                    ->isEqualTo($_result->getNumberOfRequiredParameters())
 
                 ->let($parameters = $_result->getParameters())
 
@@ -142,12 +144,32 @@ class Extension extends Suite
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
+                ->string($parameters[1]->getName())
+                    ->isEqualTo('wasm_module_unique_identifier')
+                ->string($parameters[1]->getType() . '')
+                    ->isEqualTo('string')
+                ->boolean($parameters[1]->getType()->allowsNull())
+                    ->isTrue()
+
                 ->let($return_type = $_result->getReturnType())
 
                 ->string($return_type . '')
                     ->isEqualTo('resource')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
+
+            ->when($_result = $result['wasm_module_clean_up_persistent_resources'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(0)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('void')
+                ->boolean($return_type->allowsNull())
+                    ->isFalse()
 
             ->when($_result = $result['wasm_module_serialize'])
             ->then
@@ -439,6 +461,67 @@ class Extension extends Suite
         $this
             ->given($wasmBytes = wasm_fetch_bytes('foo'))
             ->when($result = wasm_compile($wasmBytes))
+            ->then
+                ->variable($result)
+                    ->isNull();
+    }
+
+    public function test_wasm_compile_with_an_unique_identifier()
+    {
+        $this
+            ->given(
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
+                $wasmModuleIdentifier = __METHOD__
+            )
+            ->when($result = wasm_compile($wasmBytes, $wasmModuleIdentifier))
+            ->then
+                ->resource($result)
+                    ->isOfType('wasm_module')
+                ->string($result . '')
+                    ->isEqualTo('Resource id #-1');
+    }
+
+    public function test_wasm_compile_with_an_unique_identifier_boost_performances()
+    {
+        $this
+            // First compilation.
+            ->given(
+                $timeA = microtime(true),
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
+                $wasmModuleIdentifier = __METHOD__,
+                $wasmModule = wasm_compile($wasmBytes, $wasmModuleIdentifier),
+                $timeB = microtime(true)
+            )
+
+            // Second compilation. Must be way faster because a module unique
+            // identifier has been passed, and thus the module resource will
+            // be persistent.
+            ->given(
+                $timeC = microtime(true),
+                $wasmModule = wasm_compile($wasmBytes, $wasmModuleIdentifier),
+                $timeD = microtime(true)
+            )
+
+            // Calculate the speedup.
+            ->when($result = ($timeB - $timeA) / ($timeD - $timeC))
+            ->then
+                ->float($result)
+                    ->isGreaterThan(
+                        5000, // This is an arbritary value, it just represents a threshold.
+                        'If this is failing, it means that the bytes are read, ' .
+                        'and that the module is compiled again, which is not good.'
+                    );
+    }
+
+    public function test_wasm_module_clean_up_persistent_resources()
+    {
+        $this
+            ->given(
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
+                $wasmModuleIdentifier = __METHOD__,
+                $wasmModule = wasm_compile($wasmBytes, $wasmModuleIdentifier),
+            )
+            ->when($result = wasm_module_clean_up_persistent_resources())
             ->then
                 ->variable($result)
                     ->isNull();

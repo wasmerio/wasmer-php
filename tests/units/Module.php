@@ -14,6 +14,15 @@ class Module extends Suite
 {
     const FILE_PATH = __DIR__ . '/tests.wasm';
 
+    public function test_constants()
+    {
+        $this
+            ->boolean(SUT::PERSISTENT)
+                ->isTrue()
+            ->boolean(SUT::VOLATILE)
+                ->isFalse();
+    }
+
     public function test_constructor_invalid_path()
     {
         $this
@@ -74,6 +83,35 @@ class Module extends Suite
                     "An error happened while compiling the module `$filePath`:\n" .
                     "    Validation error \"Unexpected EOF\""
                 );
+    }
+
+    public function test_constructor_persistent_module()
+    {
+        $this
+            // First compilation.
+            ->given(
+                $timeA = microtime(true),
+                $module = new SUT(self::FILE_PATH, SUT::PERSISTENT),
+                $timeB = microtime(true)
+            )
+
+            // Second compilation. Must be way faster because the module is
+            // persistent.
+            ->given(
+                $timeC = microtime(true),
+                $module = new SUT(self::FILE_PATH, SUT::PERSISTENT),
+                $timeD = microtime(true)
+            )
+
+            // Calculate the speedup.
+            ->when($result = ($timeB - $timeA) / ($timeD - $timeC))
+            ->then
+                ->float($result)
+                    ->isGreaterThan(
+                        300, // This is an arbritary value, it just represents a threshold.
+                        'If this is failing, it means that the bytes are read, ' .
+                        'and that the module is compiled again, which is not good.'
+                    );
     }
 
     public function test_instantiate()

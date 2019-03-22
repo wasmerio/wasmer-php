@@ -236,7 +236,8 @@ static void wasm_module_destructor(zend_resource *resource)
  * function.
  */
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_compile, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, 0)
+    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_module_unique_identifier, IS_STRING, NULLABLE)
 ZEND_END_ARG_INFO()
 
 /**
@@ -253,15 +254,30 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(wasm_compile)
 {
     zval *wasm_bytes_resource;
+    zend_string *wasm_module_unique_identifier = NULL;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
         Z_PARAM_RESOURCE(wasm_bytes_resource)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_STR_EX(wasm_module_unique_identifier, NULLABLE, 0);
     ZEND_PARSE_PARAMETERS_END();
 
-    zend_string *key = zend_string_init("foo", 3, 0);
-    zend_resource *resource = (zend_resource *) zend_hash_find_ptr(&EG(persistent_list), key);
+    // The Wasm module resource will be persistent if there is a unique identifier.
+    bool persistent_wasm_module = false;
 
-    // The resource is not registered.
+    if (wasm_module_unique_identifier != NULL) {
+        persistent_wasm_module = true;
+    }
+
+    zend_resource *resource = NULL;
+
+    // Wasm module persistent resource look up.
+    if (persistent_wasm_module) {
+        resource = (zend_resource *) zend_hash_find_ptr(&EG(persistent_list), wasm_module_unique_identifier);
+    }
+
+    // Wasm module persistent resource is disabled, or it is not
+    // registered in the persistent resource registry.
     if (resource == NULL) {
         // Extract the bytes from the resource.
         wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
@@ -288,7 +304,17 @@ PHP_FUNCTION(wasm_compile)
         }
 
         // Store the module in a persistent resource.
-        resource = zend_register_persistent_resource_ex(key, (void *) wasm_module, wasm_module_resource_number);
+        if (persistent_wasm_module) {
+            resource = zend_register_persistent_resource_ex(
+                wasm_module_unique_identifier,
+                (void *) wasm_module,
+                wasm_module_resource_number
+            );
+        }
+        // Store the module in a regular resource.
+        else {
+            resource = zend_register_resource((void *) wasm_module, wasm_module_resource_number);
+        }
 
         if (resource == NULL) {
             RETURN_NULL();

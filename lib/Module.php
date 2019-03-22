@@ -18,14 +18,35 @@ use Serializable;
  *
  * # Examples
  *
+ * To compile the bytes in `my_program.wasm` to a WebAssembly module:
+ *
  * ```php,ignore
  * $module = new Wasm\Module('my_program.wasm');
+ * $instance = $module->instantiate();
+ * $result = $instance->sum(1, 2);
+ * ```
+ *
+ * To compile the module only once per multiple PHP requests, one will write:
+ *
+ * ```php,ignore
+ * $module = new Wasm\Module('my_program.wasm', Wasm\Module::PERSISTENT);
  * $instance = $module->instantiate();
  * $result = $instance->sum(1, 2);
  * ```
  */
 class Module implements Serializable
 {
+    /**
+     * Instructs that the underlying module resource must be persistent.
+     */
+    const PERSISTENT = true;
+
+    /**
+     * Instructs that the underlying module resource must **not** be
+     * persistent.
+     */
+    const VOLATILE = false;
+
     /**
      * The Wasm module.
      */
@@ -34,13 +55,27 @@ class Module implements Serializable
     /**
      * Compiles WebAssembly bytes from a file into a module.
      *
+     * The `$persistence` flag allows to compile the module only once per
+     * multiple PHP request executions: It can dramatically improves the set
+     * up of your WebAssembly program when it is quite large.
+     *
+     * When the `$persistence` flag is turned to `self::PERSISTENT`, the given
+     * file will be read only once and the module will be compiled only
+     * once. The underlying `wasm_module` resource will be registered as
+     * persistent across PHP requests. As a side-effect, if the file content
+     * changes, the module will not be re-compiled.
+     *
+     * To force to compile a new fresh module, the `$persistence` flag must be
+     * turned to `self::VOLATILE`, which is the default value. See also the
+     * `wasm_module_clean_up_persistent_resources` function.
+     *
      * The constructor throws a `RuntimeException` when the given file does
      * not exist, or is not readable.
      *
      * The constructor also throws a `RuntimeException` when the compilation
      * failed.
      */
-    public function __construct(string $filePath)
+    public function __construct(string $filePath, bool $persistence = self::VOLATILE)
     {
         if (false === file_exists($filePath)) {
             throw new RuntimeException("File path to Wasm binary `$filePath` does not exist.");
@@ -51,16 +86,21 @@ class Module implements Serializable
         }
 
         $wasmBytes = wasm_fetch_bytes($filePath);
+        $wasmModuleUniqueIdentifier = null;
 
-        if (null === $wasmBytes) {
-            throw new RuntimeException("An error happened while reading the module `$filePath`.");
+        if (self::PERSISTENT === $persistence) {
+            $wasmModuleUniqueIdentifier = $this->getUniqueIdentifier($filePath);
+        } else {
+            // Validating WebAssembly bytes forces the `wasm_bytes` resource to
+            // be read. In the case of a persistent module, we don't want to
+            // read the bytes. That's why `wasm_validate` is called only when
+            // the module is not persistent.
+            if (false === wasm_validate($wasmBytes)) {
+                throw new RuntimeException("Bytes in `$filePath` are invalid.");
+            }
         }
 
-        if (false === wasm_validate($wasmBytes)) {
-            throw new RuntimeException("Bytes in `$filePath` are invalid.");
-        }
-
-        $this->wasmModule = wasm_compile($wasmBytes);
+        $this->wasmModule = wasm_compile($wasmBytes, $wasmModuleUniqueIdentifier);
 
         if (null === $this->wasmModule) {
             throw new RuntimeException(
@@ -68,6 +108,23 @@ class Module implements Serializable
                 str_replace("\n", "\n    ", wasm_get_last_error())
             );
         }
+    }
+
+    /**
+     * Generates a unique identifier for this module.
+     *
+     * This is used when the module needs to be persistent: It identifies the
+     * module resource by a unique string.
+     */
+    protected function getUniqueIdentifier(string $filePath): string
+    {
+        $out = realpath($filePath);
+
+        if (true === function_exists('hash')) {
+            $out = hash('sha3-512', $out);
+        }
+
+        return $out;
     }
 
     /**

@@ -1073,7 +1073,7 @@ PHP_MINIT_FUNCTION(wasm)
     wasm_module_resource_name = "wasm_module";
     wasm_module_resource_number = zend_register_list_destructors_ex(
         wasm_module_destructor,
-        NULL,
+        wasm_module_destructor,
         wasm_module_resource_name,
         module_number
     );

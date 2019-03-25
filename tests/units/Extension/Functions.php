@@ -2,16 +2,16 @@
 
 declare(strict_types = 1);
 
-namespace Wasm\Tests\Units;
+namespace Wasm\Tests\Units\Extension;
 
 use ReflectionExtension;
 use ReflectionFunction;
 use RuntimeException;
 use Wasm\Tests\Suite;
 
-class Extension extends Suite
+class Functions extends Suite
 {
-    const FILE_PATH = __DIR__ . '/tests.wasm';
+    const FILE_PATH = __DIR__ . '/../tests.wasm';
 
     public function getTestedClassName()
     {
@@ -21,46 +21,6 @@ class Extension extends Suite
     public function getTestedClassNamespace()
     {
         return '\\';
-    }
-
-    public function test_reflection_classes()
-    {
-        $this
-            ->given($reflection = new ReflectionExtension('wasm'))
-            ->when($result = $reflection->getClasses())
-            ->then
-                ->array($result)
-                    ->isEmpty()
-
-            ->when($result = $reflection->getClassNames())
-            ->then
-                ->array($result)
-                    ->isEmpty();
-    }
-
-    public function test_reflection_constants()
-    {
-        $this
-            ->given($reflection = new ReflectionExtension('wasm'))
-            ->when($result = $reflection->getConstants())
-            ->then
-                ->array($result)
-                    ->isEqualTo([
-                        'WASM_TYPE_I32' => 0,
-                        'WASM_TYPE_I64' => 1,
-                        'WASM_TYPE_F32' => 2,
-                        'WASM_TYPE_F64' => 3,
-                    ]);
-    }
-
-    public function test_reflection_dependencies()
-    {
-        $this
-            ->given($reflection = new ReflectionExtension('wasm'))
-            ->when($result = $reflection->getDependencies())
-            ->then
-                ->array($result)
-                    ->isEmpty();
     }
 
     public function test_reflection_functions()
@@ -365,36 +325,6 @@ class Extension extends Suite
                     ->isTrue();
     }
 
-    public function test_reflection_ini_entries()
-    {
-        $this
-            ->given($reflection = new ReflectionExtension('wasm'))
-            ->when($result = $reflection->getINIEntries())
-            ->then
-                ->array($result)
-                    ->isEmpty();
-    }
-
-    public function test_reflection_name()
-    {
-        $this
-            ->given($reflection = new ReflectionExtension('wasm'))
-            ->when($result = $reflection->getName())
-            ->then
-                ->string($result)
-                    ->isEqualTo('wasm');
-    }
-
-    public function test_reflection_version()
-    {
-        $this
-            ->given($reflection = new ReflectionExtension('wasm'))
-            ->when($result = $reflection->getVersion())
-            ->then
-                ->string($result)
-                    ->isEqualTo('0.2.0');
-    }
-
     public function test_wasm_fetch_bytes()
     {
         $this
@@ -447,7 +377,7 @@ class Extension extends Suite
     public function test_wasm_compile_invalid_bytes()
     {
         $this
-            ->given($wasmBytes = wasm_fetch_bytes(__DIR__ . '/invalid.wasm'))
+            ->given($wasmBytes = wasm_fetch_bytes(dirname(__DIR__) . '/invalid.wasm'))
             ->when($result = wasm_compile($wasmBytes))
             ->then
                 ->variable($result)
@@ -511,20 +441,6 @@ class Extension extends Suite
                         'If this is failing, it means that the bytes are read, ' .
                         'and that the module is compiled again, which is not good.'
                     );
-    }
-
-    public function test_wasm_module_clean_up_persistent_resources()
-    {
-        $this
-            ->given(
-                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
-                $wasmModuleIdentifier = __METHOD__,
-                $wasmModule = wasm_compile($wasmBytes, $wasmModuleIdentifier),
-            )
-            ->when($result = wasm_module_clean_up_persistent_resources())
-            ->then
-                ->variable($result)
-                    ->isNull();
     }
 
     public function test_wasm_module_serialize()

@@ -1270,6 +1270,7 @@ PHP_MINIT_FUNCTION(wasm)
     wasm_array_buffer_class_entry_handlers.offset = XtOffsetOf(wasm_array_buffer_object, instance);
     wasm_array_buffer_class_entry_handlers.dtor_obj = destroy_wasm_array_buffer_object;
     wasm_array_buffer_class_entry_handlers.free_obj = free_wasm_array_buffer_object;
+    wasm_array_buffer_class_entry_handlers.clone_obj = NULL;
 
     return SUCCESS;
 }

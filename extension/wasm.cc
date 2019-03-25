@@ -1227,6 +1227,10 @@ static const zend_function_entry wasm_array_buffer_methods[] = {
 typedef enum {
     INT8,
     UINT8,
+    INT16,
+    UINT16,
+    INT32,
+    UINT32
 } wasm_typed_array_kind;
 
 typedef struct {
@@ -1251,6 +1255,10 @@ typedef struct {
     union {
         int8_t *as_int8;
         uint8_t *as_uint8;
+        int16_t *as_int16;
+        uint16_t *as_uint16;
+        int32_t *as_int32;
+        uint32_t *as_uint32;
     } view;
 
     // The class instance, i.e. the object. It must be the last item
@@ -1260,6 +1268,10 @@ typedef struct {
 
 zend_class_entry *wasm_typed_array_int8_class_entry;
 zend_class_entry *wasm_typed_array_uint8_class_entry;
+zend_class_entry *wasm_typed_array_int16_class_entry;
+zend_class_entry *wasm_typed_array_uint16_class_entry;
+zend_class_entry *wasm_typed_array_int32_class_entry;
+zend_class_entry *wasm_typed_array_uint32_class_entry;
 zend_object_handlers wasm_typed_array_class_entry_handlers;
 
 /**
@@ -1297,6 +1309,14 @@ static zend_object *create_wasm_typed_array_object(zend_class_entry *class_entry
             wasm_typed_array->kind = wasm_typed_array_kind::INT8;
         } else if (base_class_entry == wasm_typed_array_uint8_class_entry) {
             wasm_typed_array->kind = wasm_typed_array_kind::UINT8;
+        } else if (base_class_entry == wasm_typed_array_int16_class_entry) {
+            wasm_typed_array->kind = wasm_typed_array_kind::INT16;
+        } else if (base_class_entry == wasm_typed_array_uint16_class_entry) {
+            wasm_typed_array->kind = wasm_typed_array_kind::UINT16;
+        } else if (base_class_entry == wasm_typed_array_int32_class_entry) {
+            wasm_typed_array->kind = wasm_typed_array_kind::INT32;
+        } else if (base_class_entry == wasm_typed_array_uint32_class_entry) {
+            wasm_typed_array->kind = wasm_typed_array_kind::UINT32;
         } else {
             zend_error(E_ERROR, "WebAssembly buffer view has an unknown type.");
         }
@@ -1394,6 +1414,18 @@ PHP_FUNCTION(WasmTypedArray___construct)
             case wasm_typed_array_kind::INT8:
             case wasm_typed_array_kind::UINT8:
                 bytes_per_buffer_item = 1;
+
+                break;
+
+            case wasm_typed_array_kind::INT16:
+            case wasm_typed_array_kind::UINT16:
+                bytes_per_buffer_item = 2;
+
+                break;
+
+            case wasm_typed_array_kind::INT32:
+            case wasm_typed_array_kind::UINT32:
+                bytes_per_buffer_item = 4;
 
                 break;
 
@@ -1532,6 +1564,34 @@ PHP_FUNCTION(WasmTypedArray_offset_get)
 
             break;
 
+        case wasm_typed_array_kind::INT16:
+            RETURN_LONG(wasm_typed_array_object->view.as_int16[offset]);
+
+            break;
+
+        case wasm_typed_array_kind::UINT16:
+            RETURN_LONG(wasm_typed_array_object->view.as_uint16[offset]);
+
+            break;
+
+        case wasm_typed_array_kind::INT32:
+            RETURN_LONG(wasm_typed_array_object->view.as_int32[offset]);
+
+            break;
+
+        case wasm_typed_array_kind::UINT32:
+            {
+                uint32_t value = wasm_typed_array_object->view.as_uint32[offset];
+
+                if (value <= LONG_MAX) {
+                    RETURN_LONG(value);
+                } else {
+                    RETURN_DOUBLE(value);
+                }
+            }
+
+            break;
+
         default:
             zend_throw_exception(zend_ce_exception, "Invalid WebAssembly typed array type.", 1);
 
@@ -1594,6 +1654,26 @@ PHP_FUNCTION(WasmTypedArray_offset_set)
 
         case wasm_typed_array_kind::UINT8:
             wasm_typed_array_object->view.as_uint8[offset] = Z_LVAL_P(value);
+
+            break;
+
+        case wasm_typed_array_kind::INT16:
+            wasm_typed_array_object->view.as_int16[offset] = Z_LVAL_P(value);
+
+            break;
+
+        case wasm_typed_array_kind::UINT16:
+            wasm_typed_array_object->view.as_uint16[offset] = Z_LVAL_P(value);
+
+            break;
+
+        case wasm_typed_array_kind::INT32:
+            wasm_typed_array_object->view.as_int32[offset] = Z_LVAL_P(value);
+
+            break;
+
+        case wasm_typed_array_kind::UINT32:
+            wasm_typed_array_object->view.as_uint32[offset] = Z_LVAL_P(value);
 
             break;
 
@@ -1696,6 +1776,26 @@ PHP_FUNCTION(WasmTypedArray_offset_unset)
 
             break;
 
+        case wasm_typed_array_kind::INT16:
+            wasm_typed_array_object->view.as_int16[offset] = 0;
+
+            break;
+
+        case wasm_typed_array_kind::UINT16:
+            wasm_typed_array_object->view.as_uint16[offset] = 0;
+
+            break;
+
+        case wasm_typed_array_kind::INT32:
+            wasm_typed_array_object->view.as_int32[offset] = 0;
+
+            break;
+
+        case wasm_typed_array_kind::UINT32:
+            wasm_typed_array_object->view.as_uint32[offset] = 0;
+
+            break;
+
         default:
             zend_throw_exception(zend_ce_exception, "Invalid WebAssembly typed array type.", 1);
 
@@ -1774,18 +1874,22 @@ PHP_MINIT_FUNCTION(wasm)
     wasm_array_buffer_class_entry_handlers.free_obj = free_wasm_array_buffer_object;
     wasm_array_buffer_class_entry_handlers.clone_obj = NULL;
 
-    // Declare the `WasmTypedArray` classes, like `WasmUint8Array`.
-    INIT_CLASS_ENTRY(class_entry, "WasmInt8Array", wasm_typed_array_methods);
-    wasm_typed_array_int8_class_entry = zend_register_internal_class(&class_entry TSRMLS_CC);
-    wasm_typed_array_int8_class_entry->create_object = create_wasm_typed_array_object;
-    wasm_typed_array_int8_class_entry->ce_flags |= ZEND_ACC_FINAL;
-    zend_class_implements(wasm_typed_array_int8_class_entry TSRMLS_CC, 1, zend_ce_arrayaccess);
+    // Declare the `WasmTypedArray` classes.
+#define DECLARE_WASM_TYPED_ARRAY(class_name, type) \
+    INIT_CLASS_ENTRY(class_entry, #class_name, wasm_typed_array_methods); \
+    wasm_typed_array_##type##_class_entry = zend_register_internal_class(&class_entry TSRMLS_CC); \
+    wasm_typed_array_##type##_class_entry->create_object = create_wasm_typed_array_object; \
+    wasm_typed_array_##type##_class_entry->ce_flags |= ZEND_ACC_FINAL; \
+    zend_class_implements(wasm_typed_array_##type##_class_entry TSRMLS_CC, 1, zend_ce_arrayaccess);
 
-    INIT_CLASS_ENTRY(class_entry, "WasmUint8Array", wasm_typed_array_methods);
-    wasm_typed_array_uint8_class_entry = zend_register_internal_class(&class_entry TSRMLS_CC);
-    wasm_typed_array_uint8_class_entry->create_object = create_wasm_typed_array_object;
-    wasm_typed_array_uint8_class_entry->ce_flags |= ZEND_ACC_FINAL;
-    zend_class_implements(wasm_typed_array_uint8_class_entry TSRMLS_CC, 1, zend_ce_arrayaccess);
+    DECLARE_WASM_TYPED_ARRAY(WasmInt8Array, int8);
+    DECLARE_WASM_TYPED_ARRAY(WasmUint8Array, uint8);
+    DECLARE_WASM_TYPED_ARRAY(WasmInt16Array, int16);
+    DECLARE_WASM_TYPED_ARRAY(WasmUint16Array, uint16);
+    DECLARE_WASM_TYPED_ARRAY(WasmInt32Array, int32);
+    DECLARE_WASM_TYPED_ARRAY(WasmUint32Array, uint32);
+
+#undef DECLARE_WASM_TYPED_ARRAY
 
     memcpy(&wasm_typed_array_class_entry_handlers, zend_get_std_object_handlers(), sizeof(wasm_typed_array_class_entry_handlers));
     wasm_typed_array_class_entry_handlers.offset = XtOffsetOf(wasm_typed_array_object, instance);

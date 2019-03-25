@@ -70,7 +70,7 @@ public:
 
     ~wasm_lazy_byte_array_t()
     {
-        free((uint8_t *) byte_array->bytes);
+        efree((uint8_t *) byte_array->bytes);
     }
 
     wasmer_byte_array *get_bytes()
@@ -87,7 +87,7 @@ public:
             fseek(wasm_file, 0, SEEK_END);
 
             size_t wasm_file_length = ftell(wasm_file);
-            const uint8_t *wasm_bytes = (const uint8_t *) malloc(wasm_file_length);
+            const uint8_t *wasm_bytes = (const uint8_t *) emalloc(wasm_file_length);
             fseek(wasm_file, 0, SEEK_SET);
 
             fread((uint8_t *) wasm_bytes, 1, wasm_file_length, wasm_file);
@@ -96,7 +96,7 @@ public:
             fclose(wasm_file);
 
             // Store the bytes of the Wasm file into a `wasmer_byte_array` structure.
-            byte_array = (wasmer_byte_array *) malloc(sizeof(wasmer_byte_array));
+            byte_array = (wasmer_byte_array *) emalloc(sizeof(wasmer_byte_array));
             byte_array->bytes = wasm_bytes;
             byte_array->bytes_len = (uint32_t) wasm_file_length;
         }
@@ -847,7 +847,7 @@ static void wasm_value_destructor(zend_resource *resource)
         return;
     }
 
-    free(wasm_value);
+    efree(wasm_value);
 }
 
 /**
@@ -885,7 +885,7 @@ PHP_FUNCTION(wasm_value)
     // Convert the value to a `wasmer_value_tag`. It is expected to
     // receive a `WASM_TYPE_*` constant.
     wasmer_value_tag type = (wasmer_value_tag) (uint32_t) value_type;
-    wasmer_value_t *wasm_value = (wasmer_value_t *) malloc(sizeof(wasmer_value_t));
+    wasmer_value_t *wasm_value = (wasmer_value_t *) emalloc(sizeof(wasmer_value_t));
 
     // Convert the PHP value to a `wasm_value_t`.
     if (type == wasmer_value_tag::WASM_I32) {
@@ -903,7 +903,7 @@ PHP_FUNCTION(wasm_value)
     }
     // Invalid value type provided.
     else {
-        free(wasm_value);
+        efree(wasm_value);
 
         RETURN_NULL();
     }
@@ -968,7 +968,7 @@ PHP_FUNCTION(wasm_invoke_function)
     size_t function_input_length = zend_hash_num_elements(inputs);
 
     // Extract the input values from the `wasm_value` resources.
-    wasmer_value_t *function_inputs = (wasmer_value_t *) malloc(sizeof(wasmer_value_t) * function_input_length);
+    wasmer_value_t *function_inputs = (wasmer_value_t *) emalloc(sizeof(wasmer_value_t) * function_input_length);
 
     {
         zend_ulong key;
@@ -997,6 +997,8 @@ PHP_FUNCTION(wasm_invoke_function)
         function_outputs,
         function_output_length
     );
+
+    efree(function_inputs);
 
     // Failed to call the Wasm function.
     if (function_call_result != wasmer_result_t::WASMER_OK) {
@@ -1047,7 +1049,7 @@ PHP_FUNCTION(wasm_get_last_error)
         RETURN_NULL();
     }
 
-    char *error_message = (char *) malloc(error_message_length);
+    char *error_message = (char *) emalloc(error_message_length);
     wasmer_last_error_message(error_message, error_message_length);
 
     ZVAL_STRINGL(return_value, error_message, error_message_length - 1);

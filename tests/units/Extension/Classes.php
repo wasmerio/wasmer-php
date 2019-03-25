@@ -4,9 +4,11 @@ declare(strict_types = 1);
 
 namespace Wasm\Tests\Units\Extension;
 
+use Exception;
 use ReflectionClass;
 use ReflectionExtension;
 use ReflectionMethod;
+use WasmArrayBuffer;
 use Wasm\Tests\Suite;
 
 class Classes extends Suite
@@ -95,5 +97,53 @@ class Classes extends Suite
                     ->isTrue()
                 ->boolean($_result->isInternal())
                     ->isTrue();
+    }
+
+    public function test_wasm_array_buffer_constructor()
+    {
+        $this
+            ->when($result = new WasmArrayBuffer(42))
+            ->then
+                ->object($result)
+                    ->isInstanceOf(WasmArrayBuffer::class);
+    }
+
+    public function test_wasm_array_buffer_of_length_0()
+    {
+        $this
+            ->exception(
+                function() {
+                    new WasmArrayBuffer(0);
+                }
+            )
+                ->isInstanceOf(Exception::class)
+                ->hasMessage('Buffer length must be positive.')
+                ->hasCode(0);
+    }
+
+    public function test_wasm_array_buffer_with_a_negative_length()
+    {
+        $this
+            ->exception(
+                function() {
+                    new WasmArrayBuffer(-1);
+                }
+            )
+                ->isInstanceOf(Exception::class)
+                ->hasMessage('Buffer length must be positive.')
+                ->hasCode(0);
+    }
+
+    public function test_wasm_array_buffer_get_byte_length()
+    {
+        $this
+            ->given(
+                $byteLength = 42,
+                $wasmArrayBuffer = new WasmArrayBuffer($byteLength)
+            )
+            ->when($result = $wasmArrayBuffer->getByteLength())
+            ->then
+                ->integer($result)
+                    ->isEqualTo($byteLength);
     }
 }

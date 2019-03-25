@@ -1173,7 +1173,7 @@ PHP_METHOD(WasmArrayBuffer, __construct)
     }
 
     wasm_array_buffer_object *wasm_array_buffer_object = WASM_ARRAY_BUFFER_OBJECT_THIS();
-    wasm_array_buffer_object->buffer = malloc(byte_length);
+    wasm_array_buffer_object->buffer = calloc(byte_length, byte_length);
     wasm_array_buffer_object->buffer_length = (size_t) byte_length;
 }
 

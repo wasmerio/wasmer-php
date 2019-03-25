@@ -1438,7 +1438,7 @@ PHP_FUNCTION(WasmTypedArray___construct)
         size_t maximum_length = (wasm_array_buffer_object->buffer_length - offset) / bytes_per_buffer_item;
 
         if (length == 0) {
-            length = maximum_length;
+            wasm_typed_array_object->length = maximum_length;
         } else if (length > maximum_length) {
             zend_throw_exception_ex(
                 zend_ce_exception,

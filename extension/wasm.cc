@@ -22,6 +22,7 @@
 
 #include "php.h"
 #include "ext/standard/info.h"
+#include "zend_exceptions.h"
 #include "php_wasm.h"
 #include "wasmer.hh"
 
@@ -1052,6 +1053,164 @@ PHP_FUNCTION(wasm_get_last_error)
     ZVAL_STRINGL(return_value, error_message, error_message_length - 1);
 }
 
+// Declare the functions with their information.
+static const zend_function_entry wasm_functions[] = {
+    PHP_FE(wasm_fetch_bytes,							arginfo_wasm_fetch_bytes)
+    PHP_FE(wasm_validate,								arginfo_wasm_validate)
+    PHP_FE(wasm_compile,								arginfo_wasm_compile)
+    PHP_FE(wasm_module_clean_up_persistent_resources,	arginfo_wasm_module_clean_up_persistent_resources)
+    PHP_FE(wasm_module_new_instance,					arginfo_wasm_module_new_instance)
+    PHP_FE(wasm_module_serialize,						arginfo_wasm_module_serialize)
+    PHP_FE(wasm_module_deserialize,						arginfo_wasm_module_deserialize)
+    PHP_FE(wasm_new_instance,							arginfo_wasm_new_instance)
+    PHP_FE(wasm_get_function_signature,					arginfo_wasm_get_function_signature)
+    PHP_FE(wasm_value,									arginfo_wasm_value)
+    PHP_FE(wasm_invoke_function,						arginfo_wasm_invoke_function)
+    PHP_FE(wasm_get_last_error,							arginfo_wasm_get_last_error)
+    PHP_FE_END
+};
+
+/**
+ * Custom object for the `WasmArrayBuffer` class.
+ */
+typedef struct {
+    // The internal buffer.
+    void *buffer;
+
+    // The internal buffer length.
+    size_t buffer_length;
+
+    // The class instance, i.e. the object. It must be the last item
+    // of the structure.
+    zend_object instance;
+} wasm_array_buffer_object;
+
+zend_class_entry *wasm_array_buffer_class_entry;
+zend_object_handlers wasm_array_buffer_class_entry_handlers;
+
+/**
+ * Gets the `wasm_array_buffer_object` pointer from a `zend_object` pointer.
+ */
+static inline wasm_array_buffer_object *wasm_array_buffer_object_from_zend_object(zend_object *object)
+{
+	return (wasm_array_buffer_object *) ((char *)(object) - XtOffsetOf(wasm_array_buffer_object, instance));
+}
+
+/**
+ * Function for a `zend_class_entry` to create a `WasmArrayBuffer` object.
+ */
+static zend_object *create_wasm_array_buffer_object(zend_class_entry *class_entry)
+{
+    wasm_array_buffer_object *wasm_array_buffer = (wasm_array_buffer_object *) ecalloc(
+        1,
+        sizeof(wasm_array_buffer_object) + zend_object_properties_size(class_entry)
+    );
+    wasm_array_buffer->buffer = NULL;
+    wasm_array_buffer->buffer_length = 0;
+
+    zend_object_std_init(&wasm_array_buffer->instance, class_entry);
+    object_properties_init(&wasm_array_buffer->instance, class_entry);
+
+    wasm_array_buffer->instance.handlers = &wasm_array_buffer_class_entry_handlers;
+
+    return &wasm_array_buffer->instance;
+}
+
+/**
+ * Handler for a `zend_class_entry` to destroy (i.e. call the
+ * destructor on the userland) a `WasmArrayBuffer` object.
+ */
+static void destroy_wasm_array_buffer_object(zend_object *object)
+{
+    zend_objects_destroy_object(object);
+}
+
+/**
+ * Handler for a `zend_class_entry` to free a `WasmArrayBuffer` object.
+ */
+static void free_wasm_array_buffer_object(zend_object *object)
+{
+    wasm_array_buffer_object *wasm_array_buffer_object = wasm_array_buffer_object_from_zend_object(object);
+
+    if (wasm_array_buffer_object->buffer != NULL) {
+        free(wasm_array_buffer_object->buffer);
+    }
+
+    zend_object_std_dtor(object);
+}
+
+// Shortcut to get `$this` in a `WasmArrayBuffer` method.
+#define WASM_ARRAY_BUFFER_OBJECT_THIS() wasm_array_buffer_object_from_zend_object(Z_OBJ_P(getThis()))
+
+/**
+ * Declare the parameter information for the
+ * `WasmArrayBuffer::__construct` method.
+ */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasmarraybuffer___construct, 0, ZEND_RETURN_VALUE, ARITY(1))
+    ZEND_ARG_TYPE_INFO(0, byte_length, IS_LONG, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `WasmArrayBuffer::__construct` method.
+ *
+ * # Usage
+ *
+ * ```php
+ $ $buffer = new WasmArrayBuffer();
+ * ```
+ */
+PHP_METHOD(WasmArrayBuffer, __construct)
+{
+    zend_long byte_length;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_LONG(byte_length)
+    ZEND_PARSE_PARAMETERS_END();
+
+    if (byte_length <= 0) {
+        zend_throw_exception(zend_ce_exception, "Buffer length must be positive.", 0);
+        return;
+    }
+
+    wasm_array_buffer_object *wasm_array_buffer_object = WASM_ARRAY_BUFFER_OBJECT_THIS();
+    wasm_array_buffer_object->buffer = malloc(byte_length);
+    wasm_array_buffer_object->buffer_length = (size_t) byte_length;
+}
+
+/**
+ * Declare the parameter information for the
+ * `WasmArrayBuffer::getByteLength` method.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasmarraybuffer_get_byte_length, ZEND_RETURN_VALUE, ARITY(0), IS_LONG, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `WasmArrayBuffer::getByteLength` method.
+ *
+ * # Usage
+ *
+ * ```php
+ * $length = 42;
+ * $buffer = new WasmArrayBuffer($length);
+ * assert($buffer->getByteLength() === $length);
+ * ```
+ */
+PHP_METHOD(WasmArrayBuffer, getByteLength)
+{
+    ZEND_PARSE_PARAMETERS_NONE();
+
+    wasm_array_buffer_object *wasm_array_buffer_object = WASM_ARRAY_BUFFER_OBJECT_THIS();
+
+    RETURN_LONG(wasm_array_buffer_object->buffer_length);
+}
+
+// Declare the methods with their information.
+static const zend_function_entry wasm_array_buffer_methods[] = {
+    PHP_ME(WasmArrayBuffer, __construct,	arginfo_wasmarraybuffer___construct, ZEND_ACC_PUBLIC)
+    PHP_ME(WasmArrayBuffer, getByteLength,	arginfo_wasmarraybuffer_get_byte_length, ZEND_ACC_PUBLIC)
+    PHP_FE_END
+};
+
 // Module initialization event.
 PHP_MINIT_FUNCTION(wasm)
 {
@@ -1061,7 +1220,7 @@ PHP_MINIT_FUNCTION(wasm)
     REGISTER_LONG_CONSTANT("WASM_TYPE_F32", (zend_long) wasmer_value_tag::WASM_F32, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("WASM_TYPE_F64", (zend_long) wasmer_value_tag::WASM_F64, CONST_CS | CONST_PERSISTENT);
 
-    // Declare the resources.
+    // Declare the `wasm_bytes` resource.
     wasm_bytes_resource_name = "wasm_bytes";
     wasm_bytes_resource_number = zend_register_list_destructors_ex(
         wasm_bytes_destructor,
@@ -1070,6 +1229,7 @@ PHP_MINIT_FUNCTION(wasm)
         module_number
     );
 
+    // Declare the `wasm_module` resource.
     wasm_module_resource_name = "wasm_module";
     wasm_module_resource_number = zend_register_list_destructors_ex(
         wasm_module_destructor,
@@ -1078,6 +1238,7 @@ PHP_MINIT_FUNCTION(wasm)
         module_number
     );
 
+    // Declare the `wasm_instance` resource.
     wasm_instance_resource_name = "wasm_instance";
     wasm_instance_resource_number = zend_register_list_destructors_ex(
         wasm_instance_destructor,
@@ -1086,6 +1247,7 @@ PHP_MINIT_FUNCTION(wasm)
         module_number
     );
 
+    // Declare the `wasm_value` resource.
     wasm_value_resource_name = "wasm_value";
     wasm_value_resource_number = zend_register_list_destructors_ex(
         wasm_value_destructor,
@@ -1093,6 +1255,19 @@ PHP_MINIT_FUNCTION(wasm)
         wasm_value_resource_name,
         module_number
     );
+
+    // Declare the `WasmArrayBuffer` class.
+    zend_class_entry class_entry;
+
+    INIT_CLASS_ENTRY(class_entry, "WasmArrayBuffer", wasm_array_buffer_methods);
+    wasm_array_buffer_class_entry = zend_register_internal_class(&class_entry TSRMLS_CC);
+    wasm_array_buffer_class_entry->create_object = create_wasm_array_buffer_object;
+    wasm_array_buffer_class_entry->ce_flags |= ZEND_ACC_FINAL;
+
+    memcpy(&wasm_array_buffer_class_entry_handlers, zend_get_std_object_handlers(), sizeof(wasm_array_buffer_class_entry_handlers));
+    wasm_array_buffer_class_entry_handlers.offset = XtOffsetOf(wasm_array_buffer_object, instance);
+    wasm_array_buffer_class_entry_handlers.dtor_obj = destroy_wasm_array_buffer_object;
+    wasm_array_buffer_class_entry_handlers.free_obj = free_wasm_array_buffer_object;
 
     return SUCCESS;
 }
@@ -1129,23 +1304,6 @@ PHP_MSHUTDOWN_FUNCTION(wasm)
 
     return SUCCESS;
 }
-
-// Export the functions with their information.
-static const zend_function_entry wasm_functions[] = {
-    PHP_FE(wasm_fetch_bytes,							arginfo_wasm_fetch_bytes)
-    PHP_FE(wasm_validate,								arginfo_wasm_validate)
-    PHP_FE(wasm_compile,								arginfo_wasm_compile)
-    PHP_FE(wasm_module_clean_up_persistent_resources,	arginfo_wasm_module_clean_up_persistent_resources)
-    PHP_FE(wasm_module_new_instance,					arginfo_wasm_module_new_instance)
-    PHP_FE(wasm_module_serialize,						arginfo_wasm_module_serialize)
-    PHP_FE(wasm_module_deserialize,						arginfo_wasm_module_deserialize)
-    PHP_FE(wasm_new_instance,							arginfo_wasm_new_instance)
-    PHP_FE(wasm_get_function_signature,					arginfo_wasm_get_function_signature)
-    PHP_FE(wasm_value,									arginfo_wasm_value)
-    PHP_FE(wasm_invoke_function,						arginfo_wasm_invoke_function)
-    PHP_FE(wasm_get_last_error,							arginfo_wasm_get_last_error)
-    PHP_FE_END
-};
 
 // Last boilerplate.
 zend_module_entry wasm_module_entry = {

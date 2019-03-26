@@ -1901,7 +1901,7 @@ PHP_MINIT_FUNCTION(wasm)
     INIT_CLASS_ENTRY(class_entry, #class_name, wasm_typed_array_methods); \
     wasm_typed_array_##type##_class_entry = zend_register_internal_class(&class_entry TSRMLS_CC); \
     wasm_typed_array_##type##_class_entry->create_object = create_wasm_typed_array_object; \
-    wasm_typed_array_##type##_class_entry->ce_flags |= ZEND_ACC_FINAL; \
+    wasm_typed_array_##type##_class_entry->ce_flags |= ZEND_ACC_IMMUTABLE; \
     zend_class_implements(wasm_typed_array_##type##_class_entry TSRMLS_CC, 1, zend_ce_arrayaccess); \
 	zend_declare_class_constant_long(wasm_typed_array_##type##_class_entry, "BYTES_PER_ELEMENT", sizeof("BYTES_PER_ELEMENT")-1, (zend_long) bytes_per_element);
 

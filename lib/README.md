@@ -304,7 +304,7 @@ the memory of a WebAssembly instance.
 The class looks like this:
 
 ``` php
-class WasmArrayBuffer
+final class WasmArrayBuffer
 {
     public function __construct(int $byte_length);
     public function getByteLength(): int;
@@ -329,7 +329,7 @@ They all share the same implementation. Taking the example of
 `WasmUint8Array`, it looks like this:
 
 ```php
-class WasmUint8Array implements ArrayAccess
+final class WasmUint8Array implements ArrayAccess
 {
     public const BYTES_PER_ELEMENT;
     

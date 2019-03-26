@@ -1624,7 +1624,7 @@ PHP_FUNCTION(WasmTypedArray_offset_get)
  * Declare the parameter information for the
  * `WasmTypedArray::offsetSet` method.
  */
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasmtypedarray_offset_set, 0, ZEND_RETURN_VALUE, ARITY(2))
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasmtypedarray_offset_set, ZEND_RETURN_VALUE, ARITY(2), IS_VOID, NOT_NULLABLE)
     ZEND_ARG_INFO(0, offset)
     ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()

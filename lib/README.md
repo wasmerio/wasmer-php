@@ -339,7 +339,7 @@ class WasmUint8Array implements ArrayAccess
 
     /* For `ArrayAccess` */
     public function offsetGet($offset): int;
-    public function offsetSet($offset, $value);
+    public function offsetSet($offset, $value): void;
     public function offsetExists($offset): bool;
     public function offsetUnset($offset): void;
 }

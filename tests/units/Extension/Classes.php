@@ -257,7 +257,11 @@ class Classes extends Suite
                 ->boolean($parameters[1]->hasType())
                     ->isFalse()
 
-                ->boolean($methods[4]->hasReturnType())
+                ->let($return_type = $methods[4]->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('void')
+                ->boolean($return_type->allowsNull())
                     ->isFalse()
 
                 ->string($methods[5]->getName())

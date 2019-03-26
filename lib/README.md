@@ -295,3 +295,110 @@ if (false === $result) {
 ```
 
 This function returns the error message if any.
+
+### Class `WasmArrayBuffer`
+
+This class represents a buffer of bytes. It will be used to manipulate
+the memory of a WebAssembly instance.
+
+The class looks like this:
+
+``` php
+class WasmArrayBuffer
+{
+    public function __construct(int $byte_length);
+    public function getByteLength(): int;
+}
+```
+
+### Classes `WasmTypedArray`
+
+`WasmTypedArray` is a generic name to represent classes that act as
+array-like views over a `WasmArrayBuffer`.
+
+| Class | View buffer as a sequence of… | Bytes per element |
+|-|-|-|
+| `WasmInt8Array` | `int8` | 1 |
+| `WasmUint8Array` | `uint8` | 1 |
+| `WasmInt16Array` | `int16` | 2 |
+| `WasmUint16Array` | `uint16` | 2 |
+| `WasmInt32Array` | `int32` | 4 |
+| `WasmUint32Array` | `uint32` | 4 |
+
+They all share the same implementation. Taking the example of
+`WasmUint8Array`, it looks like this:
+
+```php
+class WasmUint8Array implements ArrayAccess
+{
+    public const BYTES_PER_ELEMENT;
+    
+    public function __construct(WasmArrayBuffer $wasm_array_buffer, int $offset = 0, int $length = 0);
+    public function getOffset();
+    public function getLength();
+
+    /* For `ArrayAccess` */
+    public function offsetGet($offset): int;
+    public function offsetSet($offset, $value);
+    public function offsetExists($offset): bool;
+    public function offsetUnset($offset);
+}
+```
+
+Usage example:
+
+```php
+$wasmArrayBuffer = new WasmArrayBuffer(256);
+$int8 = new WasmInt8Array($wasmArrayBuffer);
+$int16 = new WasmInt16Array($wasmArrayBuffer);
+$int32 = new WasmInt32Array($wasmArrayBuffer);
+
+                b₁
+             ┌┬┬┬┬┬┬┐
+$int8[0] = 0b00000001;
+                b₂
+             ┌┬┬┬┬┬┬┐
+$int8[1] = 0b00000100;
+                b₃
+             ┌┬┬┬┬┬┬┐
+$int8[2] = 0b00010000;
+                b₄
+             ┌┬┬┬┬┬┬┐
+$int8[3] = 0b01000000;
+
+// No surprise with the following assertions.
+                         b₁
+                      ┌┬┬┬┬┬┬┐
+assert($int8[0] === 0b00000001);
+                         b₂
+                      ┌┬┬┬┬┬┬┐
+assert($int8[1] === 0b00000100);
+                         b₃
+                      ┌┬┬┬┬┬┬┐
+assert($int8[2] === 0b00010000);
+                         b₄
+                      ┌┬┬┬┬┬┬┐
+assert($int8[3] === 0b01000000);
+
+// The `int16` view read 2 bytes.
+                          b₂      b₁
+                       ┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐
+assert($int16[0] === 0b0000010000000001);
+                          b₄      b₃
+                       ┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐
+assert($int16[1] === 0b0100000000010000);
+
+// The `int32` view reads 4 bytes.
+                          b₄      b₃      b₂      b₁
+                       ┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐
+assert($int32[0] === 0b01000000000100000000010000000001);
+```
+
+Notice that `WasmTypedArray` treats bytes in little-endian, as
+required by the WebAssembly specification, [Chapter Structure, Section
+Instructions, Sub-Section Memory
+Instructions](https://webassembly.github.io/spec/core/syntax/instructions.html#memory-instructions):
+
+> All values are read and written in [little
+> endian](https://en.wikipedia.org/wiki/Endianness#Little-endian) byte
+> order.

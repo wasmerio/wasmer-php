@@ -667,7 +667,9 @@ class Classes extends Suite
                 ->integer($int8[3])
                     ->isEqualTo(0b01000000)
                 ->integer($int16[0])
-                    ->isEqualTo(0b000000010000000001)
+                    ->isEqualTo(0b0000010000000001)
+                ->integer($int16[1])
+                    ->isEqualTo(0b0100000000010000)
                 ->integer($int32[0])
                     ->isEqualTo(0b01000000000100000000010000000001);
     }
@@ -693,6 +695,8 @@ class Classes extends Suite
                    ->isEqualTo(0b00000000)
                 ->integer($uint16[0])
                    ->isEqualTo(0b000000000000000001)
+                ->integer($uint16[1])
+                   ->isEqualTo(0b000000000000000000)
                 ->integer($uint32[0])
                     ->isEqualTo(0b00000000000000000000000000000001);
     }

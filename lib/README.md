@@ -334,8 +334,8 @@ class WasmUint8Array implements ArrayAccess
     public const BYTES_PER_ELEMENT;
     
     public function __construct(WasmArrayBuffer $wasm_array_buffer, int $offset = 0, int $length = 0);
-    public function getOffset();
-    public function getLength();
+    public function getOffset(): int;
+    public function getLength(): int;
 
     /* For `ArrayAccess` */
     public function offsetGet($offset): int;

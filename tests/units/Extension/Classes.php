@@ -9,6 +9,7 @@ use Exception;
 use ReflectionClass;
 use ReflectionExtension;
 use ReflectionMethod;
+use StdClass;
 use WasmArrayBuffer;
 use WasmInt16Array;
 use WasmInt32Array;
@@ -22,7 +23,7 @@ class Classes extends Suite
 {
     public function getTestedClassName()
     {
-        return 'StdClass';
+        return StdClass::class;
     }
 
     public function getTestedClassNamespace()

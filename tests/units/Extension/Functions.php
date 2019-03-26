@@ -7,6 +7,7 @@ namespace Wasm\Tests\Units\Extension;
 use ReflectionExtension;
 use ReflectionFunction;
 use RuntimeException;
+use StdClass;
 use Wasm\Tests\Suite;
 
 class Functions extends Suite
@@ -15,7 +16,7 @@ class Functions extends Suite
 
     public function getTestedClassName()
     {
-        return 'StdClass';
+        return StdClass::class;
     }
 
     public function getTestedClassNamespace()

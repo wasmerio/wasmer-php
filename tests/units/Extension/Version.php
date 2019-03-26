@@ -5,13 +5,14 @@ declare(strict_types = 1);
 namespace Wasm\Tests\Units\Extension;
 
 use ReflectionExtension;
+use StdClass;
 use Wasm\Tests\Suite;
 
 class Version extends Suite
 {
     public function getTestedClassName()
     {
-        return 'StdClass';
+        return StdClass::class;
     }
 
     public function getTestedClassNamespace()

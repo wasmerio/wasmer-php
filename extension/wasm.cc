@@ -1580,15 +1580,7 @@ PHP_FUNCTION(WasmTypedArray_offset_get)
             break;
 
         case wasm_typed_array_kind::UINT32:
-            {
-                uint32_t value = wasm_typed_array_object->view.as_uint32[offset];
-
-                if (value <= LONG_MAX) {
-                    RETURN_LONG(value);
-                } else {
-                    RETURN_DOUBLE(value);
-                }
-            }
+            RETURN_LONG(wasm_typed_array_object->view.as_uint32[offset]);
 
             break;
 

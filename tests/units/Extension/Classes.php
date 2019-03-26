@@ -672,6 +672,31 @@ class Classes extends Suite
                     ->isEqualTo(0b01000000000100000000010000000001);
     }
 
+    public function test_wasm_typed_array_is_little_endian()
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer(256),
+                $uint8 = new WasmUint8Array($wasmArrayBuffer),
+                $uint16 = new WasmUint16Array($wasmArrayBuffer),
+                $uint32 = new WasmUint32Array($wasmArrayBuffer)
+            )
+            ->when($uint32[0] = 0b00000000000000000000000000000001)
+            ->then
+                ->integer($uint8[0])
+                   ->isEqualTo(0b00000001)
+                ->integer($uint8[1])
+                   ->isEqualTo(0b00000000)
+                ->integer($uint8[2])
+                   ->isEqualTo(0b00000000)
+                ->integer($uint8[3])
+                   ->isEqualTo(0b00000000)
+                ->integer($uint16[0])
+                   ->isEqualTo(0b000000000000000001)
+                ->integer($uint32[0])
+                    ->isEqualTo(0b00000000000000000000000000000001);
+    }
+
     protected function wasm_typed_arrays()
     {
         yield [WasmInt8Array::class];

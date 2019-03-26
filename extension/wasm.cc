@@ -1867,19 +1867,20 @@ PHP_MINIT_FUNCTION(wasm)
     wasm_array_buffer_class_entry_handlers.clone_obj = NULL;
 
     // Declare the `WasmTypedArray` classes.
-#define DECLARE_WASM_TYPED_ARRAY(class_name, type) \
+#define DECLARE_WASM_TYPED_ARRAY(class_name, type, bytes_per_element) \
     INIT_CLASS_ENTRY(class_entry, #class_name, wasm_typed_array_methods); \
     wasm_typed_array_##type##_class_entry = zend_register_internal_class(&class_entry TSRMLS_CC); \
     wasm_typed_array_##type##_class_entry->create_object = create_wasm_typed_array_object; \
     wasm_typed_array_##type##_class_entry->ce_flags |= ZEND_ACC_FINAL; \
-    zend_class_implements(wasm_typed_array_##type##_class_entry TSRMLS_CC, 1, zend_ce_arrayaccess);
+    zend_class_implements(wasm_typed_array_##type##_class_entry TSRMLS_CC, 1, zend_ce_arrayaccess); \
+	zend_declare_class_constant_long(wasm_typed_array_##type##_class_entry, "BYTES_PER_ELEMENT", sizeof("BYTES_PER_ELEMENT")-1, (zend_long) bytes_per_element);
 
-    DECLARE_WASM_TYPED_ARRAY(WasmInt8Array, int8);
-    DECLARE_WASM_TYPED_ARRAY(WasmUint8Array, uint8);
-    DECLARE_WASM_TYPED_ARRAY(WasmInt16Array, int16);
-    DECLARE_WASM_TYPED_ARRAY(WasmUint16Array, uint16);
-    DECLARE_WASM_TYPED_ARRAY(WasmInt32Array, int32);
-    DECLARE_WASM_TYPED_ARRAY(WasmUint32Array, uint32);
+    DECLARE_WASM_TYPED_ARRAY(WasmInt8Array, int8, 1);
+    DECLARE_WASM_TYPED_ARRAY(WasmUint8Array, uint8, 1);
+    DECLARE_WASM_TYPED_ARRAY(WasmInt16Array, int16, 2);
+    DECLARE_WASM_TYPED_ARRAY(WasmUint16Array, uint16, 2);
+    DECLARE_WASM_TYPED_ARRAY(WasmInt32Array, int32, 4);
+    DECLARE_WASM_TYPED_ARRAY(WasmUint32Array, uint32, 4);
 
 #undef DECLARE_WASM_TYPED_ARRAY
 

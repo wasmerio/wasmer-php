@@ -1397,7 +1397,7 @@ PHP_FUNCTION(WasmTypedArray___construct)
     }
 
     if (length < 0) {
-        zend_throw_exception_ex(zend_ce_exception, 2, "Level must be non-negative; given %lld.", length);
+        zend_throw_exception_ex(zend_ce_exception, 2, "Length must be non-negative; given %lld.", length);
 
         return;
     }
@@ -1541,7 +1541,7 @@ PHP_FUNCTION(WasmTypedArray_offset_get)
 
     wasm_typed_array_object *wasm_typed_array_object = WASM_TYPED_ARRAY_OBJECT_THIS();
 
-    if (offset < 0 || offset > wasm_typed_array_object->length) {
+    if (offset < 0 || offset >= wasm_typed_array_object->length) {
         zend_throw_exception_ex(
             zend_ce_exception,
             0,
@@ -1624,7 +1624,7 @@ PHP_FUNCTION(WasmTypedArray_offset_set)
 
     wasm_typed_array_object *wasm_typed_array_object = WASM_TYPED_ARRAY_OBJECT_THIS();
 
-    if (offset < 0 || offset > wasm_typed_array_object->length) {
+    if (offset < 0 || offset >= wasm_typed_array_object->length) {
         zend_throw_exception_ex(
             zend_ce_exception,
             0,
@@ -1707,7 +1707,7 @@ PHP_FUNCTION(WasmTypedArray_offset_exists)
 
     wasm_typed_array_object *wasm_typed_array_object = WASM_TYPED_ARRAY_OBJECT_THIS();
 
-    if (offset < 0 || offset > wasm_typed_array_object->length) {
+    if (offset < 0 || offset >= wasm_typed_array_object->length) {
         RETURN_FALSE;
     } else {
         RETURN_TRUE;
@@ -1745,7 +1745,7 @@ PHP_FUNCTION(WasmTypedArray_offset_unset)
 
     wasm_typed_array_object *wasm_typed_array_object = WASM_TYPED_ARRAY_OBJECT_THIS();
 
-    if (offset < 0 || offset > wasm_typed_array_object->length) {
+    if (offset < 0 || offset >= wasm_typed_array_object->length) {
         zend_throw_exception_ex(
             zend_ce_exception,
             0,

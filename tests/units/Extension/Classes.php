@@ -297,7 +297,11 @@ class Classes extends Suite
                 ->boolean($parameters[0]->hasType())
                     ->isFalse()
 
-                ->boolean($methods[6]->hasReturnType())
+                ->let($return_type = $methods[6]->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('void')
+                ->boolean($return_type->allowsNull())
                     ->isFalse()
 
                 ->boolean($result->implementsInterface(ArrayAccess::class))

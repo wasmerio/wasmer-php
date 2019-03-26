@@ -123,11 +123,24 @@ class Classes extends Suite
     public function test_reflection_wasm_typed_array(string $wasmTypedArrayClassName)
     {
         $this
-            ->given($reflection = new ReflectionExtension('wasm'))
+            ->given(
+                $reflection = new ReflectionExtension('wasm'),
+                $bytesPerElement = [
+                    WasmInt8Array::class => 1,
+                    WasmUint8Array::class => 1,
+                    WasmInt16Array::class => 2,
+                    WasmUint16Array::class => 2,
+                    WasmInt32Array::class => 4,
+                    WasmUint32Array::class => 4,
+                ]
+            )
             ->when($result = $reflection->getClasses()[$wasmTypedArrayClassName])
             ->then
                 ->array($result->getConstants())
-                    ->isEmpty()
+                    ->hasSize(1)
+                    ->isEqualTo([
+                        'BYTES_PER_ELEMENT' => $bytesPerElement[$wasmTypedArrayClassName] ?? -1,
+                    ])
 
                 ->let($methods = $result->getMethods())
 
@@ -313,16 +326,6 @@ class Classes extends Suite
                     ->isTrue();
     }
 
-    protected function wasm_typed_arrays()
-    {
-        yield [WasmInt8Array::class];
-        yield [WasmUint8Array::class];
-        yield [WasmInt16Array::class];
-        yield [WasmUint16Array::class];
-        yield [WasmInt32Array::class];
-        yield [WasmUint32Array::class];
-    }
-
     public function test_wasm_array_buffer_constructor()
     {
         $this
@@ -369,5 +372,313 @@ class Classes extends Suite
             ->then
                 ->integer($result)
                     ->isEqualTo($byteLength);
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_constructor(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $bufferLength = 256,
+                $wasmArrayBuffer = new WasmArrayBuffer($bufferLength)
+            )
+            ->when($result = new $wasmTypedArrayClassName($wasmArrayBuffer))
+            ->then
+                ->integer($result->getOffset())
+                    ->isZero()
+                ->integer($result->getLength())
+                    ->isEqualTo($bufferLength / $result::BYTES_PER_ELEMENT)
+                ->when(
+                    function () use ($result) {
+                        for ($i = 0; $i < $result->getLength(); ++$i) {
+                            $this
+                                ->integer($result[$i])
+                                    ->isEqualTo(0);
+                        }
+                    }
+                );
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_constructor_with_an_offset(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $bufferLength = 256,
+                $offset = 3,
+                $wasmArrayBuffer = new WasmArrayBuffer($bufferLength)
+            )
+            ->when($result = new $wasmTypedArrayClassName($wasmArrayBuffer, $offset))
+            ->then
+                ->integer($result->getOffset())
+                    ->isEqualTo($offset)
+                ->integer($result->getLength())
+                    ->isEqualTo((int) (($bufferLength - $offset) / $result::BYTES_PER_ELEMENT));
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_constructor_with_an_offset_and_a_length(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $bufferLength = 256,
+                $offset = 3,
+                $length = 12,
+                $wasmArrayBuffer = new WasmArrayBuffer($bufferLength)
+            )
+            ->when($result = new $wasmTypedArrayClassName($wasmArrayBuffer, $offset, $length))
+            ->then
+                ->integer($result->getOffset())
+                    ->isEqualTo($offset)
+                ->integer($result->getLength())
+                    ->isEqualTo($length);
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_constructor_with_a_negative_offset(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given($wasmArrayBuffer = new WasmArrayBuffer(256))
+            ->exception(
+                function () use ($wasmArrayBuffer, $wasmTypedArrayClassName) {
+                    new $wasmTypedArrayClassName($wasmArrayBuffer, -1);
+                }
+            )
+                ->isInstanceOf(Exception::class)
+                ->hasMessage('Offset must be non-negative; given -1.');
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_constructor_with_a_too_large_offset(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given($wasmArrayBuffer = new WasmArrayBuffer(256))
+            ->exception(
+                function () use ($wasmArrayBuffer, $wasmTypedArrayClassName) {
+                    new $wasmTypedArrayClassName($wasmArrayBuffer, 257);
+                }
+            )
+                ->isInstanceOf(Exception::class)
+                ->hasMessage('Offset must be smaller than the array buffer length; given 257, buffer length is 256.');
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_constructor_with_a_negative_length(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given($wasmArrayBuffer = new WasmArrayBuffer(256))
+            ->exception(
+                function () use ($wasmArrayBuffer, $wasmTypedArrayClassName) {
+                    new $wasmTypedArrayClassName($wasmArrayBuffer, 2, -1);
+                }
+            )
+                ->isInstanceOf(Exception::class)
+                ->hasMessage('Length must be non-negative; given -1.');
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_constructor_with_a_too_large_length(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer(256),
+                $maximumLength = 256 / $wasmTypedArrayClassName::BYTES_PER_ELEMENT
+            )
+            ->exception(
+                function () use ($wasmArrayBuffer, $wasmTypedArrayClassName) {
+                    new $wasmTypedArrayClassName($wasmArrayBuffer, 0, 257);
+                }
+            )
+                ->isInstanceOf(Exception::class)
+                ->hasMessage("Length must not be greater than the buffer length; given 257, maximum length is $maximumLength.");
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_set_get(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer($wasmTypedArrayClassName::BYTES_PER_ELEMENT),
+                $wasmTypedArray = new $wasmTypedArrayClassName($wasmArrayBuffer),
+                $wasmTypedArray[0] = 42
+            )
+            ->when($result = $wasmTypedArray[0])
+            ->then
+                ->integer($result)
+                    ->isEqualTo(42);
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_get_out_of_range(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer($wasmTypedArrayClassName::BYTES_PER_ELEMENT),
+                $wasmTypedArray = new $wasmTypedArrayClassName($wasmArrayBuffer)
+            )
+            ->exception(
+                function () use ($wasmTypedArray) {
+                    return $wasmTypedArray[1];
+                }
+            )
+                ->isInstanceOf(Exception::class);
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_set_out_of_range(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer($wasmTypedArrayClassName::BYTES_PER_ELEMENT),
+                $wasmTypedArray = new $wasmTypedArrayClassName($wasmArrayBuffer)
+            )
+            ->exception(
+                function () use ($wasmTypedArray) {
+                    $wasmTypedArray[1] = 42;
+                }
+            )
+                ->isInstanceOf(Exception::class);
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_exists(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer($wasmTypedArrayClassName::BYTES_PER_ELEMENT),
+                $wasmTypedArray = new $wasmTypedArrayClassName($wasmArrayBuffer)
+            )
+            ->when($result = isset($wasmTypedArray[0]))
+            ->then
+                ->boolean($result)
+                    ->isTrue();
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_does_not_exist(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer($wasmTypedArrayClassName::BYTES_PER_ELEMENT),
+                $wasmTypedArray = new $wasmTypedArrayClassName($wasmArrayBuffer)
+            )
+            ->when($result = isset($wasmTypedArray[1]))
+            ->then
+                ->boolean($result)
+                    ->isFalse()
+
+            ->when($result = isset($wasmTypedArray[-1]))
+            ->then
+                ->boolean($result)
+                    ->isFalse();
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_unset(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer($wasmTypedArrayClassName::BYTES_PER_ELEMENT),
+                $wasmTypedArray = new $wasmTypedArrayClassName($wasmArrayBuffer),
+                $wasmTypedArray[0] = 42,
+            )
+            ->when($result = $wasmTypedArray[0])
+            ->then
+                ->integer($result)
+                    ->isEqualTo(42)
+
+            ->when(
+                function () use ($wasmTypedArray) {
+                    unset($wasmTypedArray[0]);
+                }
+            )
+            ->when($result = $wasmTypedArray[0])
+            ->then
+                ->integer($result)
+                    ->isEqualTo(0);
+    }
+
+    /**
+     * @dataProvider wasm_typed_arrays
+     */
+    public function test_wasm_typed_array_unset_out_of_range(string $wasmTypedArrayClassName)
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer($wasmTypedArrayClassName::BYTES_PER_ELEMENT),
+                $wasmTypedArray = new $wasmTypedArrayClassName($wasmArrayBuffer)
+            )
+            ->exception(
+                function () use ($wasmTypedArray) {
+                    unset($wasmTypedArray[1]);
+                }
+            )
+                ->isInstanceOf(Exception::class);
+    }
+
+    public function test_wasm_typed_array_share_the_same_buffer()
+    {
+        $this
+            ->given(
+                $wasmArrayBuffer = new WasmArrayBuffer(256),
+                $int8 = new WasmInt8Array($wasmArrayBuffer),
+                $int16 = new WasmInt16Array($wasmArrayBuffer),
+                $int32 = new WasmInt32Array($wasmArrayBuffer)
+            )
+            ->when(
+                $int8[0] = 0b00000001,
+                $int8[1] = 0b00000100,
+                $int8[2] = 0b00010000,
+                $int8[3] = 0b01000000
+            )
+            ->then
+                ->integer($int8[0])
+                    ->isEqualTo(0b00000001)
+                ->integer($int8[1])
+                    ->isEqualTo(0b00000100)
+                ->integer($int8[2])
+                    ->isEqualTo(0b00010000)
+                ->integer($int8[3])
+                    ->isEqualTo(0b01000000)
+                ->integer($int16[0])
+                    ->isEqualTo(0b000000010000000001)
+                ->integer($int32[0])
+                    ->isEqualTo(0b01000000000100000000010000000001);
+    }
+
+    protected function wasm_typed_arrays()
+    {
+        yield [WasmInt8Array::class];
+        yield [WasmUint8Array::class];
+        yield [WasmInt16Array::class];
+        yield [WasmUint16Array::class];
+        yield [WasmInt32Array::class];
+        yield [WasmUint32Array::class];
     }
 }

@@ -1165,7 +1165,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $buffer = new WasmArrayBuffer();
+ $ $buffer = new WasmArrayBuffer(256);
  * ```
  */
 PHP_METHOD(WasmArrayBuffer, __construct)
@@ -1177,7 +1177,7 @@ PHP_METHOD(WasmArrayBuffer, __construct)
     ZEND_PARSE_PARAMETERS_END();
 
     if (byte_length <= 0) {
-        zend_throw_exception(zend_ce_exception, "Buffer length must be positive.", 0);
+        zend_throw_exception_ex(zend_ce_exception, 0, "Buffer length must be positive; given %lld.", byte_length);
 
         return;
     }

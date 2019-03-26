@@ -344,7 +344,7 @@ class Classes extends Suite
                 }
             )
                 ->isInstanceOf(Exception::class)
-                ->hasMessage('Buffer length must be positive.')
+                ->hasMessage('Buffer length must be positive; given 0.')
                 ->hasCode(0);
     }
 

@@ -192,7 +192,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $valid = wasm_validate($bytes);
  * ```
  */
@@ -1043,7 +1043,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $error = wasm_get_last_error();
+ * $error = wasm_get_last_error();
  * ```
  */
 PHP_FUNCTION(wasm_get_last_error)
@@ -1165,7 +1165,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $buffer = new WasmArrayBuffer(256);
+ * $buffer = new WasmArrayBuffer(256);
  * ```
  */
 PHP_METHOD(WasmArrayBuffer, __construct)
@@ -1182,6 +1182,8 @@ PHP_METHOD(WasmArrayBuffer, __construct)
         return;
     }
 
+    // Allocate a new buffer, and assign it the `wasm_array_buffer_object`.
+    // This new buffer is initialized with zero-bytes (see `calloc`).
     wasm_array_buffer_object *wasm_array_buffer_object = WASM_ARRAY_BUFFER_OBJECT_THIS();
     wasm_array_buffer_object->buffer = (int8_t *) calloc(byte_length, byte_length);
     wasm_array_buffer_object->buffer_length = (size_t) byte_length;
@@ -1214,7 +1216,7 @@ PHP_METHOD(WasmArrayBuffer, getByteLength)
     RETURN_LONG(wasm_array_buffer_object->buffer_length);
 }
 
-// Declare the methods with their information.
+// Declare the methods of the `WasmArrayBuffer` class with their information.
 static const zend_function_entry wasm_array_buffer_methods[] = {
     PHP_ME(WasmArrayBuffer, __construct,	arginfo_wasmarraybuffer___construct, ZEND_ACC_PUBLIC)
     PHP_ME(WasmArrayBuffer, getByteLength,	arginfo_wasmarraybuffer_get_byte_length, ZEND_ACC_PUBLIC)
@@ -1222,7 +1224,7 @@ static const zend_function_entry wasm_array_buffer_methods[] = {
 };
 
 /**
- * Custom object for the `WasmTypedArray` classes, like `WasmUint8Array`.
+ * All types of `WasmTypedArray` views.
  */
 typedef enum {
     INT8,
@@ -1233,6 +1235,12 @@ typedef enum {
     UINT32
 } wasm_typed_array_kind;
 
+/**
+ * Custom object for the `WasmTypedArray` classes. `WasmTypedArray` is
+ * a generic name used here to represent all classes like
+ * `WasmInt8Array`, `WasmUint8Array` etc. All these classes share the
+ * same implementation.
+ */
 typedef struct {
     // The type of the typed array. Set by the `create_object` class
     // entry item.
@@ -1266,6 +1274,10 @@ typedef struct {
     zend_object instance;
 } wasm_typed_array_object;
 
+/**
+ * Class entries for the `WasmTypeArray` classes. The all share the
+ * same implementation, i.e. they use the same class entry handlers.
+ */
 zend_class_entry *wasm_typed_array_int8_class_entry;
 zend_class_entry *wasm_typed_array_uint8_class_entry;
 zend_class_entry *wasm_typed_array_int16_class_entry;
@@ -1349,6 +1361,7 @@ static void free_wasm_typed_array_object(zend_object *object)
 
     zend_object_std_dtor(object);
 }
+
 // Shortcut to get `$this` in a `WasmTypedArray` method.
 #define WASM_TYPED_ARRAY_OBJECT_THIS() wasm_typed_array_object_from_zend_object(Z_OBJ_P(getThis()))
 
@@ -1362,6 +1375,18 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_wasmtypedarray___construct, 0, ZEND_RETURN_VALUE,
     ZEND_ARG_TYPE_INFO(0, length, IS_LONG, NOT_NULLABLE)
 ZEND_END_ARG_INFO()
 
+/**
+ * Declare the `WasmTypedArray::__construct` method.
+ *
+ * # Usage
+ *
+ * ```php
+ * $buffer = new WasmArrayBuffer(256);
+ * $offset = 1;
+ * $length = 7;
+ * $uint8 = new WasmUint8Array($buffer, $offset, $length);
+ * ```
+ */
 PHP_FUNCTION(WasmTypedArray___construct)
 {
     zval *wasm_array_buffer;
@@ -1402,11 +1427,14 @@ PHP_FUNCTION(WasmTypedArray___construct)
         return;
     }
 
+    // Assign the `WasmArrayBuffer` in the `WasmTypedArray`.
     wasm_typed_array_object->wasm_array_buffer = wasm_array_buffer;
     Z_ADDREF_P(wasm_array_buffer);
 
+    // Assign the offset.
     wasm_typed_array_object->offset = (size_t) offset;
 
+    // Assign the length.
     {
         size_t bytes_per_buffer_item;
 
@@ -1454,6 +1482,7 @@ PHP_FUNCTION(WasmTypedArray___construct)
         }
     }
 
+    // Set the view at the specific offset.
     wasm_typed_array_object->view.as_int8 = wasm_array_buffer_object->buffer;
     wasm_typed_array_object->view.as_int8 += offset;
 }
@@ -1471,7 +1500,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $buffer = new WasmArrayBuffer(42);
+ * $buffer = new WasmArrayBuffer(42);
  * $view = new WasmUint8Array($buffer, 3, 5);
  * assert($view->getOffset() == 3);
  * ```
@@ -1498,7 +1527,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $buffer = new WasmArrayBuffer(42);
+ * $buffer = new WasmArrayBuffer(42);
  * $view = new WasmUint8Array($buffer, 3, 5);
  * assert($view->getLength() == 5);
  * ```
@@ -1526,7 +1555,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $buffer = new WasmArrayBuffer(42);
+ * $buffer = new WasmArrayBuffer(42);
  * $view = new WasmUint8Array($buffer, 3, 5);
  * assert($view[1] == 0);
  * ```
@@ -1606,7 +1635,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $buffer = new WasmArrayBuffer(42);
+ * $buffer = new WasmArrayBuffer(42);
  * $view = new WasmUint8Array($buffer, 3, 5);
  * $view[0] = 153;
  * assert($view[0] == 153);
@@ -1692,7 +1721,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $buffer = new WasmArrayBuffer(42);
+ * $buffer = new WasmArrayBuffer(42);
  * $view = new WasmUint8Array($buffer, 3, 5);
  * assert($view[0]);
  * ```
@@ -1728,7 +1757,7 @@ ZEND_END_ARG_INFO()
  * # Usage
  *
  * ```php
- $ $buffer = new WasmArrayBuffer(42);
+ * $buffer = new WasmArrayBuffer(42);
  * $view = new WasmUint8Array($buffer, 3, 5);
  * $view[0] = 1;
  * unset($view[0]);
@@ -1795,7 +1824,7 @@ PHP_FUNCTION(WasmTypedArray_offset_unset)
     }
 }
 
-// Declare the methods with their information.
+// Declare the methods of the `WasmTypedArray` classes with their information.
 static const zend_function_entry wasm_typed_array_methods[] = {
     PHP_ME_MAPPING(__construct,		WasmTypedArray___construct,		arginfo_wasmtypedarray___construct, ZEND_ACC_PUBLIC)
     PHP_ME_MAPPING(getOffset,		WasmTypedArray_get_offset,		arginfo_wasmtypedarray_get_offset, ZEND_ACC_PUBLIC)
@@ -1867,6 +1896,7 @@ PHP_MINIT_FUNCTION(wasm)
     wasm_array_buffer_class_entry_handlers.clone_obj = NULL;
 
     // Declare the `WasmTypedArray` classes.
+    // All the `WasmTypedArray` classes share the same implementation.
 #define DECLARE_WASM_TYPED_ARRAY(class_name, type, bytes_per_element) \
     INIT_CLASS_ENTRY(class_entry, #class_name, wasm_typed_array_methods); \
     wasm_typed_array_##type##_class_entry = zend_register_internal_class(&class_entry TSRMLS_CC); \

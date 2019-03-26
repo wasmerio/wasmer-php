@@ -1887,7 +1887,7 @@ PHP_MINIT_FUNCTION(wasm)
     INIT_CLASS_ENTRY(class_entry, "WasmArrayBuffer", wasm_array_buffer_methods);
     wasm_array_buffer_class_entry = zend_register_internal_class(&class_entry TSRMLS_CC);
     wasm_array_buffer_class_entry->create_object = create_wasm_array_buffer_object;
-    wasm_array_buffer_class_entry->ce_flags |= ZEND_ACC_FINAL;
+    wasm_array_buffer_class_entry->ce_flags |= ZEND_ACC_FINAL | ZEND_ACC_IMMUTABLE;
 
     memcpy(&wasm_array_buffer_class_entry_handlers, zend_get_std_object_handlers(), sizeof(wasm_array_buffer_class_entry_handlers));
     wasm_array_buffer_class_entry_handlers.offset = XtOffsetOf(wasm_array_buffer_object, instance);

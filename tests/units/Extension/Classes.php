@@ -328,7 +328,7 @@ class Classes extends Suite
                 ->boolean($result->isCloneable())
                     ->isFalse()
                 ->boolean($result->isFinal())
-                    ->isTrue()
+                    ->isFalse()
                 ->boolean($result->isInstantiable())
                     ->isTrue()
                 ->boolean($result->isInternal())

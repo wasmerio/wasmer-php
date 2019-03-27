@@ -37,3 +37,8 @@ pub extern "C" fn i32_i64_f32_f64_f64(a: i32, b: i64, c: f32, d: f64) -> f64 {
 pub extern "C" fn bool_casted_to_i32() -> bool {
     true
 }
+
+#[no_mangle]
+pub extern "C" fn string() -> *const u8 {
+    b"Hello, World!\0".as_ptr()
+}

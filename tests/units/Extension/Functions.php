@@ -8,6 +8,8 @@ use ReflectionExtension;
 use ReflectionFunction;
 use RuntimeException;
 use StdClass;
+use WasmArrayBuffer;
+use WasmUint8Array;
 use Wasm\Tests\Suite;
 
 class Functions extends Suite
@@ -31,7 +33,7 @@ class Functions extends Suite
             ->when($result = $reflection->getFunctions())
             ->then
                 ->array($result)
-                    ->hasSize(12)
+                    ->hasSize(13)
                     ->object['wasm_fetch_bytes']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_validate']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_compile']->isInstanceOf(ReflectionFunction::class)
@@ -43,6 +45,7 @@ class Functions extends Suite
                     ->object['wasm_get_function_signature']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_value']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_invoke_function']->isInstanceOf(ReflectionFunction::class)
+                    ->object['wasm_get_memory_buffer']->isInstanceOf(ReflectionFunction::class)
                     ->object['wasm_get_last_error']->isInstanceOf(ReflectionFunction::class)
 
             ->when($_result = $result['wasm_fetch_bytes'])
@@ -309,6 +312,28 @@ class Functions extends Suite
 
                 ->string($return_type . '')
                     ->isEqualTo('number')
+                ->boolean($return_type->allowsNull())
+                    ->isTrue()
+
+            ->when($_result = $result['wasm_get_memory_buffer'])
+            ->then
+                ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(1)
+                    ->isEqualTo($_result->getNumberOfRequiredParameters())
+
+                ->let($parameters = $_result->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('wasm_instance')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('resource')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+                ->let($return_type = $_result->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('WasmArrayBuffer')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
 
@@ -725,6 +750,47 @@ class Functions extends Suite
             [],
             1
         ];
+
+        yield 'string' => [
+            'string',
+            [],
+            1048576 // pointer
+        ];
+    }
+
+    public function test_wasm_get_memory_buffer()
+    {
+        $this
+            ->given(
+                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
+                $wasmInstance = wasm_new_instance($wasmBytes),
+                $stringPointer = wasm_invoke_function($wasmInstance, 'string', [])
+            )
+            ->when($memory = wasm_get_memory_buffer($wasmInstance))
+            ->then
+                ->object($memory)
+                    ->isInstanceOf(WasmArrayBuffer::class)
+
+            ->let($string = '')
+            ->when(
+                function () use ($memory, $stringPointer, &$string) {
+                    $view = new WasmUint8Array($memory, $stringPointer);
+
+                    $this
+                        ->integer($view->getOffset())
+                            ->isEqualTo($stringPointer);
+
+                    $nth = 0;
+
+                    while (0 !== $view[$nth]) {
+                        $string .= chr($view[$nth]);
+                        ++$nth;
+                    }
+                }
+            )
+            ->then
+                ->string($string)
+                    ->isEqualTo('Hello, World!');
     }
 
     public function test_wasm_get_last_error()

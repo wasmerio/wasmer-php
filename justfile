@@ -4,6 +4,8 @@ compile-wasm FILE='examples/simple':
 	set -euo pipefail
 	rustc --target wasm32-unknown-unknown -O --crate-type=cdylib {{FILE}}.rs -o {{FILE}}.raw.wasm
 	wasm-gc {{FILE}}.raw.wasm {{FILE}}.wasm
+	wasm-opt -Os --strip-producers {{FILE}}.wasm -o {{FILE}}.opt.wasm
+	mv {{FILE}}.opt.wasm {{FILE}}.wasm
 	rm {{FILE}}.raw.wasm
 
 # Compile the Rust part.

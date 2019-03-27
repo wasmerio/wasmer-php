@@ -44,1042 +44,6 @@
 #define ARITY(n) n
 
 /**
- * Utils.
- */
-wasmer_value_tag from_zend_long_to_wasmer_value_tag(zend_long x)
-{
-    if (x > 0) {
-        return (wasmer_value_tag) (uint32_t) x;
-    } else {
-        return wasmer_value_tag::WASM_I32;
-    }
-}
-
-/**
- * Information for the `wasm_bytes` resource.
- */
-const char* wasm_bytes_resource_name;
-int wasm_bytes_resource_number;
-
-// Represents a `wasmer_byte_array` that is filled lazily. The bytes
-// are read from `file_path`.
-typedef struct wasm_lazy_byte_array_t wasm_lazy_byte_array;
-struct wasm_lazy_byte_array_t {
-private:
-    char* file_path;
-    wasmer_byte_array *byte_array;
-
-public:
-    wasm_lazy_byte_array_t(char* file_path) :
-        file_path(file_path),
-        byte_array(NULL)
-    {}
-
-    ~wasm_lazy_byte_array_t()
-    {
-        efree((uint8_t *) byte_array->bytes);
-    }
-
-    wasmer_byte_array *get_bytes()
-    {
-        if (byte_array == NULL) {
-            // Open the file.
-            FILE *wasm_file = fopen(file_path, "r");
-
-            if (wasm_file == NULL) {
-                return NULL;
-            }
-
-            // Read the file content.
-            fseek(wasm_file, 0, SEEK_END);
-
-            size_t wasm_file_length = ftell(wasm_file);
-            const uint8_t *wasm_bytes = (const uint8_t *) emalloc(wasm_file_length);
-            fseek(wasm_file, 0, SEEK_SET);
-
-            fread((uint8_t *) wasm_bytes, 1, wasm_file_length, wasm_file);
-
-            // Close the file.
-            fclose(wasm_file);
-
-            // Store the bytes of the Wasm file into a `wasmer_byte_array` structure.
-            byte_array = (wasmer_byte_array *) emalloc(sizeof(wasmer_byte_array));
-            byte_array->bytes = wasm_bytes;
-            byte_array->bytes_len = (uint32_t) wasm_file_length;
-        }
-
-        return byte_array;
-    }
-};
-
-/**
- * Extract the data structure inside the `wasm_bytes` resource.
- */
-wasmer_byte_array *wasm_bytes_from_resource(zend_resource *wasm_bytes_resource)
-{
-    wasm_lazy_byte_array *lazy_byte_array = (wasm_lazy_byte_array *) zend_fetch_resource(
-        wasm_bytes_resource,
-        wasm_bytes_resource_name,
-        wasm_bytes_resource_number
-    );
-
-    return lazy_byte_array->get_bytes();
-}
-
-/**
- * Destructor for the `wasm_bytes` resource.
- */
-static void wasm_bytes_destructor(zend_resource *resource)
-{
-    wasm_lazy_byte_array *lazy_byte_array = (wasm_lazy_byte_array *) zend_fetch_resource(
-        resource,
-        wasm_bytes_resource_name,
-        wasm_bytes_resource_number
-    );
-    free(lazy_byte_array);
-}
-
-/**
- * Declare the parameter information for the `wasm_fetch_bytes` function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_fetch_bytes, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NOT_NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, file_path, IS_STRING, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_fetch_bytes` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * // `$bytes` is of type `resource of type (wasm_bytes)`.
- * ```
- *
- * Important note: The bytes are fetched, not read, when the function
- * is called. It means that the bytes are lazily read when other
- * functions need it, like `wasm_validate`, `wasm_compile` and
- * `wasm_new_instance`.
- */
-PHP_FUNCTION(wasm_fetch_bytes)
-{
-    char *file_path;
-    size_t file_path_length;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_PATH(file_path, file_path_length)
-    ZEND_PARSE_PARAMETERS_END();
-
-    wasm_lazy_byte_array *wasm_lazy_byte_array = new ::wasm_lazy_byte_array(file_path);
-
-    // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_lazy_byte_array, wasm_bytes_resource_number);
-
-    RETURN_RES(resource);
-}
-
-/**
- * Declare the parameter information for the `wasm_validate`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_validate, ZEND_RETURN_VALUE, ARITY(1), _IS_BOOL, NOT_NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_validate` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $valid = wasm_validate($bytes);
- * ```
- */
-PHP_FUNCTION(wasm_validate)
-{
-    zval *wasm_bytes_resource;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_RESOURCE(wasm_bytes_resource)
-    ZEND_PARSE_PARAMETERS_END();
-
-    // Extract the bytes from the resource.
-    wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
-
-    if (NULL == wasm_byte_array) {
-        RETURN_FALSE;
-    }
-
-    // Check whether the bytes are valid or not.
-    bool is_valid = wasmer_validate(wasm_byte_array->bytes, wasm_byte_array->bytes_len);
-
-    RETURN_BOOL(is_valid);
-}
-
-/**
- * Information for the `wasm_module` resource.
- */
-const char* wasm_module_resource_name;
-int wasm_module_resource_number;
-
-/**
- * Extract the data structure inside the `wasm_module` resource.
- */
-wasmer_module_t *wasm_module_from_resource(zend_resource *wasm_module_resource)
-{
-    return (wasmer_module_t *) zend_fetch_resource(
-        wasm_module_resource,
-        wasm_module_resource_name,
-        wasm_module_resource_number
-    );
-}
-
-/**
- * Destructor for the `wasm_module` resource.
- */
-static void wasm_module_destructor(zend_resource *resource)
-{
-    wasmer_module_t *wasm_module = wasm_module_from_resource(resource);
-
-    if (wasm_module == NULL) {
-        return;
-    }
-
-    wasmer_module_destroy(wasm_module);
-}
-
-/**
- * Declare the parameter information for the `wasm_compile`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_compile, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_module_unique_identifier, IS_STRING, NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_compile` function.
- *
- * # Usage
- *
- * Classical usage:
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $module = wasm_compile($bytes);
- * // `$module` is of type `resource of type (wasm_module)`.
- * ```
- *
- * If one wants to avoid to recompile the module each time, it is
- * possible to compute a persistent resource by passing a module
- * unique identifier string, e.g.:
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $module = wasm_compile($bytes, 'foo');
- * // `$module` is of type `resource of type (wasm_module)`, and persistent.
- * ```
- *
- * In the case above, further execution will **not** fetch the bytes
- * nor compile the module. Indeed, bytes are not fetched because they
- * are lazily fetch on-demand, and the module will not be re-compiled
- * because the resource is persistent.
- */
-PHP_FUNCTION(wasm_compile)
-{
-    zval *wasm_bytes_resource;
-    zend_string *wasm_module_unique_identifier = NULL;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
-        Z_PARAM_RESOURCE(wasm_bytes_resource)
-        Z_PARAM_OPTIONAL
-        Z_PARAM_STR_EX(wasm_module_unique_identifier, NULLABLE, 0);
-    ZEND_PARSE_PARAMETERS_END();
-
-    zend_string *resource_key = NULL;
-    bool persistent_wasm_module = false;
-
-    // The Wasm module resource will be persistent if there is a unique identifier.
-    if (wasm_module_unique_identifier != NULL) {
-        resource_key = zend_string_copy(wasm_module_unique_identifier);
-        persistent_wasm_module = true;
-    }
-
-    zend_resource *resource = NULL;
-
-    // Wasm module persistent resource look up.
-    if (persistent_wasm_module) {
-        resource = (zend_resource *) zend_hash_find_ptr(&EG(persistent_list), resource_key);
-    }
-
-    // Wasm module persistent resource is disabled, or it is not
-    // registered in the persistent resource registry.
-    if (resource == NULL) {
-        // Extract the bytes from the resource.
-        wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
-
-        if (NULL == wasm_byte_array) {
-            RETURN_NULL();
-        }
-
-        // Create a new Wasm module.
-        wasmer_module_t *wasm_module = NULL;
-        wasmer_result_t wasm_compilation_result = wasmer_compile(
-            &wasm_module,
-            // Bytes.
-            (uint8_t *) wasm_byte_array->bytes,
-            // Bytes length.
-            wasm_byte_array->bytes_len
-        );
-
-        // Compilation failed.
-        if (wasm_compilation_result != wasmer_result_t::WASMER_OK) {
-            free(wasm_module);
-
-            RETURN_NULL();
-        }
-
-        // Store the module in a persistent resource.
-        if (persistent_wasm_module) {
-            resource = zend_register_persistent_resource_ex(
-                resource_key,
-                (void *) wasm_module,
-                wasm_module_resource_number
-            );
-        }
-        // Store the module in a regular resource.
-        else {
-            resource = zend_register_resource((void *) wasm_module, wasm_module_resource_number);
-        }
-
-        if (resource == NULL) {
-            RETURN_NULL();
-        }
-    }
-    // The resource is already registered.
-    else {}
-
-    RETURN_RES(resource);
-}
-
-/**
- * Clean up all persistent resources registered by this module.
- */
-static int clean_up_persistent_resources(zval *hashmap_item)
-{
-    zend_resource *resource = Z_RES_P(hashmap_item);
-
-    if (resource->type == wasm_module_resource_number) {
-        wasm_module_destructor(resource);
-        return ZEND_HASH_APPLY_REMOVE;
-    }
-
-    return ZEND_HASH_APPLY_KEEP;
-}
-
-/**
- * Iterate over the persistent resources list to clean up Wasm
- * persistent resources.
- */
-static void php_wasm_module_clean_up_persistent_resources()
-{
-    zend_hash_apply(&EG(persistent_list), (apply_func_t) clean_up_persistent_resources);
-}
-
-/**
- * Declare the parameter information for the `wasm_module_clean_up_persistent_resources`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_clean_up_persistent_resources, ZEND_RETURN_VALUE, ARITY(0), IS_VOID, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_module_clean_up_persistent_resources` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $module = wasm_compile($bytes, 'foo');
- * // The module is registered as a persistent resource.
- *
- * wasm_module_clean_up_persistent_resource();
- *
- * $module = wasm_compile($bytes, 'foo');
- * // The module is registered as a persistent resource, again.
- * ```
- */
-PHP_FUNCTION(wasm_module_clean_up_persistent_resources)
-{
-    ZEND_PARSE_PARAMETERS_NONE();
-
-    // Clean up persistent resources.
-    php_wasm_module_clean_up_persistent_resources();
-}
-
-/**
- * Declare the parameter information for the `wasm_module_serialize`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_serialize, ZEND_RETURN_VALUE, ARITY(1), IS_STRING, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_module_serialize` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $module = wasm_compile($bytes);
- * $serialized_module = wasm_module_serialize($module);
- * // `$serialized_module` is of type `string`.
- * ```
- */
-PHP_FUNCTION(wasm_module_serialize)
-{
-    zval *wasm_module_resource;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_RESOURCE(wasm_module_resource)
-    ZEND_PARSE_PARAMETERS_END();
-
-    // Extract the module from the resource.
-    wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
-
-    if (wasm_module == NULL) {
-        RETURN_NULL();
-    }
-
-    // Let's serialize the module.
-    wasmer_serialized_module_t *wasm_serialized_module = NULL;
-
-    if (wasmer_module_serialize(&wasm_serialized_module, wasm_module) != wasmer_result_t::WASMER_OK) {
-        RETURN_NULL();
-    }
-
-    // Extract the bytes from the serialized module.
-    wasmer_byte_array wasm_serialized_module_bytes = wasmer_serialized_module_bytes(wasm_serialized_module);
-
-    ZVAL_STRINGL(
-        return_value,
-        (char *) (uint8_t *) wasm_serialized_module_bytes.bytes,
-        wasm_serialized_module_bytes.bytes_len
-    );
-}
-
-/**
- * Declare the parameter information for the `wasm_module_deserialize`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_deserialize, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_serialized_module, IS_STRING, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_module_deserialize` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $module = wasm_compile($bytes);
- * $serialized_module = wasm_module_serialize($module);
- * $module = wasm_module_deserialize($serialized_module);
- * ```
- */
-PHP_FUNCTION(wasm_module_deserialize)
-{
-    char *wasm_serialized_module_bytes;
-    size_t wasm_serialized_module_bytes_length;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_STRING(wasm_serialized_module_bytes, wasm_serialized_module_bytes_length)
-    ZEND_PARSE_PARAMETERS_END();
-
-    wasmer_serialized_module_t *wasm_serialized_module = NULL;
-
-    if (wasmer_serialized_module_from_bytes(&wasm_serialized_module, (const uint8_t *) wasm_serialized_module_bytes, wasm_serialized_module_bytes_length) != wasmer_result_t::WASMER_OK) {
-        RETURN_NULL();
-    }
-
-    wasmer_module_t *wasm_module = NULL;
-
-    if (wasmer_module_deserialize(&wasm_module, wasm_serialized_module) != wasmer_result_t::WASMER_OK) {
-        RETURN_NULL();
-    }
-
-    // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_module, wasm_module_resource_number);
-
-    RETURN_RES(resource);
-}
-
-/**
- * Information for the `wasm_instance` resource.
- */
-const char* wasm_instance_resource_name;
-int wasm_instance_resource_number;
-
-/**
- * Extract the data structure inside the `wasm_instance` resource.
- */
-wasmer_instance_t *wasm_instance_from_resource(zend_resource *wasm_instance_resource)
-{
-    return (wasmer_instance_t *) zend_fetch_resource(
-        wasm_instance_resource,
-        wasm_instance_resource_name,
-        wasm_instance_resource_number
-    );
-}
-
-/**
- * Destructor for the `wasm_instance` resource.
- */
-static void wasm_instance_destructor(zend_resource *resource)
-{
-    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(resource);
-
-    if (wasm_instance == NULL) {
-        return;
-    }
-
-    wasmer_instance_destroy(wasm_instance);
-}
-
-/**
- * Declare the parameter information for the
- * `wasm_module_new_instance` function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_new_instance, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_module_new_instance` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $module = wasm_compile($bytes);
- * $instance = wasm_module_new_instance($module);
- * // `$instance` is of type `resource of type (wasm_instance)`.
- * ```
- *
- * It is similar to running:
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $instance = wasm_new_instance($bytes);
- * ```
- */
-PHP_FUNCTION(wasm_module_new_instance)
-{
-    zval *wasm_module_resource;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_RESOURCE(wasm_module_resource)
-    ZEND_PARSE_PARAMETERS_END();
-
-    // Extract the module from the resource.
-    wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
-
-    if (wasm_module == NULL) {
-        RETURN_NULL();
-    }
-
-    // Create a new Wasm instance.
-    wasmer_instance_t *wasm_instance = NULL;
-    wasmer_result_t wasm_instantiation_result = wasmer_module_instantiate(
-        // Module.
-        wasm_module,
-        // Instance.
-        &wasm_instance,
-        // Imports.
-        {},
-        // Imports length.
-        0
-    );
-
-    // Instantiation failed.
-    if (wasm_instantiation_result != wasmer_result_t::WASMER_OK) {
-        free(wasm_instance);
-
-        RETURN_NULL();
-    }
-
-    // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_instance, wasm_instance_resource_number);
-
-    RETURN_RES(resource);
-}
-
-/**
- * Declare the parameter information for the `wasm_new_instance`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_new_instance, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_new_instance` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $instance = wasm_new_instance($bytes);
- * // `$instance` is of type `resource of type (wasm_instance)`.
- * ```
- *
- * This function is a shortcut of `wasm_compile` +
- * `wasm_module_new_instance`. It “hides” the module compilation step.
- */
-PHP_FUNCTION(wasm_new_instance)
-{
-    zval *wasm_bytes_resource;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
-        Z_PARAM_RESOURCE(wasm_bytes_resource)
-    ZEND_PARSE_PARAMETERS_END();
-
-    // Extract the bytes from the resource.
-    wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
-
-    if (NULL == wasm_byte_array) {
-        RETURN_NULL();
-    }
-
-    // Create a new Wasm instance.
-    wasmer_instance_t *wasm_instance = NULL;
-    wasmer_result_t wasm_instantiation_result = wasmer_instantiate(
-        &wasm_instance,
-        // Bytes.
-        (uint8_t *) wasm_byte_array->bytes,
-        // Bytes length.
-        wasm_byte_array->bytes_len,
-        // Imports.
-        {},
-        // Imports length.
-        0
-    );
-
-    // Instantiation failed.
-    if (wasm_instantiation_result != wasmer_result_t::WASMER_OK) {
-        free(wasm_instance);
-
-        RETURN_NULL();
-    }
-
-    // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_instance, wasm_instance_resource_number);
-
-    RETURN_RES(resource);
-}
-
-/**
- * Declare the parameter information for the
- * `wasm_get_function_signature` function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_function_signature, ZEND_RETURN_VALUE, ARITY(2), IS_ARRAY, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, NOT_NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_get_function_signature` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $instance = wasm_new_instance($bytes);
- * $signature = wasm_get_function_signature($instance, 'function_name');
- * // `$signature` is an array of `WASM_TYPE_*` constants. The first
- * // entries are for the inputs, the last entry is for the output.
- * ```
- */
-PHP_FUNCTION(wasm_get_function_signature)
-{
-    zval *wasm_instance_resource;
-    char *function_name;
-    size_t function_name_length;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
-        Z_PARAM_RESOURCE(wasm_instance_resource)
-        Z_PARAM_STRING(function_name, function_name_length)
-    ZEND_PARSE_PARAMETERS_END();
-
-    // Extract the Wasm instance from the resource.
-    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
-
-    if (NULL == wasm_instance) {
-        RETURN_NULL();
-    }
-
-    // Read all the export definitions (of all kinds).
-    wasmer_exports_t *wasm_exports = NULL;
-
-    wasmer_instance_exports(wasm_instance, &wasm_exports);
-
-    int number_of_exports = wasmer_exports_len(wasm_exports);
-
-    // There is no export definition.
-    if (number_of_exports == 0) {
-        wasmer_exports_destroy(wasm_exports);
-
-        RETURN_NULL();
-    }
-
-    // Look for a function of the given name in the export definitions.
-    const wasmer_export_func_t *wasm_function = NULL;
-
-    for (uint32_t nth = 0; nth < number_of_exports; ++nth) {
-        wasmer_export_t *wasm_export = wasmer_exports_get(wasm_exports, nth);
-        wasmer_import_export_kind wasm_export_kind = wasmer_export_kind(wasm_export);
-
-        // Not a function definition, let's continue.
-        if (wasm_export_kind != wasmer_import_export_kind::WASM_FUNCTION) {
-            continue;
-        }
-
-        // Read the export name.
-        wasmer_byte_array wasm_export_name = wasmer_export_name(wasm_export);
-
-        if (wasm_export_name.bytes_len != function_name_length) {
-            continue;
-        }
-
-        // Gotcha?
-        if (strncmp(function_name, (const char *) wasm_export_name.bytes, wasm_export_name.bytes_len) == 0) {
-            wasm_function = wasmer_export_to_func(wasm_export);
-
-            break;
-        }
-    }
-
-    // No function with the given name has been found.
-    if (wasm_function == NULL) {
-        wasmer_exports_destroy(wasm_exports);
-
-        RETURN_NULL();
-    }
-
-    // Read the number of inputs.
-    uint32_t wasm_function_inputs_arity;
-
-    if (wasmer_export_func_params_arity(wasm_function, &wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
-        RETURN_NULL();
-    }
-
-    // Prepare the result of this function.
-    array_init_size(return_value, wasm_function_inputs_arity + /* output */ 1);
-
-    // Read the input types.
-    wasmer_value_tag *wasm_function_input_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_inputs_arity);
-
-    if (wasmer_export_func_params(wasm_function, wasm_function_input_signatures, wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
-        free(wasm_function_input_signatures);
-
-        RETURN_NULL();
-    }
-
-    for (uint32_t nth = 0; nth < wasm_function_inputs_arity; ++nth) {
-        // Add to the result.
-        add_next_index_long(return_value, (zend_long) wasm_function_input_signatures[nth]);
-    }
-
-    free(wasm_function_input_signatures);
-
-    // Read the number of outputs.
-    uint32_t wasm_function_outputs_arity;
-
-    if (wasmer_export_func_returns_arity(wasm_function, &wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
-        RETURN_NULL();
-    }
-
-    // PHP only expects one output, i.e. out returned value.
-    if (wasm_function_outputs_arity == 0) {
-        RETURN_NULL();
-    }
-
-    // Read the output types.
-    wasmer_value_tag *wasm_function_output_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_outputs_arity);
-
-    if (wasmer_export_func_returns(wasm_function, wasm_function_output_signatures, wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
-        free(wasm_function_output_signatures);
-
-        RETURN_NULL();
-    }
-
-    // Add to the result.
-    add_next_index_long(return_value, (zend_long) wasm_function_output_signatures[0]);
-
-    free(wasm_function_output_signatures);
-    wasmer_exports_destroy(wasm_exports);
-
-    // The result is automatically returned (magic, see the `PHP_FUNCTION` macro).
-}
-
-/**
- * Information for the `wasm_value` resource.
- */
-const char* wasm_value_resource_name;
-int wasm_value_resource_number;
-
-/**
- * Extract the data structure inside the `wasm_value` resource.
- */
-wasmer_value_t *wasm_value_from_resource(zend_resource *wasm_value_resource)
-{
-    return (wasmer_value_t *) zend_fetch_resource(
-        wasm_value_resource,
-        wasm_value_resource_name,
-        wasm_value_resource_number
-    );
-}
-
-/**
- * Destructor for the `wasm_value` resource.
- */
-static void wasm_value_destructor(zend_resource *resource)
-{
-    wasmer_value_t *wasm_value = wasm_value_from_resource(resource);
-
-    if (wasm_value == NULL) {
-        return;
-    }
-
-    efree(wasm_value);
-}
-
-/**
- * Declare the parameter information for the `wasm_value` function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_value, ZEND_RETURN_VALUE, ARITY(2), IS_RESOURCE, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, type, IS_LONG, NOT_NULLABLE)
-    ZEND_ARG_INFO(0, value)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_value` function.
- *
- * # Usage
- *
- * ```php
- * $value = wasm_value(WASM_TYPE_I32, 7);
- * // `$value` is of type `resource of type (wasm_value)`.
- * ```
- */
-PHP_FUNCTION(wasm_value)
-{
-    zend_long value_type;
-    zval *value;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
-        Z_PARAM_LONG(value_type)
-        Z_PARAM_ZVAL(value)
-    ZEND_PARSE_PARAMETERS_END();
-
-    if (value_type < 0) {
-        RETURN_NULL();
-    }
-
-    // Convert the value to a `wasmer_value_tag`. It is expected to
-    // receive a `WASM_TYPE_*` constant.
-    wasmer_value_tag type = (wasmer_value_tag) (uint32_t) value_type;
-    wasmer_value_t *wasm_value = (wasmer_value_t *) emalloc(sizeof(wasmer_value_t));
-
-    // Convert the PHP value to a `wasm_value_t`.
-    if (type == wasmer_value_tag::WASM_I32) {
-        wasm_value->tag = type;
-        wasm_value->value.I32 = (int32_t) value->value.lval;
-    } else if (type == wasmer_value_tag::WASM_I64) {
-        wasm_value->tag = type;
-        wasm_value->value.I64 = (int64_t) value->value.lval;
-    } else if (type == wasmer_value_tag::WASM_F32) {
-        wasm_value->tag = type;
-        wasm_value->value.F32 = (float) value->value.dval;
-    } else if (type == wasmer_value_tag::WASM_F64) {
-        wasm_value->tag = type;
-        wasm_value->value.F64 = (double) value->value.dval;
-    }
-    // Invalid value type provided.
-    else {
-        efree(wasm_value);
-
-        RETURN_NULL();
-    }
-
-    // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_value, wasm_value_resource_number);
-
-    RETURN_RES(resource);
-}
-
-/**
- * Declare the parameter information for the `wasm_invoke_function`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_invoke_function, ZEND_RETURN_VALUE, ARITY(3), _IS_NUMBER, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, NOT_NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, NOT_NULLABLE)
-    ZEND_ARG_ARRAY_INFO(0, inputs, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_invoke_function` function.
- *
- * # Usage
- *
- * ```php
- * $bytes = wasm_fetch_bytes('my_program.wasm');
- * $instance = wasm_new_instance($bytes);
- *
- * // sum(1, 2)
- * $result = wasm_invoke_function(
- *     $instance,
- *     'sum',
- *     [
- *         wasm_value(WASM_TYPE_I32, 1),
- *         wasm_value(WASM_TYPE_I32, 2),
- *     ]
- * );
- * ```
- */
-PHP_FUNCTION(wasm_invoke_function)
-{
-    zval *wasm_instance_resource;
-    char *function_name;
-    size_t function_name_length;
-    HashTable *inputs;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 3, 3)
-        Z_PARAM_RESOURCE(wasm_instance_resource)
-        Z_PARAM_STRING(function_name, function_name_length)
-        Z_PARAM_ARRAY_HT(inputs)
-    ZEND_PARSE_PARAMETERS_END();
-
-    // Extract the Wasm instance from the resource.
-    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
-
-    if (NULL == wasm_instance) {
-        RETURN_NULL();
-    }
-
-    // Read the number of inputs.
-    size_t function_input_length = zend_hash_num_elements(inputs);
-
-    // Extract the input values from the `wasm_value` resources.
-    wasmer_value_t *function_inputs = (wasmer_value_t *) emalloc(sizeof(wasmer_value_t) * function_input_length);
-
-    {
-        zend_ulong key;
-        zval *value;
-
-        ZEND_HASH_FOREACH_NUM_KEY_VAL(inputs, key, value)
-            function_inputs[key] = *wasm_value_from_resource(Z_RES_P(value));
-        ZEND_HASH_FOREACH_END();
-    }
-
-    // PHP expects one output, i.e. returned value.
-    size_t function_output_length = 1;
-    wasmer_value_t output;
-    wasmer_value_t function_outputs[] = {output};
-
-    // Call the Wasm function.
-    wasmer_result_t function_call_result = wasmer_instance_call(
-        // Instance.
-        wasm_instance,
-        // Function name.
-        function_name,
-        // Inputs.
-        function_inputs,
-        function_input_length,
-        // Outputs.
-        function_outputs,
-        function_output_length
-    );
-
-    efree(function_inputs);
-
-    // Failed to call the Wasm function.
-    if (function_call_result != wasmer_result_t::WASMER_OK) {
-        RETURN_NULL();
-    }
-
-    // Read the first output, because PHP expects only one output, as
-    // said above.
-    wasmer_value_t function_output = function_outputs[0];
-
-    // Convert the Wasm value to a PHP value.
-    if (function_output.tag == wasmer_value_tag::WASM_I32) {
-        RETURN_LONG(function_output.value.I32);
-    } else if (function_output.tag == wasmer_value_tag::WASM_I64) {
-        RETURN_LONG(function_output.value.I64);
-    } else if (function_output.tag == wasmer_value_tag::WASM_F32) {
-        RETURN_DOUBLE(function_output.value.F32);
-    } else if (function_output.tag == wasmer_value_tag::WASM_F64) {
-        RETURN_DOUBLE(function_output.value.F64);
-    } else {
-        RETURN_NULL();
-    }
-}
-
-/**
- * Declare the parameter information for the `wasm_get_last_error`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_last_error, ZEND_RETURN_VALUE, ARITY(0), IS_STRING, NULLABLE)
-ZEND_END_ARG_INFO()
-
-/**
- * Declare the `wasm_get_last_error` function.
- *
- * # Usage
- *
- * ```php
- * $error = wasm_get_last_error();
- * ```
- */
-PHP_FUNCTION(wasm_get_last_error)
-{
-    ZEND_PARSE_PARAMETERS_NONE();
-
-    int error_message_length = wasmer_last_error_length();
-
-    if (error_message_length == 0) {
-        RETURN_NULL();
-    }
-
-    char *error_message = (char *) emalloc(error_message_length);
-    wasmer_last_error_message(error_message, error_message_length);
-
-    ZVAL_STRINGL(return_value, error_message, error_message_length - 1);
-}
-
-// Declare the functions with their information.
-static const zend_function_entry wasm_functions[] = {
-    PHP_FE(wasm_fetch_bytes,							arginfo_wasm_fetch_bytes)
-    PHP_FE(wasm_validate,								arginfo_wasm_validate)
-    PHP_FE(wasm_compile,								arginfo_wasm_compile)
-    PHP_FE(wasm_module_clean_up_persistent_resources,	arginfo_wasm_module_clean_up_persistent_resources)
-    PHP_FE(wasm_module_new_instance,					arginfo_wasm_module_new_instance)
-    PHP_FE(wasm_module_serialize,						arginfo_wasm_module_serialize)
-    PHP_FE(wasm_module_deserialize,						arginfo_wasm_module_deserialize)
-    PHP_FE(wasm_new_instance,							arginfo_wasm_new_instance)
-    PHP_FE(wasm_get_function_signature,					arginfo_wasm_get_function_signature)
-    PHP_FE(wasm_value,									arginfo_wasm_value)
-    PHP_FE(wasm_invoke_function,						arginfo_wasm_invoke_function)
-    PHP_FE(wasm_get_last_error,							arginfo_wasm_get_last_error)
-    PHP_FE_END
-};
-
-/**
  * Custom object for the `WasmArrayBuffer` class.
  */
 typedef struct {
@@ -1088,6 +52,9 @@ typedef struct {
 
     // The internal buffer length.
     size_t buffer_length;
+
+    // A flag to indicate whether the buffer has been allocated or not.
+    bool allocated_buffer;
 
     // The class instance, i.e. the object. It must be the last item
     // of the structure.
@@ -1116,6 +83,7 @@ static zend_object *create_wasm_array_buffer_object(zend_class_entry *class_entr
     );
     wasm_array_buffer->buffer = NULL;
     wasm_array_buffer->buffer_length = 0;
+    wasm_array_buffer->allocated_buffer = true;
 
     zend_object_std_init(&wasm_array_buffer->instance, class_entry);
     object_properties_init(&wasm_array_buffer->instance, class_entry);
@@ -1141,7 +109,8 @@ static void free_wasm_array_buffer_object(zend_object *object)
 {
     wasm_array_buffer_object *wasm_array_buffer_object = wasm_array_buffer_object_from_zend_object(object);
 
-    if (wasm_array_buffer_object->buffer != NULL) {
+    if (wasm_array_buffer_object->allocated_buffer &&
+        wasm_array_buffer_object->buffer != NULL) {
         free(wasm_array_buffer_object->buffer);
     }
 
@@ -1833,6 +802,1129 @@ static const zend_function_entry wasm_typed_array_methods[] = {
     PHP_ME_MAPPING(offsetSet,		WasmTypedArray_offset_set,		arginfo_wasmtypedarray_offset_set, ZEND_ACC_PUBLIC)
     PHP_ME_MAPPING(offsetExists,	WasmTypedArray_offset_exists,	arginfo_wasmtypedarray_offset_exists, ZEND_ACC_PUBLIC)
     PHP_ME_MAPPING(offsetUnset,		WasmTypedArray_offset_unset,	arginfo_wasmtypedarray_offset_unset, ZEND_ACC_PUBLIC)
+    PHP_FE_END
+};
+
+/**
+ * Utils.
+ */
+wasmer_value_tag from_zend_long_to_wasmer_value_tag(zend_long x)
+{
+    if (x > 0) {
+        return (wasmer_value_tag) (uint32_t) x;
+    } else {
+        return wasmer_value_tag::WASM_I32;
+    }
+}
+
+/**
+ * Information for the `wasm_bytes` resource.
+ */
+const char* wasm_bytes_resource_name;
+int wasm_bytes_resource_number;
+
+// Represents a `wasmer_byte_array` that is filled lazily. The bytes
+// are read from `file_path`.
+typedef struct wasm_lazy_byte_array_t wasm_lazy_byte_array;
+struct wasm_lazy_byte_array_t {
+private:
+    char* file_path;
+    wasmer_byte_array *byte_array;
+
+public:
+    wasm_lazy_byte_array_t(char* file_path) :
+        file_path(file_path),
+        byte_array(NULL)
+    {}
+
+    ~wasm_lazy_byte_array_t()
+    {
+        efree((uint8_t *) byte_array->bytes);
+    }
+
+    wasmer_byte_array *get_bytes()
+    {
+        if (byte_array == NULL) {
+            // Open the file.
+            FILE *wasm_file = fopen(file_path, "r");
+
+            if (wasm_file == NULL) {
+                return NULL;
+            }
+
+            // Read the file content.
+            fseek(wasm_file, 0, SEEK_END);
+
+            size_t wasm_file_length = ftell(wasm_file);
+            const uint8_t *wasm_bytes = (const uint8_t *) emalloc(wasm_file_length);
+            fseek(wasm_file, 0, SEEK_SET);
+
+            fread((uint8_t *) wasm_bytes, 1, wasm_file_length, wasm_file);
+
+            // Close the file.
+            fclose(wasm_file);
+
+            // Store the bytes of the Wasm file into a `wasmer_byte_array` structure.
+            byte_array = (wasmer_byte_array *) emalloc(sizeof(wasmer_byte_array));
+            byte_array->bytes = wasm_bytes;
+            byte_array->bytes_len = (uint32_t) wasm_file_length;
+        }
+
+        return byte_array;
+    }
+};
+
+/**
+ * Extract the data structure inside the `wasm_bytes` resource.
+ */
+wasmer_byte_array *wasm_bytes_from_resource(zend_resource *wasm_bytes_resource)
+{
+    wasm_lazy_byte_array *lazy_byte_array = (wasm_lazy_byte_array *) zend_fetch_resource(
+        wasm_bytes_resource,
+        wasm_bytes_resource_name,
+        wasm_bytes_resource_number
+    );
+
+    return lazy_byte_array->get_bytes();
+}
+
+/**
+ * Destructor for the `wasm_bytes` resource.
+ */
+static void wasm_bytes_destructor(zend_resource *resource)
+{
+    wasm_lazy_byte_array *lazy_byte_array = (wasm_lazy_byte_array *) zend_fetch_resource(
+        resource,
+        wasm_bytes_resource_name,
+        wasm_bytes_resource_number
+    );
+    free(lazy_byte_array);
+}
+
+/**
+ * Declare the parameter information for the `wasm_fetch_bytes` function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_fetch_bytes, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, file_path, IS_STRING, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_fetch_bytes` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * // `$bytes` is of type `resource of type (wasm_bytes)`.
+ * ```
+ *
+ * Important note: The bytes are fetched, not read, when the function
+ * is called. It means that the bytes are lazily read when other
+ * functions need it, like `wasm_validate`, `wasm_compile` and
+ * `wasm_new_instance`.
+ */
+PHP_FUNCTION(wasm_fetch_bytes)
+{
+    char *file_path;
+    size_t file_path_length;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_PATH(file_path, file_path_length)
+    ZEND_PARSE_PARAMETERS_END();
+
+    wasm_lazy_byte_array *wasm_lazy_byte_array = new ::wasm_lazy_byte_array(file_path);
+
+    // Store in and return the result as a resource.
+    zend_resource *resource = zend_register_resource((void *) wasm_lazy_byte_array, wasm_bytes_resource_number);
+
+    RETURN_RES(resource);
+}
+
+/**
+ * Declare the parameter information for the `wasm_validate`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_validate, ZEND_RETURN_VALUE, ARITY(1), _IS_BOOL, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_validate` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $valid = wasm_validate($bytes);
+ * ```
+ */
+PHP_FUNCTION(wasm_validate)
+{
+    zval *wasm_bytes_resource;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_bytes_resource)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the bytes from the resource.
+    wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
+
+    if (NULL == wasm_byte_array) {
+        RETURN_FALSE;
+    }
+
+    // Check whether the bytes are valid or not.
+    bool is_valid = wasmer_validate(wasm_byte_array->bytes, wasm_byte_array->bytes_len);
+
+    RETURN_BOOL(is_valid);
+}
+
+/**
+ * Information for the `wasm_module` resource.
+ */
+const char* wasm_module_resource_name;
+int wasm_module_resource_number;
+
+/**
+ * Extract the data structure inside the `wasm_module` resource.
+ */
+wasmer_module_t *wasm_module_from_resource(zend_resource *wasm_module_resource)
+{
+    return (wasmer_module_t *) zend_fetch_resource(
+        wasm_module_resource,
+        wasm_module_resource_name,
+        wasm_module_resource_number
+    );
+}
+
+/**
+ * Destructor for the `wasm_module` resource.
+ */
+static void wasm_module_destructor(zend_resource *resource)
+{
+    wasmer_module_t *wasm_module = wasm_module_from_resource(resource);
+
+    if (wasm_module == NULL) {
+        return;
+    }
+
+    wasmer_module_destroy(wasm_module);
+}
+
+/**
+ * Declare the parameter information for the `wasm_compile`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_compile, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_module_unique_identifier, IS_STRING, NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_compile` function.
+ *
+ * # Usage
+ *
+ * Classical usage:
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes);
+ * // `$module` is of type `resource of type (wasm_module)`.
+ * ```
+ *
+ * If one wants to avoid to recompile the module each time, it is
+ * possible to compute a persistent resource by passing a module
+ * unique identifier string, e.g.:
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes, 'foo');
+ * // `$module` is of type `resource of type (wasm_module)`, and persistent.
+ * ```
+ *
+ * In the case above, further execution will **not** fetch the bytes
+ * nor compile the module. Indeed, bytes are not fetched because they
+ * are lazily fetch on-demand, and the module will not be re-compiled
+ * because the resource is persistent.
+ */
+PHP_FUNCTION(wasm_compile)
+{
+    zval *wasm_bytes_resource;
+    zend_string *wasm_module_unique_identifier = NULL;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
+        Z_PARAM_RESOURCE(wasm_bytes_resource)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_STR_EX(wasm_module_unique_identifier, NULLABLE, 0);
+    ZEND_PARSE_PARAMETERS_END();
+
+    zend_string *resource_key = NULL;
+    bool persistent_wasm_module = false;
+
+    // The Wasm module resource will be persistent if there is a unique identifier.
+    if (wasm_module_unique_identifier != NULL) {
+        resource_key = zend_string_copy(wasm_module_unique_identifier);
+        persistent_wasm_module = true;
+    }
+
+    zend_resource *resource = NULL;
+
+    // Wasm module persistent resource look up.
+    if (persistent_wasm_module) {
+        resource = (zend_resource *) zend_hash_find_ptr(&EG(persistent_list), resource_key);
+    }
+
+    // Wasm module persistent resource is disabled, or it is not
+    // registered in the persistent resource registry.
+    if (resource == NULL) {
+        // Extract the bytes from the resource.
+        wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
+
+        if (NULL == wasm_byte_array) {
+            RETURN_NULL();
+        }
+
+        // Create a new Wasm module.
+        wasmer_module_t *wasm_module = NULL;
+        wasmer_result_t wasm_compilation_result = wasmer_compile(
+            &wasm_module,
+            // Bytes.
+            (uint8_t *) wasm_byte_array->bytes,
+            // Bytes length.
+            wasm_byte_array->bytes_len
+        );
+
+        // Compilation failed.
+        if (wasm_compilation_result != wasmer_result_t::WASMER_OK) {
+            free(wasm_module);
+
+            RETURN_NULL();
+        }
+
+        // Store the module in a persistent resource.
+        if (persistent_wasm_module) {
+            resource = zend_register_persistent_resource_ex(
+                resource_key,
+                (void *) wasm_module,
+                wasm_module_resource_number
+            );
+        }
+        // Store the module in a regular resource.
+        else {
+            resource = zend_register_resource((void *) wasm_module, wasm_module_resource_number);
+        }
+
+        if (resource == NULL) {
+            RETURN_NULL();
+        }
+    }
+    // The resource is already registered.
+    else {}
+
+    RETURN_RES(resource);
+}
+
+/**
+ * Clean up all persistent resources registered by this module.
+ */
+static int clean_up_persistent_resources(zval *hashmap_item)
+{
+    zend_resource *resource = Z_RES_P(hashmap_item);
+
+    if (resource->type == wasm_module_resource_number) {
+        wasm_module_destructor(resource);
+        return ZEND_HASH_APPLY_REMOVE;
+    }
+
+    return ZEND_HASH_APPLY_KEEP;
+}
+
+/**
+ * Iterate over the persistent resources list to clean up Wasm
+ * persistent resources.
+ */
+static void php_wasm_module_clean_up_persistent_resources()
+{
+    zend_hash_apply(&EG(persistent_list), (apply_func_t) clean_up_persistent_resources);
+}
+
+/**
+ * Declare the parameter information for the `wasm_module_clean_up_persistent_resources`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_clean_up_persistent_resources, ZEND_RETURN_VALUE, ARITY(0), IS_VOID, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_module_clean_up_persistent_resources` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes, 'foo');
+ * // The module is registered as a persistent resource.
+ *
+ * wasm_module_clean_up_persistent_resource();
+ *
+ * $module = wasm_compile($bytes, 'foo');
+ * // The module is registered as a persistent resource, again.
+ * ```
+ */
+PHP_FUNCTION(wasm_module_clean_up_persistent_resources)
+{
+    ZEND_PARSE_PARAMETERS_NONE();
+
+    // Clean up persistent resources.
+    php_wasm_module_clean_up_persistent_resources();
+}
+
+/**
+ * Declare the parameter information for the `wasm_module_serialize`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_serialize, ZEND_RETURN_VALUE, ARITY(1), IS_STRING, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_module_serialize` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes);
+ * $serialized_module = wasm_module_serialize($module);
+ * // `$serialized_module` is of type `string`.
+ * ```
+ */
+PHP_FUNCTION(wasm_module_serialize)
+{
+    zval *wasm_module_resource;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_module_resource)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the module from the resource.
+    wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
+
+    if (wasm_module == NULL) {
+        RETURN_NULL();
+    }
+
+    // Let's serialize the module.
+    wasmer_serialized_module_t *wasm_serialized_module = NULL;
+
+    if (wasmer_module_serialize(&wasm_serialized_module, wasm_module) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
+
+    // Extract the bytes from the serialized module.
+    wasmer_byte_array wasm_serialized_module_bytes = wasmer_serialized_module_bytes(wasm_serialized_module);
+
+    ZVAL_STRINGL(
+        return_value,
+        (char *) (uint8_t *) wasm_serialized_module_bytes.bytes,
+        wasm_serialized_module_bytes.bytes_len
+    );
+}
+
+/**
+ * Declare the parameter information for the `wasm_module_deserialize`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_deserialize, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_serialized_module, IS_STRING, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_module_deserialize` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes);
+ * $serialized_module = wasm_module_serialize($module);
+ * $module = wasm_module_deserialize($serialized_module);
+ * ```
+ */
+PHP_FUNCTION(wasm_module_deserialize)
+{
+    char *wasm_serialized_module_bytes;
+    size_t wasm_serialized_module_bytes_length;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_STRING(wasm_serialized_module_bytes, wasm_serialized_module_bytes_length)
+    ZEND_PARSE_PARAMETERS_END();
+
+    wasmer_serialized_module_t *wasm_serialized_module = NULL;
+
+    if (wasmer_serialized_module_from_bytes(&wasm_serialized_module, (const uint8_t *) wasm_serialized_module_bytes, wasm_serialized_module_bytes_length) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
+
+    wasmer_module_t *wasm_module = NULL;
+
+    if (wasmer_module_deserialize(&wasm_module, wasm_serialized_module) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
+
+    // Store in and return the result as a resource.
+    zend_resource *resource = zend_register_resource((void *) wasm_module, wasm_module_resource_number);
+
+    RETURN_RES(resource);
+}
+
+/**
+ * Information for the `wasm_instance` resource.
+ */
+const char* wasm_instance_resource_name;
+int wasm_instance_resource_number;
+
+/**
+ * Extract the data structure inside the `wasm_instance` resource.
+ */
+wasmer_instance_t *wasm_instance_from_resource(zend_resource *wasm_instance_resource)
+{
+    return (wasmer_instance_t *) zend_fetch_resource(
+        wasm_instance_resource,
+        wasm_instance_resource_name,
+        wasm_instance_resource_number
+    );
+}
+
+/**
+ * Destructor for the `wasm_instance` resource.
+ */
+static void wasm_instance_destructor(zend_resource *resource)
+{
+    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(resource);
+
+    if (wasm_instance == NULL) {
+        return;
+    }
+
+    wasmer_instance_destroy(wasm_instance);
+}
+
+/**
+ * Declare the parameter information for the
+ * `wasm_module_new_instance` function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_new_instance, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_module_new_instance` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $module = wasm_compile($bytes);
+ * $instance = wasm_module_new_instance($module);
+ * // `$instance` is of type `resource of type (wasm_instance)`.
+ * ```
+ *
+ * It is similar to running:
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $instance = wasm_new_instance($bytes);
+ * ```
+ */
+PHP_FUNCTION(wasm_module_new_instance)
+{
+    zval *wasm_module_resource;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_module_resource)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the module from the resource.
+    wasmer_module_t *wasm_module = wasm_module_from_resource(Z_RES_P(wasm_module_resource));
+
+    if (wasm_module == NULL) {
+        RETURN_NULL();
+    }
+
+    // Create a new Wasm instance.
+    wasmer_instance_t *wasm_instance = NULL;
+    wasmer_result_t wasm_instantiation_result = wasmer_module_instantiate(
+        // Module.
+        wasm_module,
+        // Instance.
+        &wasm_instance,
+        // Imports.
+        {},
+        // Imports length.
+        0
+    );
+
+    // Instantiation failed.
+    if (wasm_instantiation_result != wasmer_result_t::WASMER_OK) {
+        free(wasm_instance);
+
+        RETURN_NULL();
+    }
+
+    // Store in and return the result as a resource.
+    zend_resource *resource = zend_register_resource((void *) wasm_instance, wasm_instance_resource_number);
+
+    RETURN_RES(resource);
+}
+
+/**
+ * Declare the parameter information for the `wasm_new_instance`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_new_instance, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_new_instance` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $instance = wasm_new_instance($bytes);
+ * // `$instance` is of type `resource of type (wasm_instance)`.
+ * ```
+ *
+ * This function is a shortcut of `wasm_compile` +
+ * `wasm_module_new_instance`. It “hides” the module compilation step.
+ */
+PHP_FUNCTION(wasm_new_instance)
+{
+    zval *wasm_bytes_resource;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_bytes_resource)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the bytes from the resource.
+    wasmer_byte_array *wasm_byte_array = wasm_bytes_from_resource(Z_RES_P(wasm_bytes_resource));
+
+    if (NULL == wasm_byte_array) {
+        RETURN_NULL();
+    }
+
+    // Create a new Wasm instance.
+    wasmer_instance_t *wasm_instance = NULL;
+    wasmer_result_t wasm_instantiation_result = wasmer_instantiate(
+        &wasm_instance,
+        // Bytes.
+        (uint8_t *) wasm_byte_array->bytes,
+        // Bytes length.
+        wasm_byte_array->bytes_len,
+        // Imports.
+        {},
+        // Imports length.
+        0
+    );
+
+    // Instantiation failed.
+    if (wasm_instantiation_result != wasmer_result_t::WASMER_OK) {
+        free(wasm_instance);
+
+        RETURN_NULL();
+    }
+
+    // Store in and return the result as a resource.
+    zend_resource *resource = zend_register_resource((void *) wasm_instance, wasm_instance_resource_number);
+
+    RETURN_RES(resource);
+}
+
+/**
+ * Declare the parameter information for the
+ * `wasm_get_function_signature` function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_function_signature, ZEND_RETURN_VALUE, ARITY(2), IS_ARRAY, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_get_function_signature` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $instance = wasm_new_instance($bytes);
+ * $signature = wasm_get_function_signature($instance, 'function_name');
+ * // `$signature` is an array of `WASM_TYPE_*` constants. The first
+ * // entries are for the inputs, the last entry is for the output.
+ * ```
+ */
+PHP_FUNCTION(wasm_get_function_signature)
+{
+    zval *wasm_instance_resource;
+    char *function_name;
+    size_t function_name_length;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
+        Z_PARAM_RESOURCE(wasm_instance_resource)
+        Z_PARAM_STRING(function_name, function_name_length)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the Wasm instance from the resource.
+    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
+
+    if (wasm_instance == NULL) {
+        RETURN_NULL();
+    }
+
+    // Read all the export definitions (of all kinds).
+    wasmer_exports_t *wasm_exports = NULL;
+    wasmer_instance_exports(wasm_instance, &wasm_exports);
+
+    int number_of_exports = wasmer_exports_len(wasm_exports);
+
+    // There is no export definition.
+    if (number_of_exports == 0) {
+        wasmer_exports_destroy(wasm_exports);
+
+        RETURN_NULL();
+    }
+
+    // Look for a function of the given name in the export definitions.
+    const wasmer_export_func_t *wasm_function = NULL;
+
+    for (uint32_t nth = 0; nth < number_of_exports; ++nth) {
+        wasmer_export_t *wasm_export = wasmer_exports_get(wasm_exports, nth);
+        wasmer_import_export_kind wasm_export_kind = wasmer_export_kind(wasm_export);
+
+        // Not a function definition, let's continue.
+        if (wasm_export_kind != wasmer_import_export_kind::WASM_FUNCTION) {
+            continue;
+        }
+
+        // Read the export name.
+        wasmer_byte_array wasm_export_name = wasmer_export_name(wasm_export);
+
+        if (wasm_export_name.bytes_len != function_name_length) {
+            continue;
+        }
+
+        // Gotcha?
+        if (strncmp(function_name, (const char *) wasm_export_name.bytes, wasm_export_name.bytes_len) == 0) {
+            wasm_function = wasmer_export_to_func(wasm_export);
+
+            break;
+        }
+    }
+
+    // No function with the given name has been found.
+    if (wasm_function == NULL) {
+        wasmer_exports_destroy(wasm_exports);
+
+        RETURN_NULL();
+    }
+
+    // Read the number of inputs.
+    uint32_t wasm_function_inputs_arity;
+
+    if (wasmer_export_func_params_arity(wasm_function, &wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
+
+    // Prepare the result of this function.
+    array_init_size(return_value, wasm_function_inputs_arity + /* output */ 1);
+
+    // Read the input types.
+    wasmer_value_tag *wasm_function_input_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_inputs_arity);
+
+    if (wasmer_export_func_params(wasm_function, wasm_function_input_signatures, wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
+        free(wasm_function_input_signatures);
+
+        RETURN_NULL();
+    }
+
+    for (uint32_t nth = 0; nth < wasm_function_inputs_arity; ++nth) {
+        // Add to the result.
+        add_next_index_long(return_value, (zend_long) wasm_function_input_signatures[nth]);
+    }
+
+    free(wasm_function_input_signatures);
+
+    // Read the number of outputs.
+    uint32_t wasm_function_outputs_arity;
+
+    if (wasmer_export_func_returns_arity(wasm_function, &wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
+
+    // PHP only expects one output, i.e. out returned value.
+    if (wasm_function_outputs_arity == 0) {
+        RETURN_NULL();
+    }
+
+    // Read the output types.
+    wasmer_value_tag *wasm_function_output_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_outputs_arity);
+
+    if (wasmer_export_func_returns(wasm_function, wasm_function_output_signatures, wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
+        free(wasm_function_output_signatures);
+
+        RETURN_NULL();
+    }
+
+    // Add to the result.
+    add_next_index_long(return_value, (zend_long) wasm_function_output_signatures[0]);
+
+    free(wasm_function_output_signatures);
+    wasmer_exports_destroy(wasm_exports);
+
+    // The result is automatically returned (magic, see the `PHP_FUNCTION` macro).
+}
+
+/**
+ * Information for the `wasm_value` resource.
+ */
+const char* wasm_value_resource_name;
+int wasm_value_resource_number;
+
+/**
+ * Extract the data structure inside the `wasm_value` resource.
+ */
+wasmer_value_t *wasm_value_from_resource(zend_resource *wasm_value_resource)
+{
+    return (wasmer_value_t *) zend_fetch_resource(
+        wasm_value_resource,
+        wasm_value_resource_name,
+        wasm_value_resource_number
+    );
+}
+
+/**
+ * Destructor for the `wasm_value` resource.
+ */
+static void wasm_value_destructor(zend_resource *resource)
+{
+    wasmer_value_t *wasm_value = wasm_value_from_resource(resource);
+
+    if (wasm_value == NULL) {
+        return;
+    }
+
+    efree(wasm_value);
+}
+
+/**
+ * Declare the parameter information for the `wasm_value` function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_value, ZEND_RETURN_VALUE, ARITY(2), IS_RESOURCE, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, type, IS_LONG, NOT_NULLABLE)
+    ZEND_ARG_INFO(0, value)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_value` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $value = wasm_value(WASM_TYPE_I32, 7);
+ * // `$value` is of type `resource of type (wasm_value)`.
+ * ```
+ */
+PHP_FUNCTION(wasm_value)
+{
+    zend_long value_type;
+    zval *value;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
+        Z_PARAM_LONG(value_type)
+        Z_PARAM_ZVAL(value)
+    ZEND_PARSE_PARAMETERS_END();
+
+    if (value_type < 0) {
+        RETURN_NULL();
+    }
+
+    // Convert the value to a `wasmer_value_tag`. It is expected to
+    // receive a `WASM_TYPE_*` constant.
+    wasmer_value_tag type = (wasmer_value_tag) (uint32_t) value_type;
+    wasmer_value_t *wasm_value = (wasmer_value_t *) emalloc(sizeof(wasmer_value_t));
+
+    // Convert the PHP value to a `wasm_value_t`.
+    if (type == wasmer_value_tag::WASM_I32) {
+        wasm_value->tag = type;
+        wasm_value->value.I32 = (int32_t) value->value.lval;
+    } else if (type == wasmer_value_tag::WASM_I64) {
+        wasm_value->tag = type;
+        wasm_value->value.I64 = (int64_t) value->value.lval;
+    } else if (type == wasmer_value_tag::WASM_F32) {
+        wasm_value->tag = type;
+        wasm_value->value.F32 = (float) value->value.dval;
+    } else if (type == wasmer_value_tag::WASM_F64) {
+        wasm_value->tag = type;
+        wasm_value->value.F64 = (double) value->value.dval;
+    }
+    // Invalid value type provided.
+    else {
+        efree(wasm_value);
+
+        RETURN_NULL();
+    }
+
+    // Store in and return the result as a resource.
+    zend_resource *resource = zend_register_resource((void *) wasm_value, wasm_value_resource_number);
+
+    RETURN_RES(resource);
+}
+
+/**
+ * Declare the parameter information for the `wasm_invoke_function`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_invoke_function, ZEND_RETURN_VALUE, ARITY(3), _IS_NUMBER, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, function_name, IS_STRING, NOT_NULLABLE)
+    ZEND_ARG_ARRAY_INFO(0, inputs, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_invoke_function` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $instance = wasm_new_instance($bytes);
+ *
+ * // sum(1, 2)
+ * $result = wasm_invoke_function(
+ *     $instance,
+ *     'sum',
+ *     [
+ *         wasm_value(WASM_TYPE_I32, 1),
+ *         wasm_value(WASM_TYPE_I32, 2),
+ *     ]
+ * );
+ * ```
+ */
+PHP_FUNCTION(wasm_invoke_function)
+{
+    zval *wasm_instance_resource;
+    char *function_name;
+    size_t function_name_length;
+    HashTable *inputs;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 3, 3)
+        Z_PARAM_RESOURCE(wasm_instance_resource)
+        Z_PARAM_STRING(function_name, function_name_length)
+        Z_PARAM_ARRAY_HT(inputs)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the Wasm instance from the resource.
+    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
+
+    if (NULL == wasm_instance) {
+        RETURN_NULL();
+    }
+
+    // Read the number of inputs.
+    size_t function_input_length = zend_hash_num_elements(inputs);
+
+    // Extract the input values from the `wasm_value` resources.
+    wasmer_value_t *function_inputs = (wasmer_value_t *) emalloc(sizeof(wasmer_value_t) * function_input_length);
+
+    {
+        zend_ulong key;
+        zval *value;
+
+        ZEND_HASH_FOREACH_NUM_KEY_VAL(inputs, key, value)
+            function_inputs[key] = *wasm_value_from_resource(Z_RES_P(value));
+        ZEND_HASH_FOREACH_END();
+    }
+
+    // PHP expects one output, i.e. returned value.
+    size_t function_output_length = 1;
+    wasmer_value_t output;
+    wasmer_value_t function_outputs[] = {output};
+
+    // Call the Wasm function.
+    wasmer_result_t function_call_result = wasmer_instance_call(
+        // Instance.
+        wasm_instance,
+        // Function name.
+        function_name,
+        // Inputs.
+        function_inputs,
+        function_input_length,
+        // Outputs.
+        function_outputs,
+        function_output_length
+    );
+
+    efree(function_inputs);
+
+    // Failed to call the Wasm function.
+    if (function_call_result != wasmer_result_t::WASMER_OK) {
+        RETURN_NULL();
+    }
+
+    // Read the first output, because PHP expects only one output, as
+    // said above.
+    wasmer_value_t function_output = function_outputs[0];
+
+    // Convert the Wasm value to a PHP value.
+    if (function_output.tag == wasmer_value_tag::WASM_I32) {
+        RETURN_LONG(function_output.value.I32);
+    } else if (function_output.tag == wasmer_value_tag::WASM_I64) {
+        RETURN_LONG(function_output.value.I64);
+    } else if (function_output.tag == wasmer_value_tag::WASM_F32) {
+        RETURN_DOUBLE(function_output.value.F32);
+    } else if (function_output.tag == wasmer_value_tag::WASM_F64) {
+        RETURN_DOUBLE(function_output.value.F64);
+    } else {
+        RETURN_NULL();
+    }
+}
+
+/**
+ * Declare the parameter information for the
+ * `wasm_get_memory_buffer` function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_wasm_get_memory_buffer, ZEND_RETURN_REFERENCE, ARITY(1), WasmArrayBuffer, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_instance, IS_RESOURCE, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_get_memory_buffer` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $bytes = wasm_fetch_bytes('my_program.wasm');
+ * $instance = wasm_new_instance($bytes);
+ * $memory = wasm_get_memory_buffer($instance);
+ * ```
+ */
+PHP_FUNCTION(wasm_get_memory_buffer)
+{
+    zval *wasm_instance_resource;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_RESOURCE(wasm_instance_resource)
+    ZEND_PARSE_PARAMETERS_END();
+
+    // Extract the Wasm instance from the resource.
+    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
+
+    if (NULL == wasm_instance) {
+        RETURN_NULL();
+    }
+
+    // Read all the export definitions (of all kinds).
+    wasmer_exports_t *wasm_exports = NULL;
+    wasmer_instance_exports(wasm_instance, &wasm_exports);
+
+    int number_of_exports = wasmer_exports_len(wasm_exports);
+
+    // There is no export definition.
+    if (number_of_exports == 0) {
+        wasmer_exports_destroy(wasm_exports);
+
+        RETURN_NULL();
+    }
+
+    // Look for a memory in the export definitions.
+    wasmer_memory_t *wasm_memory = NULL;
+
+    for (uint32_t nth = 0; nth < number_of_exports; ++nth) {
+        wasmer_export_t *wasm_export = wasmer_exports_get(wasm_exports, nth);
+        wasmer_import_export_kind wasm_export_kind = wasmer_export_kind(wasm_export);
+
+        // Not a memory definition, let's continue.
+        if (wasm_export_kind != wasmer_import_export_kind::WASM_MEMORY) {
+            continue;
+        }
+
+        // Get the memory instance from the export.
+        if (wasmer_export_to_memory(wasm_export, &wasm_memory) != wasmer_result_t::WASMER_OK) {
+            break;
+        }
+
+        break;
+    }
+
+    // Gotcha?
+    if (wasm_memory == NULL) {
+        wasmer_exports_destroy(wasm_exports);
+
+        RETURN_NULL();
+    }
+
+    uint8_t *wasm_memory_data = wasmer_memory_data(wasm_memory);
+    uint32_t wasm_memory_data_length = wasmer_memory_data_length(wasm_memory);
+
+    zend_object *wasm_array_buffer = create_wasm_array_buffer_object(wasm_array_buffer_class_entry);
+    wasm_array_buffer_object *wasm_array_buffer_object = wasm_array_buffer_object_from_zend_object(wasm_array_buffer);
+
+    wasm_array_buffer_object->buffer = (int8_t *) wasm_memory_data;
+    wasm_array_buffer_object->buffer_length = (size_t) wasm_memory_data_length;
+    wasm_array_buffer_object->allocated_buffer = false;
+
+    ZVAL_OBJ(return_value, &wasm_array_buffer_object->instance);
+}
+
+/**
+ * Declare the parameter information for the `wasm_get_last_error`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_get_last_error, ZEND_RETURN_VALUE, ARITY(0), IS_STRING, NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `wasm_get_last_error` function.
+ *
+ * # Usage
+ *
+ * ```php
+ * $error = wasm_get_last_error();
+ * ```
+ */
+PHP_FUNCTION(wasm_get_last_error)
+{
+    ZEND_PARSE_PARAMETERS_NONE();
+
+    int error_message_length = wasmer_last_error_length();
+
+    if (error_message_length == 0) {
+        RETURN_NULL();
+    }
+
+    char *error_message = (char *) emalloc(error_message_length);
+    wasmer_last_error_message(error_message, error_message_length);
+
+    ZVAL_STRINGL(return_value, error_message, error_message_length - 1);
+}
+
+// Declare the functions with their information.
+static const zend_function_entry wasm_functions[] = {
+    PHP_FE(wasm_fetch_bytes,							arginfo_wasm_fetch_bytes)
+    PHP_FE(wasm_validate,								arginfo_wasm_validate)
+    PHP_FE(wasm_compile,								arginfo_wasm_compile)
+    PHP_FE(wasm_module_clean_up_persistent_resources,	arginfo_wasm_module_clean_up_persistent_resources)
+    PHP_FE(wasm_module_new_instance,					arginfo_wasm_module_new_instance)
+    PHP_FE(wasm_module_serialize,						arginfo_wasm_module_serialize)
+    PHP_FE(wasm_module_deserialize,						arginfo_wasm_module_deserialize)
+    PHP_FE(wasm_new_instance,							arginfo_wasm_new_instance)
+    PHP_FE(wasm_get_function_signature,					arginfo_wasm_get_function_signature)
+    PHP_FE(wasm_value,									arginfo_wasm_value)
+    PHP_FE(wasm_invoke_function,						arginfo_wasm_invoke_function)
+    PHP_FE(wasm_get_memory_buffer,						arginfo_wasm_get_memory_buffer)
+    PHP_FE(wasm_get_last_error,							arginfo_wasm_get_last_error)
     PHP_FE_END
 };
 

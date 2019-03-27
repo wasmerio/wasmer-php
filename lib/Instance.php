@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Wasm;
 
 use RuntimeException;
+use WasmArrayBuffer;
 
 /**
  * The `Instance` class allows to compile WebAssembly bytes into a module, and
@@ -31,6 +32,11 @@ class Instance
      * The Wasm instance.
      */
     protected $wasmInstance;
+
+    /**
+     * A Wasm buffer over the instance memory if any.
+     */
+    protected $wasmMemoryBuffer;
 
     /**
      * Compiles and instantiates a WebAssembly binary file.
@@ -92,6 +98,30 @@ class Instance
                 }
             }
         };
+    }
+
+    /**
+     * Returns an array buffer over the instance memory if any.
+     *
+     * It is recommended to combine the array buffer with typed arrays
+     * `Wasm\TypedArray`.
+     *
+     * # Examples
+     *
+     * ```php,ignore
+     * $instance = new Wasm\Instance('my_program.wasm');
+     * $memory = $instance->getMemoryBuffer();
+     *
+     * assert($memory instanceof WasmArrayBuffer);
+     * ```
+     */
+    public function getMemoryBuffer(): ?WasmArrayBuffer
+    {
+        if (null === $this->wasmMemoryBuffer) {
+            $this->wasmMemoryBuffer = wasm_get_memory_buffer($this->wasmInstance);
+        }
+
+        return $this->wasmMemoryBuffer;
     }
 
     /**

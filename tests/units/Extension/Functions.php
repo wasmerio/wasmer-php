@@ -793,6 +793,20 @@ class Functions extends Suite
                     ->isEqualTo('Hello, World!');
     }
 
+    public function test_wasm_get_memory_buffer_with_no_exported_memory()
+    {
+        $this
+            ->given(
+                $wasmBytes = wasm_fetch_bytes(dirname(__DIR__) . '/no_memory.wasm'),
+                $wasmInstance = wasm_new_instance($wasmBytes),
+                $stringPointer = wasm_invoke_function($wasmInstance, 'string', [])
+            )
+            ->when($memory = wasm_get_memory_buffer($wasmInstance))
+            ->then
+                ->variable($memory)
+                    ->isNull();
+    }
+
     public function test_wasm_get_last_error()
     {
         $this

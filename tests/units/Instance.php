@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace Wasm\Tests\Units;
 
 use RuntimeException;
+use Wasm as LUT;
+use WasmArrayBuffer;
 use Wasm\Instance as SUT;
 use Wasm\InvocationException;
 use Wasm\Tests\Suite;
@@ -76,6 +78,40 @@ class Instance extends Suite
                     "An error happened while compiling or instantiating the module `$filePath`:\n" .
                     "    error instantiating"
                 );
+    }
+
+    public function test_get_memory_buffer()
+    {
+        $this
+            ->given(
+                $wasmInstance = new SUT(self::FILE_PATH),
+                $stringPointer = $wasmInstance->string()
+            )
+            ->when($result = $wasmInstance->getMemoryBuffer())
+            ->then
+                ->object($result)
+                    ->isInstanceOf(WasmArrayBuffer::class)
+
+            ->let($string = '')
+            ->when(
+                function () use ($result, $stringPointer, &$string) {
+                    $view = new LUT\Uint8Array($result, $stringPointer);
+
+                    $this
+                        ->integer($view->getOffset())
+                            ->isEqualTo($stringPointer);
+
+                    $nth = 0;
+
+                    while (0 !== $view[$nth]) {
+                        $string .= chr($view[$nth]);
+                        ++$nth;
+                    }
+                }
+            )
+            ->then
+                ->string($string)
+                    ->isEqualTo('Hello, World!');
     }
 
     public function test_basic_sum()
@@ -208,5 +244,15 @@ class Instance extends Suite
             ->then
                 ->integer($result)
                     ->isEqualTo(1);
+    }
+
+    public function test_call_string()
+    {
+        $this
+            ->given($wasmInstance = new SUT(self::FILE_PATH))
+            ->when($result = $wasmInstance->string())
+            ->then
+                ->integer($result)
+                    ->isEqualTo(1048576);
     }
 }

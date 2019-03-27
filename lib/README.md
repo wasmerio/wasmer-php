@@ -244,7 +244,7 @@ entries are for the inputs, the last entry is for the output.
 
 ### Function `wasm_value`
 
-Compile a PHP value into a WebAssembly value:
+Compiles a PHP value into a WebAssembly value:
 
 ```php
 $value = wasm_value(WASM_TYPE_I32, 7);
@@ -272,6 +272,32 @@ $result = wasm_invoke_function(
 ```
 
 This function returns the result of the invoked function.
+
+### Function `wasm_get_memory_buffer`
+
+Returns an `WasmArrayBuffer` with the instance memory as the buffer.
+
+```php
+$bytes = wasm_fetch_bytes('my_program.wasm');
+$instance = wasm_new_instance($bytes);
+$pointer = wasm_invoke_function($instance, 'function_returning_a_pointer_to_a_string', []);
+
+// Get a memory buffer.
+$memory = wasm_get_memory_buffer($instance);
+
+// Get a view over the memory buffer.
+$view = new WasmUint8Array($memory, $pointer);
+
+// Read the memory to, for instance, read a NUL-terminated ASCII string.
+$nth = 0;
+
+while (0 !== $view[$nth]) {
+    echo chr($view[$nth]);
+    ++$nth;
+}
+
+echo "\n";
+```
 
 ### Function `wasm_get_last_error`
 

@@ -4,14 +4,16 @@ declare(strict_types = 1);
 
 $bytes = wasm_fetch_bytes(__DIR__ . '/memory.wasm');
 $instance = wasm_new_instance($bytes);
-$result = wasm_invoke_function($instance, 'return_hello', []);
+$pointer = wasm_invoke_function($instance, 'return_hello', []);
 
 $memory = wasm_get_memory_buffer($instance);
-$view = new WasmInt8Array($memory);
+$view = new WasmUint8Array($memory, $pointer);
 
-$nth = $result;
+$nth = 0;
 
 while (0 !== $view[$nth]) {
     echo chr($view[$nth]);
     ++$nth;
 }
+
+echo "\n";

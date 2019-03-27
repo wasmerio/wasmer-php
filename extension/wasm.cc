@@ -1195,6 +1195,8 @@ ZEND_END_ARG_INFO()
  * $bytes = wasm_fetch_bytes('my_program.wasm');
  * $instance = wasm_new_instance($bytes);
  * $memory = wasm_get_memory_buffer($instance);
+ * $view = new WasmUint8Array($memory);
+ * // enjoy!
  * ```
  */
 PHP_FUNCTION(wasm_get_memory_buffer)
@@ -1238,30 +1240,34 @@ PHP_FUNCTION(wasm_get_memory_buffer)
         }
 
         // Get the memory instance from the export.
-        if (wasmer_export_to_memory(wasm_export, &wasm_memory) != wasmer_result_t::WASMER_OK) {
+        if (wasmer_export_to_memory(wasm_export, &wasm_memory) == wasmer_result_t::WASMER_OK) {
             break;
         }
-
-        break;
     }
+
+    wasmer_exports_destroy(wasm_exports);
 
     // Gotcha?
     if (wasm_memory == NULL) {
-        wasmer_exports_destroy(wasm_exports);
-
         RETURN_NULL();
     }
 
+    // Get the memory data and its length.
     uint8_t *wasm_memory_data = wasmer_memory_data(wasm_memory);
     uint32_t wasm_memory_data_length = wasmer_memory_data_length(wasm_memory);
 
+    // Create a `WasmArrayBuffer` object.
     zend_object *wasm_array_buffer = create_wasm_array_buffer_object(wasm_array_buffer_class_entry);
     wasm_array_buffer_object *wasm_array_buffer_object = wasm_array_buffer_object_from_zend_object(wasm_array_buffer);
 
+    // Set the internal buffer of `WasmArrayBuffer`.
     wasm_array_buffer_object->buffer = (int8_t *) wasm_memory_data;
     wasm_array_buffer_object->buffer_length = (size_t) wasm_memory_data_length;
+
+    // Do not free the buffer, it's not allocated by PHP.
     wasm_array_buffer_object->allocated_buffer = false;
 
+    // Return the `WasmArrayBuffer` instance.
     ZVAL_OBJ(return_value, &wasm_array_buffer_object->instance);
 }
 

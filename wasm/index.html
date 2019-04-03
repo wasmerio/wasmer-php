@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+
+<html lang="en" prefix="og: http://ogp.me/ns#">
+    <head>
+        <base href="./../" />
+        <title>Index of Wasm from php-ext-wasm</title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta http-equiv="content-type" content="text/javascript; charset=utf-8" />
+        <meta http-equiv="content-type" content="text/css; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="preload" href="./css/main.css" as="style" />
+        <link rel="preload" href="./javascript/prism.js" as="script" />
+        <link rel="preload" href="./javascript/prism-hooks.js" as="script" />
+        <link rel="preload" href="./javascript/search.elm.js" as="script" />
+        <link rel="preload" href="./javascript/search-index.js" as="script" />
+        <link rel="preload" href="./javascript/search-metadata.js" as="script" />
+        <link rel="preload" href="./javascript/application.js" as="script" />
+
+        <link rel="stylesheet" href="./css/main.css" media="all" />
+        <link rel="stylesheet" href="./css/prism.css" media="all" />
+
+        <link rel="icon" type="image/png" href="./resource/logo_32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="./resource/logo_192x192.png" sizes="192x192" />
+
+        <meta name="generator" content="Kitab (https://hoa-project.net/)" />
+        <meta name="description" content="Index of Wasm from php-ext-wasm">
+
+        <meta property="og:title" content="Index of Wasm from php-ext-wasm" />
+        <meta property="og:type" content="website" />
+        <meta proprery="og:image" content="https://github.com/wasmerio.png" />
+
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:creator" content="@hoaproject" />
+        <meta name="twitter:text:title" content="Index of Wasm from php-ext-wasm" />
+        <meta name="twitter:image:src" content="https://github.com/wasmerio.png" />
+        <meta name="twitter:image:alt" content="php-ext-wasm" />
+    </head>
+    <body>
+        <div id="search" role="search">
+            <div>
+                <input type="search" placeholder="Initializing search…" disabled />
+            </div>
+        </div>
+
+        <main>
+            <aside>
+    <header>
+        <a href="./">
+            <img src="https://github.com/wasmerio.png" alt="Home" />
+        </a>
+    </header>
+
+    <nav>
+                    <h1>Home</h1>
+        
+        <h2>Namespaces</h2>
+
+        <ul class="list--flat">
+                            <li><a href="./wasm/index.html"><code>Wasm</code></a></li>
+                    </ul>
+    </nav>
+</aside>
+
+<article>
+    <h1>Namespace <code>Wasm</code></h1>
+
+            <section class="entity__description"><h1>The <code>Wasm</code> library</h1>
+<p>The <code>Wasm</code> library is a layer on top of the <code>php-ext-wasm</code> extension
+that brings more safety and a more user-friendly API.</p>
+<p>This section lists API provided by the <code>Wasm</code> library. The entry is
+<a href="./wasm/Instance.html"><code>Wasm\Instance</code></a>.</p>
+<h2>Quick example</h2>
+<p>Let's go through a very quick example. Let's assume this Rust program:</p>
+<pre><code class="language-rust">#[no_mangle]
+pub extern fn sum(x: i32, y: i32) -&gt; i32 {
+    x + y
+}
+</code></pre>
+<p>Once compiled to a WebAssembly binary named <code>my_program.wasm</code>, it is
+possible to run within PHP as follows:</p>
+<pre><code class="language-php,ignore">$instance = new Wasm\Instance('my_program.wasm');
+$result = $instance-&gt;sum(1, 2);
+
+var_dump($result); // int(3)
+</code></pre>
+<p>This example above calls a function <code>sum</code> that is exported from
+<code>my_program.wasm</code>.</p>
+<h2>The life pattern of a WebAssembly binary, and the API</h2>
+<p>A WebAssembly file is only a sequence of bytes. In order to get a
+running WebAssembly program:</p>
+<ol>
+<li>These bytes must be compiled into a module,</li>
+<li>The module must be instantiated.</li>
+</ol>
+<p>The <a href="./wasm/Module.html"><code>Wasm\Module</code></a> represents a module. The <a href="./wasm/Instance.html"><code>Wasm\Instance</code></a> represents
+an instance of a module.</p>
+<p>So, one can write:</p>
+<pre><code class="language-php">$module = new Wasm\Module('my_program.wasm');
+$instance = $module-&gt;instantiate();
+$result = $instance-&gt;sum(1, 2);
+</code></pre>
+<p>Or, alternatively, when having a module is not necessary, one can
+write:</p>
+<pre><code class="language-php">$instance = new Wasm\Instance('my_program.wasm');
+$result = $instance-&gt;sum(1, 2);
+</code></pre>
+<p>Why would one want to get a module? For two reasons:</p>
+<ol>
+<li>It can be persistent across multiple PHP requests, thus saving the cost of
+the compilation,</li>
+<li>It can be serialized, and thus can be stored in a cache, also to save the
+cost of the compilation but with the cost of the deserialization.</li>
+</ol>
+<p>The bytes compilation to a module can be costly depending of the size of your
+WebAssembly program, and the <a href="https://github.com/wasmerio/wasmer/tree/master/lib#backends">runtime
+backend</a> (LLVM,
+Cranelift etc.).</p>
+<p>See the <a href="./wasm/Module.html"><code>Wasm\Module</code></a> constructor to see how to get a persistent module; hint:</p>
+<pre><code class="language-php">$module = new Wasm\Module('my_program.wasm.', Wasm\Module::PERSISTENT);
+</code></pre>
+<p>See <a href="./wasm/cache/index.html">the cache API</a> to learn about how to serialize a
+module.</p>
+<h1>The <code>php-ext-wasm</code> raw API</h1>
+<p>This section presents the raw API provided by the <code>php-ext-wasm</code>
+extension. The entire <code>Wasm</code> library is based on this API.</p>
+<h3>Function <code>wasm_fetch_bytes</code></h3>
+<p>Fetches bytes from a WebAssembly file:</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+</code></pre>
+<p>This function returns a resource of type <code>wasm_bytes</code>.</p>
+<p><strong>⚠️ Important note</strong>: Bytes are not read when the function is called,
+but when the resource is used, for instance in functions like
+<code>wasm_validate</code>, <code>wasm_compile</code> or <code>wasm_instance</code>.</p>
+<h3>Function <code>wasm_validate</code></h3>
+<p>Validates bytes from the <code>wasm_fetch_bytes</code> function:</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+
+if (false === wasm_validate($bytes)) {
+    echo 'The program seems corrupted.';
+}
+</code></pre>
+<p>This function returns <code>true</code> when the bytes are valid, <code>false</code>
+otherwise.</p>
+<h3>Function <code>wasm_compile</code></h3>
+<p>Compiles bytes into a WebAssembly module.</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+</code></pre>
+<p>This function returns a resource of type <code>wasm_module</code>.</p>
+<h4>Persistent modules</h4>
+<p>By default, each call reads the bytes and compiles them to a new
+WebAssembly module. To avoid compiling several times the same module,
+one can use the second argument:
+<code>$wasm_module_unique_identifier</code>. When this argument is a non-null
+string, then the returned resource will be persistent across PHP
+requests. It means that n+1 calls to <code>wasm_compile</code> with the same
+value for <code>$wasm_module_unique_identifier</code> will return the same module
+resource as the first call. Modules are destroyed when PHP is
+interrupted, so when <code>php</code> terminates, or when <code>php-cgi</code> or <code>php-fpm</code>
+restart for instance.</p>
+<p>Let's see:</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$module_unique_identifier = 'foobar';
+$module = wasm_compile($bytes, $module_unique_identifier);
+// All executions will return the exact same resource of type `wasm_module`.
+</code></pre>
+<p>Because bytes are read lazily, the <code>my_program.wasm</code> file will be
+opened and read only once for the first call, and not read for the
+next calls (because the resource is persistent, and the bytes are not
+needed if the module already exists). A side-effect is that if the
+file changes, it will have no effect, i.e. it will ignored.</p>
+<p>See also the <code>wasm_module_clean_up_persistent_resources</code> function.</p>
+<h3>Function <code>wasm_module_clean_up_persistent_resources</code></h3>
+<p>Cleans up the persistent <code>wasm_module</code> resources (see the
+<code>wasm_compile</code> function and its second argument
+<code>$wasm_module_unique_identifier</code>).</p>
+<pre><code class="language-php">wasm_module_clean_up_persistent_resources();
+</code></pre>
+<p><strong>⚠️ Important note</strong>: This function calls the destructor of all
+persistent <code>wasm_module</code> resources. It means that all resources will
+be destructed across all PHP request executions. In other words, if a
+PHP request execution runs concurrently to another one, then this
+other execution will see its modules destructed during its execution,
+which is… bad and can lead to unexpected dramatic behaviors. This
+function must be used in rare cases when one need to reset the
+persistent resources, and when <strong>zero PHP requests are running</strong>.</p>
+<h3>Function <code>wasm_module_serialize</code></h3>
+<p>Serializes a module into a PHP string (technically a sequence of
+bytes):</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+$serialized_module = wasm_module_serialize($module);
+</code></pre>
+<p>This function returns a string.</p>
+<h3>Function <code>wasm_module_deserialize</code></h3>
+<p>Deserializes a module from a PHP string (technically a sequence of
+bytes):</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+$serialized_module = wasm_module_serialize($module);
+unset($module);
+
+$module = wasm_module_deserialize($module);
+$instance = wasm_module_new_instance($module);
+// life continues.
+</code></pre>
+<p>This function returns a resource of type <code>wasm_module</code>.</p>
+<h3>Function <code>wasm_module_new_instance</code></h3>
+<p>Instantiates a WebAssembly module:</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+$instance = wasm_module_new_instance($module);
+</code></pre>
+<p>This function returns a resource of type <code>wasm_instance</code>.</p>
+<h3>Function <code>wasm_new_instance</code></h3>
+<p>Compiles and instantiates WebAssembly bytes:</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$instance = wasm_new_instance($bytes);
+</code></pre>
+<p>This function returns a resource of type <code>wasm_instance</code>.</p>
+<p>This function combines <code>wasm_compile</code> and
+<code>wasm_module_new_instance</code>. It “hides” the module.</p>
+<h3>Function <code>wasm_get_function_signature</code></h3>
+<p>Returns the signature of an exported function:</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$instance = wasm_new_instance($bytes);
+$signature = wasm_get_function_signature($instance, 'function_name');
+</code></pre>
+<p>This function returns an array of <code>WASM_TYPE_*</code> constants. The first
+entries are for the inputs, the last entry is for the output.</p>
+<h3>Function <code>wasm_value</code></h3>
+<p>Compiles a PHP value into a WebAssembly value:</p>
+<pre><code class="language-php">$value = wasm_value(WASM_TYPE_I32, 7);
+</code></pre>
+<p>This function returns a resource of type <code>wasm_value</code>.</p>
+<h3>Function <code>wasm_invoke_function</code></h3>
+<p>Invokes a function that lives in the WebAssembly program.</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$instance = wasm_new_instance($bytes);
+
+// sum(1, 2)
+$result = wasm_invoke_function(
+    $instance,
+    'sum',
+    [
+        wasm_value(WASM_TYPE_I32, 1),
+        wasm_value(WASM_TYPE_I32, 2),
+    ]
+);
+</code></pre>
+<p>This function returns the result of the invoked function.</p>
+<h3>Function <code>wasm_get_memory_buffer</code></h3>
+<p>Returns an <code>WasmArrayBuffer</code> with the instance memory as the buffer.</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$instance = wasm_new_instance($bytes);
+$pointer = wasm_invoke_function($instance, 'function_returning_a_pointer_to_a_string', []);
+
+// Get a memory buffer.
+$memory = wasm_get_memory_buffer($instance);
+
+// Get a view over the memory buffer.
+$view = new WasmUint8Array($memory, $pointer);
+
+// Read the memory to, for instance, read a NUL-terminated ASCII string.
+$nth = 0;
+
+while (0 !== $view[$nth]) {
+    echo chr($view[$nth]);
+    ++$nth;
+}
+
+echo &quot;\n&quot;;
+</code></pre>
+<h3>Function <code>wasm_get_last_error</code></h3>
+<p>Reads the last error if any:</p>
+<pre><code class="language-php">$bytes = wasm_fetch_bytes('my_program.wasm');
+$instance = wasm_new_instance($bytes);
+
+// sum(1) — one argument is missing!
+$result = wasm_invoke_function(
+    $instance,
+    'sum',
+    [wasm_value(WASM_TYPE_I32, 1)]
+);
+
+if (false === $result) {
+    echo wasm_get_last_error();
+    // Call error: Parameters of type [I32] did not match signature [I32, I32] -&gt; [I32]
+}
+</code></pre>
+<p>This function returns the error message if any.</p>
+<h3>Class <code>WasmArrayBuffer</code></h3>
+<p>This class represents a buffer of bytes. It will be used to manipulate
+the memory of a WebAssembly instance.</p>
+<p>The class looks like this:</p>
+<pre><code class="language-php">final class WasmArrayBuffer
+{
+    public function __construct(int $byte_length);
+    public function getByteLength(): int;
+}
+</code></pre>
+<h3>Classes <code>WasmTypedArray</code></h3>
+<p><code>WasmTypedArray</code> is a generic name to represent classes that act as
+array-like views over a <code>WasmArrayBuffer</code>.</p>
+<p>| Class | View buffer as a sequence of… | Bytes per element |
+|-|-|-|
+| <code>WasmInt8Array</code> | <code>int8</code> | 1 |
+| <code>WasmUint8Array</code> | <code>uint8</code> | 1 |
+| <code>WasmInt16Array</code> | <code>int16</code> | 2 |
+| <code>WasmUint16Array</code> | <code>uint16</code> | 2 |
+| <code>WasmInt32Array</code> | <code>int32</code> | 4 |
+| <code>WasmUint32Array</code> | <code>uint32</code> | 4 |</p>
+<p>They all share the same implementation. Taking the example of
+<code>WasmUint8Array</code>, it looks like this:</p>
+<pre><code class="language-php">final class WasmUint8Array implements ArrayAccess
+{
+    public const BYTES_PER_ELEMENT;
+    
+    public function __construct(WasmArrayBuffer $wasm_array_buffer, int $offset = 0, int $length = 0);
+    public function getOffset(): int;
+    public function getLength(): int;
+
+    /* For `ArrayAccess` */
+    public function offsetGet($offset): int;
+    public function offsetSet($offset, $value): void;
+    public function offsetExists($offset): bool;
+    public function offsetUnset($offset): void;
+}
+</code></pre>
+<p>Usage example:</p>
+<pre><code class="language-php">$wasmArrayBuffer = new WasmArrayBuffer(256);
+$int8 = new WasmInt8Array($wasmArrayBuffer);
+$int16 = new WasmInt16Array($wasmArrayBuffer);
+$int32 = new WasmInt32Array($wasmArrayBuffer);
+
+                b₁
+             ┌┬┬┬┬┬┬┐
+$int8[0] = 0b00000001;
+                b₂
+             ┌┬┬┬┬┬┬┐
+$int8[1] = 0b00000100;
+                b₃
+             ┌┬┬┬┬┬┬┐
+$int8[2] = 0b00010000;
+                b₄
+             ┌┬┬┬┬┬┬┐
+$int8[3] = 0b01000000;
+
+// No surprise with the following assertions.
+                         b₁
+                      ┌┬┬┬┬┬┬┐
+assert($int8[0] === 0b00000001);
+                         b₂
+                      ┌┬┬┬┬┬┬┐
+assert($int8[1] === 0b00000100);
+                         b₃
+                      ┌┬┬┬┬┬┬┐
+assert($int8[2] === 0b00010000);
+                         b₄
+                      ┌┬┬┬┬┬┬┐
+assert($int8[3] === 0b01000000);
+
+// The `int16` view read 2 bytes.
+                          b₂      b₁
+                       ┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐
+assert($int16[0] === 0b0000010000000001);
+                          b₄      b₃
+                       ┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐
+assert($int16[1] === 0b0100000000010000);
+
+// The `int32` view reads 4 bytes.
+                          b₄      b₃      b₂      b₁
+                       ┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐
+assert($int32[0] === 0b01000000000100000000010000000001);
+</code></pre>
+<p>Notice that <code>WasmTypedArray</code> treats bytes in little-endian, as
+required by the WebAssembly specification, <a href="https://webassembly.github.io/spec/core/syntax/instructions.html#memory-instructions">Chapter Structure, Section
+Instructions, Sub-Section Memory
+Instructions</a>:</p>
+<blockquote>
+<p>All values are read and written in <a href="https://en.wikipedia.org/wiki/Endianness#Little-endian">little
+endian</a> byte
+order.</p>
+</blockquote>
+</section>
+    
+            <h2 id="classes">Classes</h2>
+
+        <ul class="list--table">
+                            <li>
+                    <a href="./wasm/Instance.html"><code>Instance</code></a>
+                    <p>The <code>Instance</code> class allows to compile WebAssembly bytes into a module, and
+instantiate the module directly. Then, it is possible to call exported
+functions with a user-friendly API.</p>
+                </li>
+                            <li>
+                    <a href="./wasm/InvocationException.html"><code>InvocationException</code></a>
+                    <p>An <code>InvocationException</code> exception is thrown when a function is invoked on
+a Wasm instance, and failed.</p>
+                </li>
+                            <li>
+                    <a href="./wasm/Int16Array.html"><code>Int16Array</code></a>
+                    <p>Represents a typed array of twos-complement 16-bit signed integers in
+little-endian.</p>
+                </li>
+                            <li>
+                    <a href="./wasm/Uint8Array.html"><code>Uint8Array</code></a>
+                    <p>Represents a typed array of twos-complement 8-bit unsigned integers.</p>
+                </li>
+                            <li>
+                    <a href="./wasm/Int32Array.html"><code>Int32Array</code></a>
+                    <p>Represents a typed array of twos-complement 32-bit signed integers in
+little-endian.</p>
+                </li>
+                            <li>
+                    <a href="./wasm/Uint16Array.html"><code>Uint16Array</code></a>
+                    <p>Represents a typed array of twos-complement 16-bit unsigned integers in
+little-endian.</p>
+                </li>
+                            <li>
+                    <a href="./wasm/Int8Array.html"><code>Int8Array</code></a>
+                    <p>Represents a typed array of twos-complement 8-bit signed integers.</p>
+                </li>
+                            <li>
+                    <a href="./wasm/Module.html"><code>Module</code></a>
+                    <p>The <code>Module</code> class allows to compile WebAssembly bytes into a WebAssembly
+module.</p>
+                </li>
+                            <li>
+                    <a href="./wasm/Uint32Array.html"><code>Uint32Array</code></a>
+                    <p>Represents a typed array of twos-complement 32-bit unsigned integers in
+little-endian.</p>
+                </li>
+                    </ul>
+    
+            <h2 id="interfaces">Interfaces</h2>
+
+        <ul class="list--table">
+                            <li>
+                    <a href="./wasm/TypedArray.html"><code>TypedArray</code></a>
+                    <p>Represents all the <code>WasmTypedArray</code> classes.</p>
+                </li>
+                    </ul>
+    
+    
+    
+            <h2 id="namespaces">Namespaces</h2>
+
+        <ul>
+                            <li><a href="./wasm/cache/index.html"><code>Cache</code></a></li>
+                    </ul>
+    </article>
+        </main>
+
+        <script src="./javascript/prism.js"></script>
+        <script src="./javascript/prism-hooks.js"></script>
+        <script src="./javascript/search.elm.js" defer></script>
+        <script src="./javascript/search-index.js" defer></script>
+        <script src="./javascript/search-metadata.js" defer></script>
+        <script src="./javascript/application.js" defer></script>
+    </body>
+</html>

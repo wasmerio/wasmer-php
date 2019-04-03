@@ -1,6 +1,25 @@
-# 🐘+🦀+🕸️ = PHP `ext-wasm`
+<p align="center">
+  <a href="https://wasmer.io" target="_blank" rel="noopener noreferrer">
+    <img width="400" src="https://raw.githubusercontent.com/wasmerio/wasmer/master/logo.png" alt="Wasmer logo">
+  </a>
+</p>
 
-_This is only experimental right now_.
+<p align="center">
+  <a href="https://spectrum.chat/wasmer">
+    <img src="https://withspectrum.github.io/badge/badge.svg" alt="Join the Wasmer Community">
+  </a>
+  <a href="https://wasmerio.github.io/php-ext-wasm/wasm/">
+    <img src="https://img.shields.io/badge/documentation-API-ff0066.svg" alt="Read our API documentation">
+  </a>
+  <a href="https://packagist.org/packages/php-wasm/php-wasm">
+      <img src="https://img.shields.io/packagist/dt/php-wasm/php-wasm.svg" alt="Packagist" />
+  </a>
+  <a href="https://github.com/wasmerio/wasmer/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/wasmerio/wasmer.svg" alt="License">
+  </a>
+</p>
+
+# 🐘+🦀+🕸️ The PHP extension to run WebAssembly
 
 The goal of the project is to be able to run WebAssembly binaries from
 PHP directly. So much fun coming!
@@ -128,7 +147,7 @@ The `php-ext-wasm` extension provides a raw API around
 WebAssembly. The `Wasm` library is a layer on top of `php-ext-wasm` to
 provide more safety and a more user-friendly API.
 
-See the [API documentations with examples](./lib/README.md).
+See the [API documentations with examples](https://wasmerio.github.io/php-ext-wasm/wasm/).
 
 To compile the entire project, run the following commands:
 

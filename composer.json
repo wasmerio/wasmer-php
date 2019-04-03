@@ -1,5 +1,5 @@
 {
-    "name": "php/wasm",
+    "name": "php-wasm/php-wasm",
     "description": "Run WebAssembly binaries safely with the `php-ext-wasm` extension.",
     "type": "library",
     "keywords": ["library", "php", "webassembly", "wasm", "extension"],

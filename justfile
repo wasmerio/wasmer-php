@@ -27,6 +27,10 @@ php:
 test-php:
 	composer test
 
+# Generate the documentation.
+doc:
+	composer doc
+
 # Local Variables:
 # mode: makefile
 # End:

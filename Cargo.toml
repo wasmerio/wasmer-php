@@ -1,6 +1,6 @@
 [package]
 name = "php-ext-wasm"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Ivan Enderlin <ivan.enderlin@hoa-project.net>"]
 edition = "2018"
 

@@ -13,7 +13,4 @@ categories = ["wasm"]
 [lib]
 
 [dependencies]
-wasmer-runtime-c-api = { git = "https://github.com/wasmerio/wasmer", branch = "master" }
-
-[build-dependencies]
-walkdir = "2.2"
+wasmer-runtime-c-api = "0.3.0"

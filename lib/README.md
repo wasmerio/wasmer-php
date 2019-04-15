@@ -406,7 +406,7 @@ assert($int8[2] === 0b00010000);
                       ┌┬┬┬┬┬┬┐
 assert($int8[3] === 0b01000000);
 
-// The `int16` view read 2 bytes.
+// The `int16` view reads 2 bytes.
                           b₂      b₁
                        ┌┬┬┬┬┬┬┐┌┬┬┬┬┬┬┐
 assert($int16[0] === 0b0000010000000001);

@@ -170,7 +170,7 @@ class Instance
         if ($diff > 0) {
             throw new InvocationException(
                 "Missing $diff argument(s) when calling `$name`: " .
-                "Expect $number_of_expected_arguments arguments, " .
+                "Expect $number_of_expected_arguments argument(s), " .
                 "given $number_of_given_arguments."
             );
         } elseif ($diff < 0) {
@@ -178,7 +178,7 @@ class Instance
 
             throw new InvocationException(
                 "Given $diff extra argument(s) when calling `$name`: " .
-                "Expect $number_of_expected_arguments arguments, " .
+                "Expect $number_of_expected_arguments argument(s), " .
                 "given $number_of_given_arguments."
             );
         }

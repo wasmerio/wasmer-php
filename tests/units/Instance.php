@@ -149,7 +149,7 @@ class Instance extends Suite
                 ->isInstanceOf(InvocationException::class)
                 ->hasMessage(
                     'Missing 1 argument(s) when calling `sum`: ' .
-                    'Expect 2 arguments, given 1.'
+                    'Expect 2 argument(s), given 1.'
                 );
     }
 
@@ -165,7 +165,7 @@ class Instance extends Suite
                 ->isInstanceOf(InvocationException::class)
                 ->hasMessage(
                     'Given 1 extra argument(s) when calling `sum`: ' .
-                    'Expect 2 arguments, given 3.'
+                    'Expect 2 argument(s), given 3.'
                 );
     }
 

@@ -24,7 +24,7 @@ php:
 	make install
 
 # Run PHP tests.
-test-php:
+test:
 	composer test
 
 # Generate the documentation.

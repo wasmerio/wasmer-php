@@ -25,7 +25,15 @@ php:
 
 # Run PHP tests.
 test:
-	composer test
+	#!/usr/bin/env bash
+	PHP_PREFIX_BIN=$(php-config --prefix)/bin
+	$PHP_PREFIX_BIN/php $(which composer) test
+
+# Run PHP benchmarks.
+bench:
+	#!/usr/bin/env bash
+	PHP_PREFIX_BIN=$(php-config --prefix)/bin
+	$PHP_PREFIX_BIN/php $(which composer) bench
 
 # Generate the documentation.
 doc:

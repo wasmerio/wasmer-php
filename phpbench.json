@@ -1,0 +1,13 @@
+{
+    "bootstrap": "vendor/autoload.php",
+    "php_config": {
+        "extension": [ "wasm.so" ]
+    },
+    "path": "benchmarks/",
+    "reports": {
+        "default": {
+            "extends": "aggregate",
+            "cols": ["subject", "params", "revs", "its", "mem_peak", "mean", "mode", "best", "rstdev"]
+        }
+    }
+}

@@ -22,7 +22,8 @@
     },
     "require-dev": {
         "atoum/atoum": "^3.3",
-        "hoa/kitab": "^0.12"
+        "hoa/kitab": "^0.12",
+        "phpbench/phpbench": "^0.16.9"
     },
     "autoload": {
         "psr-4": {
@@ -35,6 +36,7 @@
     },
     "scripts": {
         "test": "vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal",
+        "bench": "php -d extension=wasm vendor/bin/phpbench run --report default --ansi",
         "doc": "php -d extension=wasm vendor/bin/kitab compile --with-composer --with-project-name=php-ext-wasm --with-logo-url='https://github.com/wasmerio.png' --output-directory doc lib"
     }
 }

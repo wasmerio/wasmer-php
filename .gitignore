@@ -1,5 +1,4 @@
+/composer.lock
 /doc
 /target/
 /vendor/
-Cargo.lock
-composer.lock

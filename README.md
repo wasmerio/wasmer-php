@@ -19,7 +19,7 @@
   </a>
 </p>
 
-# 🐘+🦀+🕸️ The PHP extension to run WebAssembly
+# The PHP extension to run WebAssembly
 
 The goal of the project is to be able to run WebAssembly binaries from
 PHP directly. So much fun coming!
@@ -79,14 +79,18 @@ versions](https://getcomposer.org/doc/04-schema.md#package-links) (see
 
 ### As fast as possible
 
-Since version 0.2.0, `php-ext-wasm` uses [the `wasmer`
-library](https://github.com/wasmerio/wasmer). It is 28x times faster than the
-previous library ([`wasmi`](https://github.com/paritytech/wasmi), see
-[#5](https://github.com/wasmerio/php-ext-wasm/pull/5#issuecomment-470958749) for more
-information).
+We are working on being as fast as native code (see [this blog post to
+learn more][wasmi-to-wasmer]). So far, the extension provides a faster
+execution than PHP itself. With the `nbody` benchmark, the
+`php-ext-wasm` is 9.5 times faster than pure PHP:
 
-It is still possible to improve the performance. We are working on it
-right now. After some more work, we want to publish a benchmark.
+| subject | mean | mode | best | rstdev |
+|--|-:|-:|-:|-:|
+| `wasm_extension` | 2,009.335μs | 1,991.778μs | 1,968.595μs | 2.17% |
+| `pure_php` | 19,714.738μs | 19,143.083μs | 18,853.399μs | 3.58% |
+
+
+[wasmi-to-wasmer]: https://medium.com/wasmer/php-ext-wasm-migrating-from-wasmi-to-wasmer-4d1014f41c88
 
 ### Safety first
 

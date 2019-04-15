@@ -1,6 +1,6 @@
 {
     "name": "wasm",
-    "description": "Run WebAssembly binaries safely."
+    "description": "Run WebAssembly binaries safely.",
     "type": "extension",
     "license": "BSD-3-Clause",
     "authors": [
@@ -8,9 +8,5 @@
             "name": "Ivan Enderlin",
             "email": "ivan.enderlin@hoa-project.net"
         }
-    ],
-    "support": {
-        "email": "ivan.enderlin@hoa-project.net",
-        "chat": "https://spectrum.chat/wasmer"
-    },
+    ]
 }

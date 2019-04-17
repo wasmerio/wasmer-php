@@ -68,7 +68,7 @@ jobs:
           name: Test the extension
           command: |
             export PATH="$HOME/.cargo/bin:$PATH"
-            composer install
+            composer install --no-progress
             vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal --use-dot-report
 
 

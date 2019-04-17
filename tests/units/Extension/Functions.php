@@ -437,38 +437,6 @@ class Functions extends Suite
                     ->isEqualTo('Resource id #-1');
     }
 
-    public function test_wasm_compile_with_an_unique_identifier_boost_performances()
-    {
-        $this
-            // First compilation.
-            ->given(
-                $timeA = microtime(true),
-                $wasmBytes = wasm_fetch_bytes(self::FILE_PATH),
-                $wasmModuleIdentifier = __METHOD__,
-                $wasmModule = wasm_compile($wasmBytes, $wasmModuleIdentifier),
-                $timeB = microtime(true)
-            )
-
-            // Second compilation. Must be way faster because a module unique
-            // identifier has been passed, and thus the module resource will
-            // be persistent.
-            ->given(
-                $timeC = microtime(true),
-                $wasmModule = wasm_compile($wasmBytes, $wasmModuleIdentifier),
-                $timeD = microtime(true)
-            )
-
-            // Calculate the speedup.
-            ->when($result = ($timeB - $timeA) / ($timeD - $timeC))
-            ->then
-                ->float($result)
-                    ->isGreaterThan(
-                        5000, // This is an arbritary value, it just represents a threshold.
-                        'If this is failing, it means that the bytes are read, ' .
-                        'and that the module is compiled again, which is not good.'
-                    );
-    }
-
     public function test_wasm_module_serialize()
     {
         $this

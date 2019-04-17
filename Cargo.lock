@@ -570,7 +570,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "php-ext-wasm"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "wasmer-runtime-c-api 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

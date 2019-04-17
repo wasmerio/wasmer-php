@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Install Rust
           command: |
-            test -d /usr/local/cargo || curl https://sh.rustup.rs -sSf | sh
+            test -d /usr/local/cargo || curl https://sh.rustup.rs -sSf | sh -s -- -y
 
       # Install `just` used to manage the project.
       - run:

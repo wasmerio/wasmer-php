@@ -17,7 +17,8 @@ php:
 	#!/usr/bin/env bash
 	set -euo pipefail
 	cd extension
-	export CXX="clang++ -stdlib=libc++"
+	test -f libwasmer_runtime_c_api.a && rm libwasmer_runtime_c_api.a
+	ln -s ../target/release/deps/libwasmer_runtime_c_api-*.a libwasmer_runtime_c_api.a
 	PHP_PREFIX_BIN=$(php-config --prefix)/bin
 	$PHP_PREFIX_BIN/phpize --clean
 	$PHP_PREFIX_BIN/phpize

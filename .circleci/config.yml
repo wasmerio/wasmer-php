@@ -46,7 +46,8 @@ jobs:
           name: Compile and install the PHP extension
           command: |
             export PATH="$HOME/.cargo/bin:$PATH"
-            sudo apt-get install clang++
+            sudo apt-get install gcc
+            export CXX="gcc"
             just php
 
       # Run the extension test suites.

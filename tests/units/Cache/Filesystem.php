@@ -243,11 +243,13 @@ class Filesystem extends Suite
 
     private function directory()
     {
-        $directory =
-            sys_get_temp_dir() . DIRECTORY_SEPARATOR .
-            'php-ext-wasm' . DIRECTORY_SEPARATOR .
-            'tests' . DIRECTORY_SEPARATOR .
-            uniqid() . '-' . uniqid();
+        do {
+            $directory =
+                sys_get_temp_dir() . DIRECTORY_SEPARATOR .
+                'php-ext-wasm' . DIRECTORY_SEPARATOR .
+                'tests' . DIRECTORY_SEPARATOR .
+                uniqid() . '-' . uniqid();
+        } while(true === is_dir($directory));
 
         mkdir($directory, 0777, true);
 

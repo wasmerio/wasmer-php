@@ -1,4 +1,5 @@
 /composer.lock
 /doc
+/extension/libwasmer_runtime_c_api.a
 /target/
 /vendor/

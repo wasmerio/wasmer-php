@@ -69,7 +69,7 @@ jobs:
           command: |
             export PATH="$HOME/.cargo/bin:$PATH"
             composer install
-            just test
+            vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal --use-dot-report
 
 
 # List of workflows.

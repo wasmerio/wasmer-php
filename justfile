@@ -17,6 +17,7 @@ php:
 	#!/usr/bin/env bash
 	set -euo pipefail
 	cd extension
+	export CXX="clang++ -stdlib=libc++"
 	PHP_PREFIX_BIN=$(php-config --prefix)/bin
 	$PHP_PREFIX_BIN/phpize --clean
 	$PHP_PREFIX_BIN/phpize

@@ -45,12 +45,15 @@ jobs:
       - run:
           name: Compile and install the PHP extension
           command: |
+            export PATH="$HOME/.cargo/bin:$PATH"
+            sudo apt-get install clang++
             just php
 
       # Run the extension test suites.
       - run:
           name: Test the extension
           command: |
+            export PATH="$HOME/.cargo/bin:$PATH"
             composer install
             just test
 

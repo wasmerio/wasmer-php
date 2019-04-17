@@ -22,7 +22,8 @@ jobs:
       - run:
           name: Install just
           command: |
-            test -f /usr/local/cargo/bin/just || cargo install just
+            export PATH="$HOME/.cargo/bin:$PATH"
+            test -f $HOME/.cargo/bin/just || cargo install just
 
       # Install Composer.
       - run:
@@ -31,12 +32,13 @@ jobs:
             php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
             php composer-setup.php
             php -r "unlink('composer-setup.php');"
+            mv composer.phar composer
 
       # Compile the Rust part of the extension.
       - run:
           name: Compile the Rust part of the PHP extension
           command: |
-            export PATH="/usr/local/cargo/bin:$PATH"
+            export PATH="$HOME/.cargo/bin:$PATH"
             just rust
 
       # Compile and install the PHP extension.

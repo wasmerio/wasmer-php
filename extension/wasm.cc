@@ -16,53 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include "php.h"
-#include "ext/standard/info.h"
-#include "zend_exceptions.h"
-#include "Zend/zend_interfaces.h"
-#include "php_wasm.h"
-#include "wasmer.hh"
-
-#if defined(PHP_WIN32)
-#  include "win32/php_stdint.h"
-#elif defined(HAVE_STDINT_H)
-#  include <stdint.h>
-#endif
-
-// Constant to represent a not nullable (return) type.
-#define NOT_NULLABLE 0
-
-// Constant to represent a nullable (return) type.
-#define NULLABLE 1
-
-// Syntactic sugar to represent the arity of a function in
-// `ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX`.
-#define ARITY(n) n
-
-/**
- * Custom object for the `WasmArrayBuffer` class.
- */
-typedef struct {
-    // The internal buffer.
-    int8_t *buffer;
-
-    // The internal buffer length.
-    size_t buffer_length;
-
-    // A flag to indicate whether the buffer has been allocated or not.
-    bool allocated_buffer;
-
-    // The class instance, i.e. the object. It must be the last item
-    // of the structure.
-    zend_object instance;
-} wasm_array_buffer_object;
-
-zend_class_entry *wasm_array_buffer_class_entry;
-zend_object_handlers wasm_array_buffer_class_entry_handlers;
+#include "wasm.hh"
 
 /**
  * Gets the `wasm_array_buffer_object` pointer from a `zend_object` pointer.
@@ -116,9 +70,6 @@ static void free_wasm_array_buffer_object(zend_object *object)
 
     zend_object_std_dtor(object);
 }
-
-// Shortcut to get `$this` in a `WasmArrayBuffer` method.
-#define WASM_ARRAY_BUFFER_OBJECT_THIS() wasm_array_buffer_object_from_zend_object(Z_OBJ_P(getThis()))
 
 /**
  * Declare the parameter information for the
@@ -203,12 +154,6 @@ wasmer_value_tag from_zend_long_to_wasmer_value_tag(zend_long x)
         return wasmer_value_tag::WASM_I32;
     }
 }
-
-/**
- * Information for the `wasm_bytes` resource.
- */
-const char* wasm_bytes_resource_name;
-int wasm_bytes_resource_number;
 
 // Represents a `wasmer_byte_array` that is filled lazily. The bytes
 // are read from `file_path`.
@@ -365,12 +310,6 @@ PHP_FUNCTION(wasm_validate)
 
     RETURN_BOOL(is_valid);
 }
-
-/**
- * Information for the `wasm_module` resource.
- */
-const char* wasm_module_resource_name;
-int wasm_module_resource_number;
 
 /**
  * Extract the data structure inside the `wasm_module` resource.
@@ -665,12 +604,6 @@ PHP_FUNCTION(wasm_module_deserialize)
 
     RETURN_RES(resource);
 }
-
-/**
- * Information for the `wasm_instance` resource.
- */
-const char* wasm_instance_resource_name;
-int wasm_instance_resource_number;
 
 /**
  * Extract the data structure inside the `wasm_instance` resource.
@@ -972,12 +905,6 @@ PHP_FUNCTION(wasm_get_function_signature)
 
     // The result is automatically returned (magic, see the `PHP_FUNCTION` macro).
 }
-
-/**
- * Information for the `wasm_value` resource.
- */
-const char* wasm_value_resource_name;
-int wasm_value_resource_number;
 
 /**
  * Extract the data structure inside the `wasm_value` resource.
@@ -1322,69 +1249,6 @@ static const zend_function_entry wasm_functions[] = {
 };
 
 /**
- * All types of `WasmTypedArray` views.
- */
-typedef enum {
-    INT8,
-    UINT8,
-    INT16,
-    UINT16,
-    INT32,
-    UINT32
-} wasm_typed_array_kind;
-
-/**
- * Custom object for the `WasmTypedArray` classes. `WasmTypedArray` is
- * a generic name used here to represent all classes like
- * `WasmInt8Array`, `WasmUint8Array` etc. All these classes share the
- * same implementation.
- */
-typedef struct {
-    // The type of the typed array. Set by the `create_object` class
-    // entry item.
-    wasm_typed_array_kind kind;
-
-    // The internal `WasmArrayBuffer`. Set by the `__construct`
-    // method.
-    zval *wasm_array_buffer;
-
-    // The offset over the buffer, i.e. start reading the internal
-    // buffer at this offset. Set by the `__construct` method.
-    size_t offset;
-
-    // The length of the view, i.e. read the internal buffer from the
-    // offset to this length. Set by the `__construct` method.
-    size_t length;
-
-    // The buffer view over this `wasm_array_buffer`. Set by the
-    // `__construct` method.
-    union {
-        int8_t *as_int8;
-        uint8_t *as_uint8;
-        int16_t *as_int16;
-        uint16_t *as_uint16;
-        int32_t *as_int32;
-        uint32_t *as_uint32;
-    } view;
-
-    // The class instance, i.e. the object. It must be the last item
-    // of the structure.
-    zend_object instance;
-} wasm_typed_array_object;
-
-/**
- * Class entries for the `WasmTypeArray` classes. The all share the
- * same implementation, i.e. they use the same class entry handlers.
- */
-zend_class_entry *wasm_typed_array_int8_class_entry;
-zend_class_entry *wasm_typed_array_uint8_class_entry;
-zend_class_entry *wasm_typed_array_int16_class_entry;
-zend_class_entry *wasm_typed_array_uint16_class_entry;
-zend_class_entry *wasm_typed_array_int32_class_entry;
-zend_class_entry *wasm_typed_array_uint32_class_entry;
-zend_object_handlers wasm_typed_array_class_entry_handlers;
-
-/**
  * Gets the `wasm_typed_array_object` pointer from a `zend_object` pointer.
  */
 static inline wasm_typed_array_object *wasm_typed_array_object_from_zend_object(zend_object *object)
@@ -1459,9 +1323,6 @@ static void free_wasm_typed_array_object(zend_object *object)
 
     zend_object_std_dtor(object);
 }
-
-// Shortcut to get `$this` in a `WasmTypedArray` method.
-#define WASM_TYPED_ARRAY_OBJECT_THIS() wasm_typed_array_object_from_zend_object(Z_OBJ_P(getThis()))
 
 /**
  * Declare the parameter information for the

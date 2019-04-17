@@ -91,35 +91,6 @@ class Module extends Suite
                 );
     }
 
-    public function test_constructor_persistent_module()
-    {
-        $this
-            // First compilation.
-            ->given(
-                $timeA = microtime(true),
-                $module = new SUT(self::FILE_PATH, SUT::PERSISTENT),
-                $timeB = microtime(true)
-            )
-
-            // Second compilation. Must be way faster because the module is
-            // persistent.
-            ->given(
-                $timeC = microtime(true),
-                $module = new SUT(self::FILE_PATH, SUT::PERSISTENT),
-                $timeD = microtime(true)
-            )
-
-            // Calculate the speedup.
-            ->when($result = ($timeB - $timeA) / ($timeD - $timeC))
-            ->then
-                ->float($result)
-                    ->isGreaterThan(
-                        300, // This is an arbritary value, it just represents a threshold.
-                        'If this is failing, it means that the bytes are read, ' .
-                        'and that the module is compiled again, which is not good.'
-                    );
-    }
-
     public function test_instantiate()
     {
         $this

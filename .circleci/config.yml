@@ -2,10 +2,8 @@ version: 2.1
 
 # List of all jobs.
 jobs:
-  # Build the project.
-  # All the tools are put in the cache, so that it's easier for other
-  # jobs to do stuff.
-  build:
+  # Build and test the project the project.
+  build_and_test:
     docker:
       - image: circleci/php:latest
     steps:
@@ -81,8 +79,8 @@ workflows:
   # The build workflow.
   build:
     jobs:
-      # Run the `build` job for all branches and all tags.
-      - build:
+      # Run the `build_and_test` job for all branches and all tags.
+      - build_and_test:
           filters:
             branches:
               only: /.*/

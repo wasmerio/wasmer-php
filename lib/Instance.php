@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Wasm;
 
+use Exception;
 use RuntimeException;
 use WasmArrayBuffer;
 
@@ -142,95 +143,16 @@ class Instance
      */
     public function __call(string $name, array $arguments)
     {
-        $signature = wasm_get_function_signature($this->wasmInstance, $name);
-
-        if (null === $signature) {
-            $error = wasm_get_last_error();
-
-            if (null === $error) {
-                throw new InvocationException("Function `$name` does not exist.");
-            } else {
-                throw new InvocationException("Cannot invoke the function `$name` because: $error.");
-            }
-        }
-
-        $number_of_expected_arguments = count($signature) - 1;
-        $number_of_given_arguments = count($arguments);
-        $diff = $number_of_expected_arguments - $number_of_given_arguments;
-
-        if ($diff > 0) {
-            throw new InvocationException(
-                "Missing $diff argument(s) when calling `$name`: " .
-                "Expect $number_of_expected_arguments argument(s), " .
-                "given $number_of_given_arguments."
+        try {
+            $result = wasm_invoke_function(
+                $this->wasmInstance,
+                $name,
+                $arguments
             );
-        } elseif ($diff < 0) {
-            $diff = abs($diff);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
 
-            throw new InvocationException(
-                "Given $diff extra argument(s) when calling `$name`: " .
-                "Expect $number_of_expected_arguments argument(s), " .
-                "given $number_of_given_arguments."
-            );
-        }
-
-        $wasmArguments = [];
-
-        foreach ($arguments as $i => $argument) {
-            $s = $i + 1;
-
-            switch ($signature[$i]) {
-                case I32:
-                    if (!is_int($argument)) {
-                        throw new InvocationException("Argument #$s of `$name` must be a `i32` (integer).");
-                    }
-
-                    $wasmArguments[] = wasm_value(I32, $argument);
-
-                    break;
-
-                case I64:
-                    if (!is_int($argument)) {
-                        throw new InvocationException("Argument #$s of `$name` must be a `i64` (integer).");
-                    }
-
-                    $wasmArguments[] = wasm_value(I64, $argument);
-
-                    break;
-
-                case F32:
-                    if (!is_float($argument)) {
-                        throw new InvocationException("Argument #$s of `$name` must be a `f32` (float).");
-                    }
-
-                    $wasmArguments[] = wasm_value(F32, $argument);
-
-                    break;
-
-                case F64:
-                    if (!is_float($argument)) {
-                        throw new InvocationException("Argument #$s of `$name` must be a `f64` (float).");
-                    }
-
-                    $wasmArguments[] = wasm_value(F64, $argument);
-
-                    break;
-
-                default:
-                    throw new InvocationException("Unknown argument type `$signature[$i]` at position #$s of `$name`.");
-            }
-        }
-
-        $result = wasm_invoke_function(
-            $this->wasmInstance,
-            $name,
-            $wasmArguments
-        );
-
-        if (null === $result) {
-            $error = wasm_get_last_error();
-
-            throw new InvocationException("Got an error when invoking `$name`: $error");
+            throw new InvocationException("Got an error when invoking `$name`: $message", 0, $e);
         }
 
         return $result;

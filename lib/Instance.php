@@ -236,8 +236,10 @@ class Instance
             $wasmArguments
         );
 
-        if (false === $result) {
-            throw new InvocationException("Got an error when invoking `$name`.");
+        if (null === $result) {
+            $error = wasm_get_last_error();
+
+            throw new InvocationException("Got an error when invoking `$name`: $error");
         }
 
         return $result;

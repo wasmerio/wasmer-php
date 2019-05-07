@@ -16,6 +16,8 @@ use Wasm\Tests\Suite;
 
 class TypedArray extends Suite
 {
+    const FILE_PATH = __DIR__ . '/tests.wasm';
+
     /**
      * @dataProvider typed_arrays
      */
@@ -28,6 +30,23 @@ class TypedArray extends Suite
                 ->object($result)
                     ->isInstanceOf($wasmTypedArrayName)
                     ->isInstanceof(LUT\TypedArray::class);
+    }
+
+    /**
+     * @dataProvider typed_arrays
+     */
+    public function test_length(string $typedArrayName)
+    {
+        $this
+            ->given(
+                $instance = new LUT\Instance(static::FILE_PATH),
+                $memoryBuffer = $instance->getMemoryBuffer(),
+                $memoryBufferByteLength = $memoryBuffer->getByteLength()
+            )
+            ->when($typedArray = new $typedArrayName($memoryBuffer))
+            ->then
+                ->integer($typedArray->getLength())
+                    ->isEqualTo($memoryBuffer->getByteLength() / $typedArrayName::BYTES_PER_ELEMENT);
     }
 
     protected function typed_arrays()

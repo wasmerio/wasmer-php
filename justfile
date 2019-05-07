@@ -22,6 +22,8 @@ php:
 	PHP_PREFIX_BIN=$(php-config --prefix)/bin
 	$PHP_PREFIX_BIN/phpize --clean
 	$PHP_PREFIX_BIN/phpize
+	export CXX='g++'
+	export CXXFLAGS='-std=c++11'
 	./configure --with-php-config=$PHP_PREFIX_BIN/php-config
 	make install
 

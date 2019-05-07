@@ -34,11 +34,6 @@ class Instance
     protected $wasmInstance;
 
     /**
-     * A Wasm buffer over the instance memory if any.
-     */
-    protected $wasmMemoryBuffer;
-
-    /**
      * Compiles and instantiates a WebAssembly binary file.
      *
      * The constructor throws a `RuntimeException` when the given file does
@@ -117,11 +112,7 @@ class Instance
      */
     public function getMemoryBuffer(): ?WasmArrayBuffer
     {
-        if (null === $this->wasmMemoryBuffer) {
-            $this->wasmMemoryBuffer = wasm_get_memory_buffer($this->wasmInstance);
-        }
-
-        return $this->wasmMemoryBuffer;
+        return wasm_get_memory_buffer($this->wasmInstance);
     }
 
     /**

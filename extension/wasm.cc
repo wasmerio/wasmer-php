@@ -1053,7 +1053,7 @@ PHP_FUNCTION(wasm_invoke_function)
             zend_throw_exception_ex(
                 zend_ce_exception,
                 0,
-                "Missing %d argument(s) when calling the `%.*s` exported function: Expect %d argument(s), given %d.",
+                "Missing %d argument(s) when calling the `%.*s` exported function; Expect %d argument(s), given %d.",
                 diff,
                 (int) function_name_length,
                 function_name,
@@ -1070,7 +1070,7 @@ PHP_FUNCTION(wasm_invoke_function)
             zend_throw_exception_ex(
                 zend_ce_exception,
                 0,
-                "Given %d extra argument(s) when calling the `%.*s` exported function: Expect %d argument(s), given %d.",
+                "Given %d extra argument(s) when calling the `%.*s` exported function; Expect %d argument(s), given %d.",
                 -diff,
                 (int) function_name_length,
                 function_name,
@@ -1170,7 +1170,9 @@ PHP_FUNCTION(wasm_invoke_function)
 
                 function_inputs[nth].tag = wasmer_value_tag::WASM_F64;
                 function_inputs[nth].value.F64 = (double) value->value.dval;
-            } else {
+            }
+            // Unreacheable.
+            else {
                 zend_throw_exception_ex(
                     zend_ce_exception,
                     0,
@@ -1221,7 +1223,7 @@ PHP_FUNCTION(wasm_invoke_function)
         zend_throw_exception_ex(
             zend_ce_exception,
             0,
-            "Failed to call the `%.*s`  exported function.",
+            "Failed to call the `%.*s` exported function.",
             (int) function_name_length,
             function_name
         );

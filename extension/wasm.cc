@@ -877,8 +877,11 @@ ZEND_END_ARG_INFO()
  *     $instance,
  *     'sum',
  *     [
+ *         // with a Wasm value directly
  *         wasm_value(WASM_TYPE_I32, 1),
- *         wasm_value(WASM_TYPE_I32, 2),
+ *
+ *         // with a PHP value, the Wasm type will be infered
+ *         2,
  *     ]
  * );
  * ```

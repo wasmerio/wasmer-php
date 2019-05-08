@@ -25,10 +25,10 @@ for ($nth = 0; $nth < $length_of_subject; ++$nth) {
 // C-string terminates by NULL.
 $memory[$nth] = 0;
 
-// Run the `hello` function. Give the pointer to the subject.
+// Run the `greet` function. Give the pointer to the subject.
 $output_pointer = $instance->greet($input_pointer);
 
-// Read the result of the `hello` function.
+// Read the result of the `greet` function.
 $memory = new Wasm\Uint8Array($memory_buffer, $output_pointer);
 
 $output = '';

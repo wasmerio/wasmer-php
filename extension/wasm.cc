@@ -1023,24 +1023,7 @@ PHP_FUNCTION(wasm_invoke_function)
         return;
     }
 
-    // Read the output types.
-    wasmer_value_tag *wasm_function_output_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_outputs_arity);
-
-    if (wasmer_export_func_returns(wasm_function, wasm_function_output_signatures, wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
-        free(wasm_function_input_signatures);
-        free(wasm_function_output_signatures);
-        wasmer_exports_destroy(wasm_exports);
-
-        zend_throw_exception_ex(
-            zend_ce_exception,
-            0,
-            "Failed to read the output signature of the `%.*s` exported function.",
-            (int) function_name_length,
-            function_name
-        );
-
-        return;
-    }
+    wasmer_exports_destroy(wasm_exports);
 
     {
         // Check the given signature matches the expected signature.
@@ -1050,8 +1033,6 @@ PHP_FUNCTION(wasm_invoke_function)
 
         if (diff > 0) {
             free(wasm_function_input_signatures);
-            free(wasm_function_output_signatures);
-            wasmer_exports_destroy(wasm_exports);
 
             zend_throw_exception_ex(
                 zend_ce_exception,
@@ -1067,8 +1048,6 @@ PHP_FUNCTION(wasm_invoke_function)
             return;
         } else if (diff < 0) {
             free(wasm_function_input_signatures);
-            free(wasm_function_output_signatures);
-            wasmer_exports_destroy(wasm_exports);
 
             zend_throw_exception_ex(
                 zend_ce_exception,
@@ -1105,6 +1084,8 @@ PHP_FUNCTION(wasm_invoke_function)
             // Convert PHP integer to Wasm i32.
             else if (wasm_type == wasmer_value_tag::WASM_I32) {
                 if (php_type != IS_LONG) {
+                    free(wasm_function_input_signatures);
+
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
@@ -1123,6 +1104,8 @@ PHP_FUNCTION(wasm_invoke_function)
             // Convert PHP integer to Wasm i64.
             else if (wasm_type == wasmer_value_tag::WASM_I64) {
                 if (php_type != IS_LONG) {
+                    free(wasm_function_input_signatures);
+
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
@@ -1141,6 +1124,8 @@ PHP_FUNCTION(wasm_invoke_function)
             // Convert PHP integer to Wasm f32.
             else if (wasm_type == wasmer_value_tag::WASM_F32) {
                 if (php_type != IS_DOUBLE) {
+                    free(wasm_function_input_signatures);
+
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
@@ -1159,6 +1144,8 @@ PHP_FUNCTION(wasm_invoke_function)
             // Convert PHP integer to Wasm f64.
             else if (wasm_type == wasmer_value_tag::WASM_F64) {
                 if (php_type != IS_DOUBLE) {
+                    free(wasm_function_input_signatures);
+
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
@@ -1176,6 +1163,8 @@ PHP_FUNCTION(wasm_invoke_function)
             }
             // Unreacheable.
             else {
+                free(wasm_function_input_signatures);
+
                 zend_throw_exception_ex(
                     zend_ce_exception,
                     0,
@@ -1184,6 +1173,8 @@ PHP_FUNCTION(wasm_invoke_function)
                     (int) function_name_length,
                     function_name
                 );
+
+                return;
             }
 
             ++nth;
@@ -1191,10 +1182,8 @@ PHP_FUNCTION(wasm_invoke_function)
     }
 
     free(wasm_function_input_signatures);
-    free(wasm_function_output_signatures);
-    wasmer_exports_destroy(wasm_exports);
 
-    // PHP expects one output.
+    // PHP expects at most one output.
     size_t function_output_length = wasm_function_outputs_arity;
     wasmer_value_t *function_outputs = NULL;
 
@@ -1235,8 +1224,8 @@ PHP_FUNCTION(wasm_invoke_function)
     }
 
     if (function_output_length > 0) {
-        // Read the first output, because PHP expects only one output, as
-        // said above.
+        // Read the first output, because PHP expects at most one
+        // output, as said above.
         wasmer_value_t function_output = function_outputs[0];
 
         // Convert the Wasm value to a PHP value.

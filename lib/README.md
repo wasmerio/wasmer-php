@@ -229,19 +229,6 @@ This function returns a resource of type `wasm_instance`.
 This function combines `wasm_compile` and
 `wasm_module_new_instance`. It “hides” the module.
 
-### Function `wasm_get_function_signature`
-
-Returns the signature of an exported function:
-
-```php
-$bytes = wasm_fetch_bytes('my_program.wasm');
-$instance = wasm_new_instance($bytes);
-$signature = wasm_get_function_signature($instance, 'function_name');
-```
-
-This function returns an array of `WASM_TYPE_*` constants. The first
-entries are for the inputs, the last entry is for the output.
-
 ### Function `wasm_value`
 
 Compiles a PHP value into a WebAssembly value:
@@ -265,13 +252,25 @@ $result = wasm_invoke_function(
     $instance,
     'sum',
     [
+        // Define a typed Wasm value.
         wasm_value(WASM_TYPE_I32, 1),
-        wasm_value(WASM_TYPE_I32, 2),
+
+        // Use a PHP value; the typed Wasm value will be infered.
+        2,
     ]
 );
 ```
 
-This function returns the result of the invoked function.
+As shown, the function arguments can be of kind `wasm_value` resource,
+or a PHP value directly. When passing a `wasm_value` resource, the
+Wasm type is forced. When passing a PHP value, the Wasm type is
+infered. This last variant is faster since it doesn't involve any PHP
+resource allocations and indirections to read the value. It is
+recommended to use this form.
+
+This function returns the result of the invoked function as a PHP
+value. The function returns `null` when the Wasm function is void
+(returns nothing). The function throws exceptions when errors happen.
 
 ### Function `wasm_get_memory_buffer`
 

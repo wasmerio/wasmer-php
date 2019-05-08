@@ -134,7 +134,7 @@ class Instance extends Suite
                 }
             )
                 ->isInstanceOf(InvocationException::class)
-                ->hasMessage('Function `ƒ` does not exist.');
+                ->hasMessage('Got an error when invoking `ƒ`: The instance has no exported function named `ƒ`.');
     }
 
     public function test_call_missing_arguments()
@@ -148,7 +148,8 @@ class Instance extends Suite
             )
                 ->isInstanceOf(InvocationException::class)
                 ->hasMessage(
-                    'Missing 1 argument(s) when calling `sum`: ' .
+                    'Got an error when invoking `sum`: ' .
+                    'Missing 1 argument(s) when calling the `sum` exported function; ' .
                     'Expect 2 argument(s), given 1.'
                 );
     }
@@ -164,7 +165,8 @@ class Instance extends Suite
             )
                 ->isInstanceOf(InvocationException::class)
                 ->hasMessage(
-                    'Given 1 extra argument(s) when calling `sum`: ' .
+                    'Got an error when invoking `sum`: ' .
+                    'Given 1 extra argument(s) when calling the `sum` exported function; ' .
                     'Expect 2 argument(s), given 3.'
                 );
     }

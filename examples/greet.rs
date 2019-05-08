@@ -19,7 +19,7 @@ pub extern "C" fn deallocate(pointer: *mut c_void, capacity: usize) {
 }
 
 #[no_mangle]
-pub extern "C" fn hello(subject: *mut c_char) -> *mut c_char {
+pub extern "C" fn greet(subject: *mut c_char) -> *mut c_char {
     let subject = unsafe { CStr::from_ptr(subject).to_bytes().to_vec() };
     let mut output = b"Hello, ".to_vec();
     output.extend(&subject);

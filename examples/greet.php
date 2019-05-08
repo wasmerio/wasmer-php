@@ -5,9 +5,9 @@ declare(strict_types = 1);
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 // Instantiate the module.
-$instance = new Wasm\Instance(__DIR__ . '/hello.wasm');
+$instance = new Wasm\Instance(__DIR__ . '/greet.wasm');
 
-// Set the subject to salute.
+// Set the subject to greet.
 $subject = 'Wasmer 🐘';
 $length_of_subject = strlen($subject);
 
@@ -26,7 +26,7 @@ for ($nth = 0; $nth < $length_of_subject; ++$nth) {
 $memory[$nth] = 0;
 
 // Run the `hello` function. Give the pointer to the subject.
-$output_pointer = $instance->hello($input_pointer);
+$output_pointer = $instance->greet($input_pointer);
 
 // Read the result of the `hello` function.
 $memory = new Wasm\Uint8Array($memory_buffer, $output_pointer);

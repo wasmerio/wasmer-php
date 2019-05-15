@@ -8,6 +8,14 @@ compile-wasm FILE='examples/simple':
 	mv {{FILE}}.opt.wasm {{FILE}}.wasm
 	rm {{FILE}}.raw.wasm
 
+compile-and-run-cargo-example FILE='serde':
+	#!/usr/bin/env bash
+	set -euo pipefail
+	cd examples/cargo/{{FILE}}
+	cargo +nightly build --target wasm32-unknown-unknown
+	cp target/wasm32-unknown-unknown/debug/php_ext_wasm_cargo_{{FILE}}_example.wasm {{FILE}}.wasm
+	php -d extension=wasm {{FILE}}.php
+
 # Compile the Rust part.
 rust:
 	cargo build --release

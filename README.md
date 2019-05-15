@@ -158,9 +158,13 @@ To compile the entire project, run the following commands:
 ```sh
 $ just rust
 $ just php
+$ composer install
 $ php -d extension=wasm examples/simple.php
 ```
-
+Additionally, to compile one of the cargo examples, run the following:
+```bash
+$ just compile-and-run-cargo-example serde
+```
 (Yes, you need [`just`](https://github.com/casey/just/)).
 
 ## Testing

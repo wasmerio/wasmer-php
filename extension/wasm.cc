@@ -171,6 +171,10 @@ PHP_METHOD(WasmArrayBuffer, grow)
 
     wasm_array_buffer_object *wasm_array_buffer_object = WASM_ARRAY_BUFFER_OBJECT_THIS();
 
+    if (wasm_array_buffer_object->allocated_buffer == true) {
+        RETURN_NULL();
+    }
+
     wasmer_result_t wasm_memory_grow_result = wasmer_memory_grow(
         wasm_array_buffer_object->memory,
         // Number of pages.

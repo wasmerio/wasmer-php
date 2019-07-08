@@ -35,6 +35,7 @@ static zend_object *create_wasm_array_buffer_object(zend_class_entry *class_entr
         1,
         sizeof(wasm_array_buffer_object) + zend_object_properties_size(class_entry)
     );
+    wasm_array_buffer->memory = NULL;
     wasm_array_buffer->buffer = NULL;
     wasm_array_buffer->buffer_length = 0;
     wasm_array_buffer->allocated_buffer = true;
@@ -136,10 +137,67 @@ PHP_METHOD(WasmArrayBuffer, getByteLength)
     RETURN_LONG(wasm_array_buffer_object->buffer_length);
 }
 
+/**
+ * Declare the parameter information for the
+ * `WasmArrayBuffer::grow` method.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasmarraybuffer_grow, ZEND_RETURN_VALUE, ARITY(1), IS_VOID, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, number_of_pages, IS_LONG, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
+ * Declare the `WasmArrayBuffer::grow` method.
+ *
+ * # Usage
+ *
+ * ```php
+ * $buffer = new WasmArrayBuffer(42);
+ * $buffer->grow(1);
+ * ```
+ */
+PHP_METHOD(WasmArrayBuffer, grow)
+{
+    zend_long number_of_pages;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+        Z_PARAM_LONG(number_of_pages)
+    ZEND_PARSE_PARAMETERS_END();
+
+    if (number_of_pages <= 0) {
+        zend_throw_exception_ex(zend_ce_exception, 0, "Number of pages must be positive; given %lld.", number_of_pages);
+
+        RETURN_NULL();
+    }
+
+    wasm_array_buffer_object *wasm_array_buffer_object = WASM_ARRAY_BUFFER_OBJECT_THIS();
+
+    wasmer_result_t wasm_memory_grow_result = wasmer_memory_grow(
+        wasm_array_buffer_object->memory,
+        // Number of pages.
+        (uint32_t) number_of_pages
+    );
+
+    // Compilation failed.
+    if (wasm_memory_grow_result != wasmer_result_t::WASMER_OK) {
+        zend_throw_exception_ex(zend_ce_exception, 0, "Failed to grow the memory.");
+
+        RETURN_NULL();
+    }
+
+    // Refresh the memory data and its length.
+    uint8_t *wasm_memory_data = wasmer_memory_data(wasm_array_buffer_object->memory);
+    uint32_t wasm_memory_data_length = wasmer_memory_data_length(wasm_array_buffer_object->memory);
+
+    // Reset the internal buffer of `WasmArrayBuffer`.
+    wasm_array_buffer_object->buffer = (int8_t *) wasm_memory_data;
+    wasm_array_buffer_object->buffer_length = (size_t) wasm_memory_data_length;
+}
+
 // Declare the methods of the `WasmArrayBuffer` class with their information.
 static const zend_function_entry wasm_array_buffer_methods[] = {
     PHP_ME(WasmArrayBuffer, __construct,	arginfo_wasmarraybuffer___construct, ZEND_ACC_PUBLIC)
     PHP_ME(WasmArrayBuffer, getByteLength,	arginfo_wasmarraybuffer_get_byte_length, ZEND_ACC_PUBLIC)
+    PHP_ME(WasmArrayBuffer, grow,			arginfo_wasmarraybuffer_grow, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -1350,6 +1408,7 @@ PHP_FUNCTION(wasm_get_memory_buffer)
     wasm_array_buffer_object *wasm_array_buffer_object = wasm_array_buffer_object_from_zend_object(wasm_array_buffer);
 
     // Set the internal buffer of `WasmArrayBuffer`.
+    wasm_array_buffer_object->memory = wasm_memory;
     wasm_array_buffer_object->buffer = (int8_t *) wasm_memory_data;
     wasm_array_buffer_object->buffer_length = (size_t) wasm_memory_data_length;
 

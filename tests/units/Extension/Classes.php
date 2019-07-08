@@ -407,6 +407,22 @@ class Classes extends Suite
                     ->isEqualTo($byteLength);
     }
 
+    public function test_wasm_array_buffer_grow()
+    {
+        $this
+            ->given(
+                $byteLength = 1114112,
+                $wasmArrayBuffer = new WasmArrayBuffer($byteLength),
+            )
+            ->when($result = $wasmArrayBuffer->grow(1))
+            ->then
+                ->variable($result)
+                    ->isNull()
+                // Does nothing because it's not Wasm memory, just an allocated buffer.
+                ->integer($wasmArrayBuffer->getByteLength())
+                    ->isEqualTo($byteLength);
+    }
+
     /**
      * @dataProvider wasm_typed_arrays
      */

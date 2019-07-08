@@ -114,6 +114,30 @@ class Instance extends Suite
                     ->isEqualTo('Hello, World!');
     }
 
+    public function test_grow_memory_buffer()
+    {
+        $this
+            ->given(
+                $wasmInstance = new SUT(self::FILE_PATH),
+                $memory = $wasmInstance->getMemoryBuffer(),
+                $oldMemoryLength = $memory->getByteLength()
+            )
+            ->when($result = $memory->grow(1))
+            ->then
+                ->variable($result)
+                    ->isNull()
+                ->integer($oldMemoryLength)
+                    ->isEqualTo(1114112)
+
+                ->let($memoryLength = $memory->getByteLength())
+
+                ->integer($memoryLength)
+                    ->isEqualTo(1179648)
+
+                ->integer($memoryLength - $oldMemoryLength)
+                    ->isEqualTo(65536);
+    }
+
     public function test_basic_sum()
     {
         $this

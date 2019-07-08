@@ -333,6 +333,7 @@ final class WasmArrayBuffer
 {
     public function __construct(int $byte_length);
     public function getByteLength(): int;
+    public function grow(int $number_of_pages): void;
 }
 ```
 

@@ -53,6 +53,13 @@ zend_object_handlers wasm_array_buffer_class_entry_handlers;
  * Custom object for the `WasmArrayBuffer` class.
  */
 typedef struct {
+    // The internal opaque exports pointer. It contains the data of
+    // the `wasmer_memory_t`.
+    wasmer_exports_t *exports;
+
+    // The internal opaque memory pointer.
+    wasmer_memory_t *memory;
+
     // The internal buffer.
     int8_t *buffer;
 

@@ -60,7 +60,7 @@ class Classes extends Suite
                 ->let($methods = $result->getMethods())
 
                 ->array($methods)
-                    ->hasSize(2)
+                    ->hasSize(3)
 
                 ->string($methods[0]->getName())
                     ->isEqualTo('__construct')
@@ -91,6 +91,30 @@ class Classes extends Suite
 
                 ->string($return_type . '')
                     ->isEqualTo('int')
+                ->boolean($return_type->allowsNull())
+                    ->isFalse()
+
+                ->string($methods[2]->getName())
+                    ->isEqualTo('grow')
+                ->boolean($methods[2]->isPublic())
+                    ->isTrue()
+                ->integer($methods[2]->getNumberOfParameters())
+                    ->isEqualTo(1)
+                    ->isEqualTo($methods[2]->getNumberOfRequiredParameters())
+
+                ->let($parameters = $methods[2]->getParameters())
+
+                ->string($parameters[0]->getName())
+                    ->isEqualTo('number_of_pages')
+                ->string($parameters[0]->getType() . '')
+                    ->isEqualTo('int')
+                ->boolean($parameters[0]->getType()->allowsNull())
+                    ->isFalse()
+
+                ->let($return_type = $methods[2]->getReturnType())
+
+                ->string($return_type . '')
+                    ->isEqualTo('void')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
 
@@ -380,6 +404,22 @@ class Classes extends Suite
             ->when($result = $wasmArrayBuffer->getByteLength())
             ->then
                 ->integer($result)
+                    ->isEqualTo($byteLength);
+    }
+
+    public function test_wasm_array_buffer_grow()
+    {
+        $this
+            ->given(
+                $byteLength = 1114112,
+                $wasmArrayBuffer = new WasmArrayBuffer($byteLength),
+            )
+            ->when($result = $wasmArrayBuffer->grow(1))
+            ->then
+                ->variable($result)
+                    ->isNull()
+                // Does nothing because it's not Wasm memory, just an allocated buffer.
+                ->integer($wasmArrayBuffer->getByteLength())
                     ->isEqualTo($byteLength);
     }
 

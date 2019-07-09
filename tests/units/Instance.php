@@ -138,6 +138,20 @@ class Instance extends Suite
                     ->isEqualTo(65536);
     }
 
+    public function test_grow_memory_buffer_too_much()
+    {
+        $this
+            ->given(
+                $wasmInstance = new SUT(self::FILE_PATH),
+                $memory = $wasmInstance->getMemoryBuffer()
+            )
+            ->exception(function () use ($memory) {
+                $memory->grow(100000);
+            })
+                ->isInstanceOf(\Exception::class)
+                ->hasMessage('Failed to grow the memory.');
+    }
+
     public function test_basic_sum()
     {
         $this

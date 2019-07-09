@@ -35,6 +35,7 @@ static zend_object *create_wasm_array_buffer_object(zend_class_entry *class_entr
         1,
         sizeof(wasm_array_buffer_object) + zend_object_properties_size(class_entry)
     );
+    wasm_array_buffer->exports = NULL;
     wasm_array_buffer->memory = NULL;
     wasm_array_buffer->buffer = NULL;
     wasm_array_buffer->buffer_length = 0;
@@ -63,6 +64,14 @@ static void destroy_wasm_array_buffer_object(zend_object *object)
 static void free_wasm_array_buffer_object(zend_object *object)
 {
     wasm_array_buffer_object *wasm_array_buffer_object = wasm_array_buffer_object_from_zend_object(object);
+
+    if (wasm_array_buffer_object->exports != NULL) {
+        wasmer_exports_destroy(wasm_array_buffer_object->exports);
+    }
+
+    if (wasm_array_buffer_object->memory != NULL) {
+        wasm_array_buffer_object->memory = NULL;
+    }
 
     if (wasm_array_buffer_object->allocated_buffer &&
         wasm_array_buffer_object->buffer != NULL) {
@@ -1396,10 +1405,10 @@ PHP_FUNCTION(wasm_get_memory_buffer)
         }
     }
 
-    wasmer_exports_destroy(wasm_exports);
-
     // Gotcha?
     if (wasm_memory == NULL) {
+        wasmer_exports_destroy(wasm_exports);
+
         RETURN_NULL();
     }
 
@@ -1412,6 +1421,7 @@ PHP_FUNCTION(wasm_get_memory_buffer)
     wasm_array_buffer_object *wasm_array_buffer_object = wasm_array_buffer_object_from_zend_object(wasm_array_buffer);
 
     // Set the internal buffer of `WasmArrayBuffer`.
+    wasm_array_buffer_object->exports = wasm_exports;
     wasm_array_buffer_object->memory = wasm_memory;
     wasm_array_buffer_object->buffer = (int8_t *) wasm_memory_data;
     wasm_array_buffer_object->buffer_length = (size_t) wasm_memory_data_length;

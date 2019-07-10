@@ -156,8 +156,7 @@ See the [API documentations with examples](https://wasmerio.github.io/php-ext-wa
 To compile the entire project, run the following commands:
 
 ```sh
-$ just rust
-$ just php
+$ just build
 $ php -d extension=wasm examples/simple.php
 ```
 

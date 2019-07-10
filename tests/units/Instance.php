@@ -57,7 +57,7 @@ class Instance extends Suite
                 ->isInstanceOf(RuntimeException::class)
                 ->hasMessage(
                     "An error happened while compiling or instantiating the module `$filePath`:\n" .
-                    "    error instantiating"
+                    "    compile error: Validation error \"Invalid type\""
                 );
     }
 
@@ -76,7 +76,7 @@ class Instance extends Suite
                 ->isInstanceOf(RuntimeException::class)
                 ->hasMessage(
                     "An error happened while compiling or instantiating the module `$filePath`:\n" .
-                    "    error instantiating"
+                    "    compile error: Validation error \"Unexpected EOF\""
                 );
     }
 

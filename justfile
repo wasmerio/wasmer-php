@@ -8,17 +8,11 @@ compile-wasm FILE='examples/simple':
 	mv {{FILE}}.opt.wasm {{FILE}}.wasm
 	rm {{FILE}}.raw.wasm
 
-# Compile the Rust part.
-rust:
-	cargo build --release
-
-# Compile the PHP part.
-php:
+# Compile the PHP extension.
+build:
 	#!/usr/bin/env bash
 	set -euo pipefail
-	cd extension
-	test -f libwasmer_runtime_c_api.a && rm libwasmer_runtime_c_api.a
-	ln -s ../target/release/deps/libwasmer_runtime_c_api-*.a libwasmer_runtime_c_api.a
+	cd src
 	PHP_PREFIX_BIN=$(php-config --prefix)/bin
 	$PHP_PREFIX_BIN/phpize --clean
 	$PHP_PREFIX_BIN/phpize

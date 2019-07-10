@@ -32,15 +32,8 @@ jobs:
             php -r "unlink('composer-setup.php');"
             mv composer.phar composer
 
-      # Compile the Rust part of the extension.
-      - run:
-          name: Compile the Rust part of the PHP extension
-          command: |
-            export PATH="$HOME/.cargo/bin:$PATH"
-            just rust
-
       # Compile and install the PHP extension.
-      # `just php` isn't used because there is no some issue with
+      # `just build` isn't used because there is no some issue with
       # `--with-pic` I don't understand…
       - run:
           name: Compile and install the PHP extension
@@ -48,10 +41,8 @@ jobs:
             export PATH="$HOME/.cargo/bin:$PATH"
             sudo apt-get install gcc
             export CXX="gcc"
-            EXTENSION="$HOME/project/extension"
+            EXTENSION="$HOME/project/src
             cd $EXTENSION
-            test -f libwasmer_runtime_c_api.a && rm libwasmer_runtime_c_api.a
-            ln -s ../target/release/deps/libwasmer_runtime_c_api-*.a libwasmer_runtime_c_api.a
             PHP_PREFIX=$(php-config --prefix)
             PHP_PREFIX_BIN=$PHP_PREFIX/bin
             $PHP_PREFIX_BIN/phpize --clean

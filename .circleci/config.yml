@@ -40,7 +40,7 @@ jobs:
           command: |
             export PATH="$HOME/.cargo/bin:$PATH"
             export CXX="gcc"
-            EXTENSION="$HOME/project/src
+            EXTENSION="$HOME/project/src"
             cd $EXTENSION
             PHP_PREFIX=$(php-config --prefix)
             PHP_PREFIX_BIN=$PHP_PREFIX/bin

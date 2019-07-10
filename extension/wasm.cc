@@ -683,7 +683,7 @@ void initialize_wasm_instance(wasm_instance *instance)
 
     {
         int number_of_exports = wasmer_exports_len(instance->exports);
-        auto exported_functions = new std::unordered_map<std::string, const wasmer_export_func_t *>();
+        auto exported_functions = new std::unordered_map<std::string, wasm_exported_function *>();
 
         for (uint32_t nth = 0; nth < number_of_exports; ++nth) {
             wasmer_export_t *wasm_export = wasmer_exports_get(instance->exports, nth);
@@ -698,9 +698,83 @@ void initialize_wasm_instance(wasm_instance *instance)
             wasmer_byte_array wasm_export_name = wasmer_export_name(wasm_export);
 
             const wasmer_export_func_t *wasm_function = wasmer_export_to_func(wasm_export);
-            std::string wasm_function_name = std::string((const char *) wasm_export_name.bytes, (size_t) wasm_export_name.bytes_len);
 
-            (*exported_functions)[wasm_function_name] = wasm_function;
+            // Read the number of inputs.
+            uint32_t wasm_function_inputs_arity;
+
+            if (wasmer_export_func_params_arity(wasm_function, &wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
+                zend_throw_exception_ex(
+                    zend_ce_exception,
+                    0,
+                    "Failed to read the input arity of the `%.*s` exported function.",
+                    (int) wasm_export_name.bytes_len,
+                    wasm_export_name.bytes
+                );
+
+                return;
+            }
+
+            // Read the input types.
+            wasmer_value_tag *wasm_function_input_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_inputs_arity);
+
+            if (wasmer_export_func_params(wasm_function, wasm_function_input_signatures, wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
+                free(wasm_function_input_signatures);
+
+                zend_throw_exception_ex(
+                    zend_ce_exception,
+                    0,
+                    "Failed to read the signature of the `%.*s` exported function.",
+                    (int) wasm_export_name.bytes_len,
+                    wasm_export_name.bytes
+                );
+
+                return;
+            }
+
+            // Read the number of outputs.
+            uint32_t wasm_function_outputs_arity;
+
+            if (wasmer_export_func_returns_arity(wasm_function, &wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
+                free(wasm_function_input_signatures);
+
+                zend_throw_exception_ex(
+                    zend_ce_exception,
+                    0,
+                    "Failed to read the output arity of the `%.*s` exported function.",
+                    (int) wasm_export_name.bytes_len,
+                    wasm_export_name.bytes
+                );
+
+                return;
+            }
+
+            // Read the output types.
+            wasmer_value_tag *wasm_function_output_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_outputs_arity);
+
+            if (wasmer_export_func_returns(wasm_function, wasm_function_output_signatures, wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
+                free(wasm_function_input_signatures);
+                free(wasm_function_output_signatures);
+
+                zend_throw_exception_ex(
+                    zend_ce_exception,
+                    0,
+                    "Failed to read the signature of the `%.*s` exported function.",
+                    (int) wasm_export_name.bytes_len,
+                    wasm_export_name.bytes
+                );
+
+                return;
+            }
+
+            auto wasm_exported_func = (wasm_exported_function *) emalloc(sizeof(wasm_exported_function));
+            wasm_exported_func->exported_function = wasm_function;
+            wasm_exported_func->inputs = wasm_function_input_signatures;
+            wasm_exported_func->input_arity = wasm_function_inputs_arity;
+            wasm_exported_func->outputs = wasm_function_output_signatures;
+            wasm_exported_func->output_arity = wasm_function_outputs_arity;
+
+            std::string wasm_function_name = std::string((const char *) wasm_export_name.bytes, (size_t) wasm_export_name.bytes_len);
+            (*exported_functions)[wasm_function_name] = wasm_exported_func;
         }
 
         instance->exported_functions = exported_functions;
@@ -728,6 +802,16 @@ static void wasm_instance_destructor(zend_resource *resource)
 
     if (instance == NULL) {
         return;
+    }
+
+    for (
+         auto iterator = instance->exported_functions->begin();
+         iterator != instance->exported_functions->end();
+         ++iterator
+    ) {
+        wasm_exported_function *exported_function = iterator->second;
+        free(exported_function->inputs);
+        free(exported_function->outputs);
     }
 
     instance->exported_functions->clear();
@@ -1038,8 +1122,7 @@ PHP_FUNCTION(wasm_invoke_function)
     }
 
     // Look for a function of the given name in the export definitions.
-    const wasmer_export_func_t *wasm_function = NULL;
-    std::unordered_map<std::string, const wasmer_export_func_t *>::iterator iterator;
+    std::unordered_map<std::string, wasm_exported_function *>::iterator iterator;
 
     iterator = instance->exported_functions->find(std::string((const char *) function_name, function_name_length));
 
@@ -1056,66 +1139,15 @@ PHP_FUNCTION(wasm_invoke_function)
         return;
     }
 
-    wasm_function = iterator->second;
-
-    // Read the number of inputs.
-    uint32_t wasm_function_inputs_arity;
-
-    if (wasmer_export_func_params_arity(wasm_function, &wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
-        zend_throw_exception_ex(
-            zend_ce_exception,
-            0,
-            "Failed to read the input arity of the `%.*s` exported function.",
-            (int) function_name_length,
-            function_name
-        );
-        
-        return;
-    }
-
-    // Read the input types.
-    wasmer_value_tag *wasm_function_input_signatures = (wasmer_value_tag *) malloc(sizeof(wasmer_value_tag) * wasm_function_inputs_arity);
-
-    if (wasmer_export_func_params(wasm_function, wasm_function_input_signatures, wasm_function_inputs_arity) != wasmer_result_t::WASMER_OK) {
-        free(wasm_function_input_signatures);
-
-        zend_throw_exception_ex(
-            zend_ce_exception,
-            0,
-            "Failed to read the signature of the `%.*s` exported function.",
-            (int) function_name_length,
-            function_name
-        );
-        
-        return;
-    }
-
-    // Read the number of outputs.
-    uint32_t wasm_function_outputs_arity;
-
-    if (wasmer_export_func_returns_arity(wasm_function, &wasm_function_outputs_arity) != wasmer_result_t::WASMER_OK) {
-        free(wasm_function_input_signatures);
-
-        zend_throw_exception_ex(
-            zend_ce_exception,
-            0,
-            "Failed to read the output arity of the `%.*s` exported function.",
-            (int) function_name_length,
-            function_name
-        );
-
-        return;
-    }
+    const wasm_exported_function *wasm_function = iterator->second;
 
     {
         // Check the given signature matches the expected signature.
-        int32_t number_of_expected_arguments = (int32_t) wasm_function_inputs_arity;
+        int32_t number_of_expected_arguments = (int32_t) wasm_function->input_arity;
         int32_t number_of_given_arguments = (int32_t) zend_hash_num_elements(inputs);
         int32_t diff = number_of_expected_arguments - number_of_given_arguments;
 
         if (diff > 0) {
-            free(wasm_function_input_signatures);
-
             zend_throw_exception_ex(
                 zend_ce_exception,
                 0,
@@ -1129,8 +1161,6 @@ PHP_FUNCTION(wasm_invoke_function)
 
             return;
         } else if (diff < 0) {
-            free(wasm_function_input_signatures);
-
             zend_throw_exception_ex(
                 zend_ce_exception,
                 0,
@@ -1148,7 +1178,7 @@ PHP_FUNCTION(wasm_invoke_function)
 
     // Convert the inputs as Wasm values, or extract the inputs values
     // from the `wasm_value` resources.
-    size_t function_input_length = wasm_function_inputs_arity;
+    size_t function_input_length = wasm_function->input_arity;
     wasmer_value_t *function_inputs = (wasmer_value_t *) emalloc(sizeof(wasmer_value_t) * function_input_length);
 
     {
@@ -1157,7 +1187,7 @@ PHP_FUNCTION(wasm_invoke_function)
 
         ZEND_HASH_FOREACH_VAL(inputs, value)
             zend_uchar php_type = Z_TYPE_P(value);
-            wasmer_value_tag wasm_type = wasm_function_input_signatures[nth];
+            wasmer_value_tag wasm_type = wasm_function->inputs[nth];
 
             // The value is a resource. We expect it to be a `wasm_value` resource.
             if (php_type == IS_RESOURCE) {
@@ -1166,8 +1196,6 @@ PHP_FUNCTION(wasm_invoke_function)
             // Convert PHP integer to Wasm i32.
             else if (wasm_type == wasmer_value_tag::WASM_I32) {
                 if (php_type != IS_LONG) {
-                    free(wasm_function_input_signatures);
-
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
@@ -1186,8 +1214,6 @@ PHP_FUNCTION(wasm_invoke_function)
             // Convert PHP integer to Wasm i64.
             else if (wasm_type == wasmer_value_tag::WASM_I64) {
                 if (php_type != IS_LONG) {
-                    free(wasm_function_input_signatures);
-
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
@@ -1206,8 +1232,6 @@ PHP_FUNCTION(wasm_invoke_function)
             // Convert PHP integer to Wasm f32.
             else if (wasm_type == wasmer_value_tag::WASM_F32) {
                 if (php_type != IS_DOUBLE) {
-                    free(wasm_function_input_signatures);
-
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
@@ -1226,8 +1250,6 @@ PHP_FUNCTION(wasm_invoke_function)
             // Convert PHP integer to Wasm f64.
             else if (wasm_type == wasmer_value_tag::WASM_F64) {
                 if (php_type != IS_DOUBLE) {
-                    free(wasm_function_input_signatures);
-
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
@@ -1245,8 +1267,6 @@ PHP_FUNCTION(wasm_invoke_function)
             }
             // Unreacheable.
             else {
-                free(wasm_function_input_signatures);
-
                 zend_throw_exception_ex(
                     zend_ce_exception,
                     0,
@@ -1263,10 +1283,8 @@ PHP_FUNCTION(wasm_invoke_function)
         ZEND_HASH_FOREACH_END();
     }
 
-    free(wasm_function_input_signatures);
-
     // PHP expects at most one output.
-    size_t function_output_length = wasm_function_outputs_arity;
+    size_t function_output_length = wasm_function->output_arity;
     wasmer_value_t *function_outputs = NULL;
 
     if (function_output_length > 0) {

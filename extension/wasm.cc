@@ -730,6 +730,9 @@ static void wasm_instance_destructor(zend_resource *resource)
         return;
     }
 
+    instance->exported_functions->clear();
+    delete instance->exported_functions;
+
     wasmer_exports_destroy(instance->exports);
     wasmer_instance_destroy(instance->instance);
 }

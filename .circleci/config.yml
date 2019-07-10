@@ -39,7 +39,6 @@ jobs:
           name: Compile and install the PHP extension
           command: |
             export PATH="$HOME/.cargo/bin:$PATH"
-            sudo apt-get install gcc
             export CXX="gcc"
             EXTENSION="$HOME/project/src
             cd $EXTENSION

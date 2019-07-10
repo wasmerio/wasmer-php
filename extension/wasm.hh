@@ -154,9 +154,20 @@ const char* wasm_instance_resource_name;
 int wasm_instance_resource_number;
 
 /**
+ * Represents an `instance` with regular data.
+ */
+typedef struct {
+    // The internal opaque instance pointer.
+    wasmer_instance_t *instance;
+
+    // The internal opaque exports pointer.
+    wasmer_exports_t *exports;
+} wasm_instance;
+
+/**
  * Extract the data structure inside the `wasm_instance` resource.
  */
-wasmer_instance_t *wasm_instance_from_resource(zend_resource *wasm_instance_resource);
+wasm_instance *wasm_instance_from_resource(zend_resource *wasm_instance_resource);
 
 /**
  * Destructor for the `wasm_instance` resource.

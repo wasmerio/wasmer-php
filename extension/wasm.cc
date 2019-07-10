@@ -679,9 +679,9 @@ PHP_FUNCTION(wasm_module_deserialize)
 /**
  * Extract the data structure inside the `wasm_instance` resource.
  */
-wasmer_instance_t *wasm_instance_from_resource(zend_resource *wasm_instance_resource)
+wasm_instance *wasm_instance_from_resource(zend_resource *wasm_instance_resource)
 {
-    return (wasmer_instance_t *) zend_fetch_resource(
+    return (wasm_instance *) zend_fetch_resource(
         wasm_instance_resource,
         wasm_instance_resource_name,
         wasm_instance_resource_number
@@ -693,13 +693,13 @@ wasmer_instance_t *wasm_instance_from_resource(zend_resource *wasm_instance_reso
  */
 static void wasm_instance_destructor(zend_resource *resource)
 {
-    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(resource);
+    wasm_instance *wasm_instance = wasm_instance_from_resource(resource);
 
     if (wasm_instance == NULL) {
         return;
     }
 
-    wasmer_instance_destroy(wasm_instance);
+    wasmer_instance_destroy(wasm_instance->instance);
 }
 
 /**
@@ -745,12 +745,15 @@ PHP_FUNCTION(wasm_module_new_instance)
     }
 
     // Create a new Wasm instance.
-    wasmer_instance_t *wasm_instance = NULL;
+    wasm_instance *instance = (wasm_instance *) emalloc(sizeof(wasm_instance));
+    instance->instance = NULL;
+    instance->exports = NULL;
+
     wasmer_result_t wasm_instantiation_result = wasmer_module_instantiate(
         // Module.
         wasm_module,
         // Instance.
-        &wasm_instance,
+        &instance->instance,
         // Imports.
         {},
         // Imports length.
@@ -759,13 +762,14 @@ PHP_FUNCTION(wasm_module_new_instance)
 
     // Instantiation failed.
     if (wasm_instantiation_result != wasmer_result_t::WASMER_OK) {
-        free(wasm_instance);
+        free(instance->instance);
+        free(instance);
 
         RETURN_NULL();
     }
 
     // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_instance, wasm_instance_resource_number);
+    zend_resource *resource = zend_register_resource((void *) instance, wasm_instance_resource_number);
 
     RETURN_RES(resource);
 }
@@ -808,9 +812,12 @@ PHP_FUNCTION(wasm_new_instance)
     }
 
     // Create a new Wasm instance.
-    wasmer_instance_t *wasm_instance = NULL;
+    wasm_instance *instance = (wasm_instance *) emalloc(sizeof(wasm_instance));
+    instance->instance = NULL;
+    instance->exports = NULL;
+
     wasmer_result_t wasm_instantiation_result = wasmer_instantiate(
-        &wasm_instance,
+        &instance->instance,
         // Bytes.
         (uint8_t *) wasm_byte_array->bytes,
         // Bytes length.
@@ -823,13 +830,13 @@ PHP_FUNCTION(wasm_new_instance)
 
     // Instantiation failed.
     if (wasm_instantiation_result != wasmer_result_t::WASMER_OK) {
-        free(wasm_instance);
+        efree(instance);
 
         RETURN_NULL();
     }
 
     // Store in and return the result as a resource.
-    zend_resource *resource = zend_register_resource((void *) wasm_instance, wasm_instance_resource_number);
+    zend_resource *resource = zend_register_resource((void *) instance, wasm_instance_resource_number);
 
     RETURN_RES(resource);
 }
@@ -971,16 +978,16 @@ PHP_FUNCTION(wasm_invoke_function)
     ZEND_PARSE_PARAMETERS_END();
 
     // Extract the Wasm instance from the resource.
-    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
+    wasm_instance *instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
 
-    if (NULL == wasm_instance) {
+    if (NULL == instance) {
         RETURN_NULL();
     }
 
     // Be sure the invoked function exists.
     // Read all the export definitions (of all kinds).
     wasmer_exports_t *wasm_exports = NULL;
-    wasmer_instance_exports(wasm_instance, &wasm_exports);
+    wasmer_instance_exports(instance->instance, &wasm_exports);
 
     int number_of_exports = wasmer_exports_len(wasm_exports);
 
@@ -1266,7 +1273,7 @@ PHP_FUNCTION(wasm_invoke_function)
     // Call the Wasm function.
     wasmer_result_t function_call_result = wasmer_instance_call(
         // Instance.
-        wasm_instance,
+        instance->instance,
         // Function name.
         function_name,
         // Inputs.
@@ -1368,15 +1375,15 @@ PHP_FUNCTION(wasm_get_memory_buffer)
     ZEND_PARSE_PARAMETERS_END();
 
     // Extract the Wasm instance from the resource.
-    wasmer_instance_t *wasm_instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
+    wasm_instance *instance = wasm_instance_from_resource(Z_RES_P(wasm_instance_resource));
 
-    if (NULL == wasm_instance) {
+    if (NULL == instance) {
         RETURN_NULL();
     }
 
     // Read all the export definitions (of all kinds).
     wasmer_exports_t *wasm_exports = NULL;
-    wasmer_instance_exports(wasm_instance, &wasm_exports);
+    wasmer_instance_exports(instance->instance, &wasm_exports);
 
     int number_of_exports = wasmer_exports_len(wasm_exports);
 

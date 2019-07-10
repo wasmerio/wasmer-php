@@ -17,6 +17,8 @@
 */
 
 #include "wasm.hh"
+#include <unordered_map>
+#include <string>
 
 /**
  * Gets the `wasm_array_buffer_object` pointer from a `zend_object` pointer.
@@ -672,6 +674,40 @@ PHP_FUNCTION(wasm_module_deserialize)
 }
 
 /**
+ * Given an already instantiated `wasm_instance`, this function will
+ * fill the other fields (`exports` and `exported_functions`).
+ */
+void initialize_wasm_instance(wasm_instance *instance)
+{
+    wasmer_instance_exports(instance->instance, &instance->exports);
+
+    {
+        int number_of_exports = wasmer_exports_len(instance->exports);
+        auto exported_functions = new std::unordered_map<std::string, const wasmer_export_func_t *>();
+
+        for (uint32_t nth = 0; nth < number_of_exports; ++nth) {
+            wasmer_export_t *wasm_export = wasmer_exports_get(instance->exports, nth);
+            wasmer_import_export_kind wasm_export_kind = wasmer_export_kind(wasm_export);
+
+            // Not a function definition, let's continue.
+            if (wasm_export_kind != wasmer_import_export_kind::WASM_FUNCTION) {
+                continue;
+            }
+
+            // Read the export name.
+            wasmer_byte_array wasm_export_name = wasmer_export_name(wasm_export);
+
+            const wasmer_export_func_t *wasm_function = wasmer_export_to_func(wasm_export);
+            std::string wasm_function_name = std::string((const char *) wasm_export_name.bytes, (size_t) wasm_export_name.bytes_len);
+
+            (*exported_functions)[wasm_function_name] = wasm_function;
+        }
+
+        instance->exported_functions = exported_functions;
+    }
+}
+
+/**
  * Extract the data structure inside the `wasm_instance` resource.
  */
 wasm_instance *wasm_instance_from_resource(zend_resource *wasm_instance_resource)
@@ -694,8 +730,8 @@ static void wasm_instance_destructor(zend_resource *resource)
         return;
     }
 
-    wasmer_instance_destroy(instance->instance);
     wasmer_exports_destroy(instance->exports);
+    wasmer_instance_destroy(instance->instance);
 }
 
 /**
@@ -744,6 +780,7 @@ PHP_FUNCTION(wasm_module_new_instance)
     wasm_instance *instance = (wasm_instance *) emalloc(sizeof(wasm_instance));
     instance->instance = NULL;
     instance->exports = NULL;
+    instance->exported_functions = NULL;
 
     wasmer_result_t wasm_instantiation_result = wasmer_module_instantiate(
         // Module.
@@ -763,7 +800,7 @@ PHP_FUNCTION(wasm_module_new_instance)
         RETURN_NULL();
     }
 
-    wasmer_instance_exports(instance->instance, &instance->exports);
+    initialize_wasm_instance(instance);
 
     // Store in and return the result as a resource.
     zend_resource *resource = zend_register_resource((void *) instance, wasm_instance_resource_number);
@@ -812,6 +849,7 @@ PHP_FUNCTION(wasm_new_instance)
     wasm_instance *instance = (wasm_instance *) emalloc(sizeof(wasm_instance));
     instance->instance = NULL;
     instance->exports = NULL;
+    instance->exported_functions = NULL;
 
     wasmer_result_t wasm_instantiation_result = wasmer_instantiate(
         &instance->instance,
@@ -832,7 +870,7 @@ PHP_FUNCTION(wasm_new_instance)
         RETURN_NULL();
     }
 
-    wasmer_instance_exports(instance->instance, &instance->exports);
+    initialize_wasm_instance(instance);
 
     // Store in and return the result as a resource.
     zend_resource *resource = zend_register_resource((void *) instance, wasm_instance_resource_number);
@@ -983,12 +1021,8 @@ PHP_FUNCTION(wasm_invoke_function)
         RETURN_NULL();
     }
 
-    // Be sure the invoked function exists.
-    // Read all the export definitions (of all kinds).
-    int number_of_exports = wasmer_exports_len(instance->exports);
-
     // There is no export definition.
-    if (number_of_exports == 0) {
+    if (instance->exported_functions->empty()) {
         zend_throw_exception_ex(
             zend_ce_exception,
             0,
@@ -1002,33 +1036,12 @@ PHP_FUNCTION(wasm_invoke_function)
 
     // Look for a function of the given name in the export definitions.
     const wasmer_export_func_t *wasm_function = NULL;
+    std::unordered_map<std::string, const wasmer_export_func_t *>::iterator iterator;
 
-    for (uint32_t nth = 0; nth < number_of_exports; ++nth) {
-        wasmer_export_t *wasm_export = wasmer_exports_get(instance->exports, nth);
-        wasmer_import_export_kind wasm_export_kind = wasmer_export_kind(wasm_export);
-
-        // Not a function definition, let's continue.
-        if (wasm_export_kind != wasmer_import_export_kind::WASM_FUNCTION) {
-            continue;
-        }
-
-        // Read the export name.
-        wasmer_byte_array wasm_export_name = wasmer_export_name(wasm_export);
-
-        if (wasm_export_name.bytes_len != function_name_length) {
-            continue;
-        }
-
-        // Gotcha?
-        if (strncmp(function_name, (const char *) wasm_export_name.bytes, wasm_export_name.bytes_len) == 0) {
-            wasm_function = wasmer_export_to_func(wasm_export);
-
-            break;
-        }
-    }
+    iterator = instance->exported_functions->find(std::string((const char *) function_name, function_name_length));
 
     // No function with the given name has been found.
-    if (wasm_function == NULL) {
+    if (iterator == instance->exported_functions->end()) {
         zend_throw_exception_ex(
             zend_ce_exception,
             0,
@@ -1039,6 +1052,8 @@ PHP_FUNCTION(wasm_invoke_function)
 
         return;
     }
+
+    wasm_function = iterator->second;
 
     // Read the number of inputs.
     uint32_t wasm_function_inputs_arity;

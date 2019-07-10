@@ -26,6 +26,8 @@
 #include "Zend/zend_interfaces.h"
 #include "php_wasm.h"
 #include "wasmer.hh"
+#include <unordered_map>
+#include <string>
 
 #if defined(PHP_WIN32)
 #  include "win32/php_stdint.h"
@@ -149,6 +151,23 @@ static void php_wasm_module_clean_up_persistent_resources();
 const char* wasm_instance_resource_name;
 int wasm_instance_resource_number;
 
+typedef struct {
+    // The internal opaque exported function pointer.
+    const wasmer_export_func_t *exported_function;
+
+    // The input signature of the exported function.
+    wasmer_value_tag *inputs;
+
+    // The input arity.
+    uint32_t input_arity;
+
+    // The output signature of the exported function.
+    wasmer_value_tag *outputs;
+
+    // The output ariry.
+    uint32_t output_arity;
+} wasm_exported_function;
+
 /**
  * Represents an `instance` with regular data.
  */
@@ -158,7 +177,16 @@ typedef struct {
 
     // The internal opaque exports pointer.
     wasmer_exports_t *exports;
+
+    // A map from exported function names to exported function pointers.
+    std::unordered_map<std::string, wasm_exported_function *> *exported_functions;
 } wasm_instance;
+
+/**
+ * Given an already instantiated `wasm_instance`, this function will
+ * fill the other fields (`exports` and `exported_functions`).
+ */
+void initialize_wasm_instance(wasm_instance *instance);
 
 /**
  * Extract the data structure inside the `wasm_instance` resource.

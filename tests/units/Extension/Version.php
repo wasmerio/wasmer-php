@@ -27,6 +27,6 @@ class Version extends Suite
             ->when($result = $reflection->getVersion())
             ->then
                 ->string($result)
-                    ->isEqualTo('0.2.0');
+                    ->isEqualTo('0.5.0');
     }
 }

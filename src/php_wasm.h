@@ -22,7 +22,7 @@
 extern zend_module_entry wasm_module_entry;
 # define phpext_wasm_ptr &wasm_module_entry
 
-# define PHP_WASM_VERSION "0.2.0"
+# define PHP_WASM_VERSION "0.5.0"
 
 # if defined(ZTS) && defined(COMPILE_DL_WASM)
 ZEND_TSRMLS_CACHE_EXTERN()

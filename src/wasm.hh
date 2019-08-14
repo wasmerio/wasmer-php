@@ -43,6 +43,16 @@
 # define ZEND_ACC_IMMUTABLE 0
 #endif
 
+/**
+ * `ZEND_PARSE_PARAMETERS_NONE` has been defined in PHP 7.3. Be
+ * compatible with PHP 7.2 by copy-pasting its definition.
+ */
+#ifndef ZEND_PARSE_PARAMETERS_NONE
+# define ZEND_PARSE_PARAMETERS_NONE() \
+    ZEND_PARSE_PARAMETERS_START(0, 0) \
+    ZEND_PARSE_PARAMETERS_END()
+#endif
+
 // Constant to represent a not nullable (return) type.
 #define NOT_NULLABLE 0
 

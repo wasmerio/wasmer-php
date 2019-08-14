@@ -258,7 +258,7 @@ class Classes extends Suite
                 ->let($return_type = $methods[3]->getReturnType())
 
                 ->string($return_type . '')
-                    ->isEqualTo('number')
+                    ->isEqualTo(PHP_VERSION_ID < 70300 ? 'unknown' : 'number')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
 
@@ -412,7 +412,7 @@ class Classes extends Suite
         $this
             ->given(
                 $byteLength = 1114112,
-                $wasmArrayBuffer = new WasmArrayBuffer($byteLength),
+                $wasmArrayBuffer = new WasmArrayBuffer($byteLength)
             )
             ->when($result = $wasmArrayBuffer->grow(1))
             ->then
@@ -655,7 +655,7 @@ class Classes extends Suite
             ->given(
                 $wasmArrayBuffer = new WasmArrayBuffer($wasmTypedArrayClassName::BYTES_PER_ELEMENT),
                 $wasmTypedArray = new $wasmTypedArrayClassName($wasmArrayBuffer),
-                $wasmTypedArray[0] = 42,
+                $wasmTypedArray[0] = 42
             )
             ->when($result = $wasmTypedArray[0])
             ->then

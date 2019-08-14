@@ -1,4 +1,7 @@
-status = [ "ci/circleci: build_and_test" ]
+status = [
+    "ci/circleci: build_and_test_php_latest",
+    "ci/circleci: build_and_test_php_7_2"
+]
 required_approvals = 0
 timeout_sec = 900
 delete_merged_branches = true 

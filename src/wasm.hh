@@ -35,6 +35,52 @@
 #  include <stdint.h>
 #endif
 
+/**
+ * `_IS_NUBMER` has been defined in PHP 7.3. Be compatible with PHP
+ * 7.2 by defining the real value. It will have no effect, but the
+ * code will compile.
+ */
+#if !defined(_IS_NUMBER)
+# define _IS_NUMBER 20
+#endif
+
+/**
+ * `ZEND_ACC_IMMUTABLE` has been defined in PHP 7.3. Be compatible
+ * with PHP 7.2 by defining an empty value.
+ */
+#if !defined(ZEND_ACC_IMMUTABLE)
+# define ZEND_ACC_IMMUTABLE 0
+#endif
+
+/**
+ * `ZEND_PARSE_PARAMETERS_NONE` has been defined in PHP 7.3. Be
+ * compatible with PHP 7.2 by copy-pasting its definition.
+ */
+#if !defined(ZEND_PARSE_PARAMETERS_NONE)
+# define ZEND_PARSE_PARAMETERS_NONE() \
+    ZEND_PARSE_PARAMETERS_START(0, 0) \
+    ZEND_PARSE_PARAMETERS_END()
+#endif
+
+/**
+ * `zend_register_persistent_resource_ex` has been added in PHP 7.3
+ * (see
+ * https://github.com/php/php-src/commit/67d5f39a47b15e28293d9d6558b80ded049179fe). Be
+ * compatible with PHP 7.2 by writing a small hack that should work.
+ */
+#if PHP_VERSION_ID < 70300
+ZEND_API zend_resource* zend_register_persistent_resource_ex(zend_string *key, void *rsrc_pointer, int rsrc_type)
+{
+    zval *zv;
+    zval tmp;
+
+    ZVAL_NEW_PERSISTENT_RES(&tmp, -1, rsrc_pointer, rsrc_type);
+    zv = zend_hash_update(&EG(persistent_list), key, &tmp);
+
+    return Z_RES_P(zv);
+}
+#endif
+
 // Constant to represent a not nullable (return) type.
 #define NOT_NULLABLE 0
 

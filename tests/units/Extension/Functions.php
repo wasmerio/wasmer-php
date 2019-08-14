@@ -282,7 +282,7 @@ class Functions extends Suite
                 ->let($return_type = $_result->getReturnType())
 
                 ->string($return_type . '')
-                    ->isEqualTo('number')
+                    ->isEqualTo(PHP_VERSION_ID < 70300 ? 'unknown' : 'number')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
 

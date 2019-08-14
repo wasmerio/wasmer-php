@@ -36,6 +36,15 @@
 #endif
 
 /**
+ * `_IS_NUBMER` has been defined in PHP 7.3. Be compatible with PHP
+ * 7.2 by defining the real value. It will have no effect, but the
+ * code will compile.
+ */
+#if !defined(_IS_NUMBER)
+# define _IS_NUMBER 20
+#endif
+
+/**
  * `ZEND_ACC_IMMUTABLE` has been defined in PHP 7.3. Be compatible
  * with PHP 7.2 by defining an empty value.
  */

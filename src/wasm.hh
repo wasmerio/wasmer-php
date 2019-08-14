@@ -35,6 +35,14 @@
 #  include <stdint.h>
 #endif
 
+/**
+ * `ZEND_ACC_IMMUTABLE` has been defined in PHP 7.3. Be compatible
+ * with PHP 7.2 by defining an empty value.
+ */
+#ifndef ZEND_ACC_IMMUTABLE
+# define ZEND_ACC_IMMUTABLE 0
+#endif
+
 // Constant to represent a not nullable (return) type.
 #define NOT_NULLABLE 0
 

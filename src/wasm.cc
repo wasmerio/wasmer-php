@@ -239,7 +239,9 @@ public:
 
     ~wasm_lazy_byte_array_t()
     {
-        efree((uint8_t *) byte_array->bytes);
+        if (byte_array != NULL) {
+            efree((uint8_t *) byte_array->bytes);
+        }
     }
 
     wasmer_byte_array *get_bytes()

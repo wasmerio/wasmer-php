@@ -1,6 +1,6 @@
 status = [
     "ci/circleci: build_and_test_php_latest",
-    "ci/circleci: build_and_test_php_7.2"
+    "ci/circleci: build_and_test_php_7_2"
 ]
 required_approvals = 0
 timeout_sec = 900

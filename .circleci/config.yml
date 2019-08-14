@@ -65,7 +65,7 @@ jobs:
     steps: *build_and_test_steps
 
   # Build and test the project the project against PHP 7.2.
-  build_and_test_php_7.2:
+  build_and_test_php_7_2:
     docker:
       - image: circleci/php:7.2
     steps: *build_and_test_steps
@@ -88,5 +88,5 @@ workflows:
             tags:
               only: /.*/
 
-      # Run the `build_and_test_php_7.2` job for all branches and all tags.
-      - build_and_test_php_7.2: *build_and_test_php_latest
+      # Run the `build_and_test_php_7_2` job for all branches and all tags.
+      - build_and_test_php_7_2: *build_and_test_php_latest

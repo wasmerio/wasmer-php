@@ -2,7 +2,7 @@
     "name": "wasm",
     "description": "Run WebAssembly binaries safely.",
     "type": "extension",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "authors": [
         {
             "name": "Ivan Enderlin",

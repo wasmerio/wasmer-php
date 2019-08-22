@@ -102,7 +102,6 @@
       <file role="doc" name="examples/memory.php" />
       <file role="doc" name="examples/memory.rs" />
       <file role="doc" name="examples/memory.wasm" />
-      <file role="doc" name="examples/module_caching" />
       <file role="doc" name="examples/module_caching.php" />
       <file role="doc" name="examples/simple.php" />
       <file role="doc" name="examples/simple.rs" />

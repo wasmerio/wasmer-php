@@ -956,13 +956,13 @@ uint64_t imported_function_trampoline(wasm_imported_function *local_context, uin
                 ZVAL_DOUBLE(&local_context->input_values[nth], arguments[1 + nth]);
                 break;
 
-        default:
-            zend_throw_exception_ex(
-                zend_ce_exception,
-                0,
-                "Failed to cast an argument when calling the PHP imported function implementation."
-            );
-            return 0;
+            default:
+                zend_throw_exception_ex(
+                    zend_ce_exception,
+                    0,
+                    "Failed to cast an argument when calling the PHP imported function implementation."
+                );
+                return 0;
         }
     }
 
@@ -993,6 +993,14 @@ uint64_t imported_function_trampoline(wasm_imported_function *local_context, uin
 
         case wasmer_value_tag::WASM_F32:
             return Z_DVAL(output);
+
+        default:
+            zend_throw_exception_ex(
+                zend_ce_exception,
+                0,
+                "Failed to cast the returned value when calling the PHP imported function implementation."
+            );
+            return 0;
     }
 }
 
@@ -1062,7 +1070,8 @@ PHP_FUNCTION(wasm_new_instance)
                 zend_throw_exception_ex(
                     zend_ce_exception,
                     0,
-                    "Imported functions must be of the form `['module_name' => ['imported_function_name' => callable, ...], ...]`."
+                    "Imported functions must be of the form `['module_name' => ['imported_function_name' => callable, ...], ...]`, for key `%s`.",
+                    ZSTR_VAL(import_module_name)
                 );
 
                 RETURN_NULL();

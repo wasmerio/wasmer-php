@@ -295,4 +295,67 @@ class Instance extends Suite
                 ->integer($result)
                     ->isEqualTo(1048576);
     }
+
+    private function get_imported_functions(): array
+    {
+        return [
+            'env' => [
+                '_sum' => function (int $x, int $y): int {
+                    return $x + $y;
+                },
+                '_arity_0' => function (): int {
+                    return 42;
+                },
+                '_i32_i32' => function (int $x): int {
+                    return $x;
+                },
+                '_f32_f32' => function (float $x): float {
+                    return $x;
+                },
+                '_i32_f32_f32' => function (int $a, float $b): float {
+                    return $a + $b;
+                },
+                '_void' => function (): void {}
+            ]
+        ];
+    }
+
+    /**
+     * @tags x
+     */
+    public function test_imported_functions()
+    {
+        $this
+            ->given(
+                $importedFunctions = $this->get_imported_functions(),
+                $wasmInstance = new SUT(__DIR__ . '/imported_functions_tests.wasm', $importedFunctions)
+            )
+            ->when($result = $wasmInstance->sum(1, 2))
+                ->integer($result)
+                    ->isEqualTo(3)
+
+            ->when($result = $wasmInstance->arity_0())
+                ->integer($result)
+                    ->isEqualTo(42)
+
+            ->when($result = $wasmInstance->i32_i32(7))
+                ->integer($result)
+                    ->isEqualTo(7)
+
+            /*
+            ->when($result = $wasmInstance->f32_f32(7.42))
+                ->float($result)
+                    ->isEqualTo(7.42);
+            */
+
+            /*
+            ->when($result = $wasmInstance->i32_f32_f32(1, 2.3))
+                ->float($result)
+                    ->isEqualTo(3.3);
+            */
+
+            ->when($result = $wasmInstance->void())
+                ->variable($result)
+                    ->isNull();
+    }
 }

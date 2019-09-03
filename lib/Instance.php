@@ -43,7 +43,7 @@ class Instance
      * The constructor also throws a `RuntimeException` when the compilation
      * or the instantiation failed.
      */
-    public function __construct(string $filePath)
+    public function __construct(string $filePath, array $importedFunctions = null)
     {
         if (false === file_exists($filePath)) {
             throw new RuntimeException("File path to Wasm binary `$filePath` does not exist.");
@@ -54,7 +54,12 @@ class Instance
         }
 
         $wasmBytes = wasm_fetch_bytes($filePath);
-        $this->wasmInstance = wasm_new_instance($wasmBytes);
+
+        if (null === $importedFunctions) {
+            $this->wasmInstance = wasm_new_instance($wasmBytes);
+        } else {
+            $this->wasmInstance = wasm_new_instance($wasmBytes, $importedFunctions);
+        }
 
         if (null === $this->wasmInstance) {
             throw new RuntimeException(

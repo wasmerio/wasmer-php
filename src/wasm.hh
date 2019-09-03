@@ -204,12 +204,28 @@ int wasm_instance_resource_number;
  * trampoline.
  */
 typedef struct {
+    // The input signature of the imported function.
     wasmer_value_tag *inputs;
+
+    // The pre-allocated input zvals, so that they are not allocated
+    // for each call.
     zval *input_values;
+
+    // The input arity.
     uint32_t input_arity;
+
+    // The output signature of the imported function.
     wasmer_value_tag *outputs;
+
+    // The output arity.
     uint32_t output_arity;
+
+    // The fcall info cache structure used to call the PHP imported
+    // function implementation.
     zend_fcall_info_cache *fci_cache;
+
+    // The trampoline buffer used to implement imported function. It
+    // is stored here only to be destroyed by the instance.
     wasmer_trampoline_buffer_t *trampoline_buffer;
 } wasm_imported_function;
 

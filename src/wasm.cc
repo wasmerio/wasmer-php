@@ -1366,16 +1366,16 @@ PHP_FUNCTION(wasm_value)
     // Convert the PHP value to a `wasm_value_t`.
     if (type == wasmer_value_tag::WASM_I32) {
         wasm_value->tag = type;
-        wasm_value->value.I32 = (int32_t) value->value.lval;
+        wasm_value->value.I32 = (int32_t) Z_LVAL_P(value);
     } else if (type == wasmer_value_tag::WASM_I64) {
         wasm_value->tag = type;
-        wasm_value->value.I64 = (int64_t) value->value.lval;
+        wasm_value->value.I64 = (int64_t) Z_LVAL_P(value);
     } else if (type == wasmer_value_tag::WASM_F32) {
         wasm_value->tag = type;
-        wasm_value->value.F32 = (float) value->value.dval;
+        wasm_value->value.F32 = (float) Z_DVAL_P(value);
     } else if (type == wasmer_value_tag::WASM_F64) {
         wasm_value->tag = type;
-        wasm_value->value.F64 = (double) value->value.dval;
+        wasm_value->value.F64 = (double) Z_DVAL_P(value);
     }
     // Invalid value type provided.
     else {
@@ -1544,7 +1544,7 @@ PHP_FUNCTION(wasm_invoke_function)
                 }
 
                 function_inputs[nth].tag = wasmer_value_tag::WASM_I32;
-                function_inputs[nth].value.I32 = (int32_t) value->value.lval;
+                function_inputs[nth].value.I32 = (int32_t) Z_LVAL_P(value);
             }
             // Convert PHP integer to Wasm i64.
             else if (wasm_type == wasmer_value_tag::WASM_I64) {
@@ -1562,7 +1562,7 @@ PHP_FUNCTION(wasm_invoke_function)
                 }
 
                 function_inputs[nth].tag = wasmer_value_tag::WASM_I64;
-                function_inputs[nth].value.I64 = (int64_t) value->value.lval;
+                function_inputs[nth].value.I64 = (int64_t) Z_LVAL_P(value);
             }
             // Convert PHP integer to Wasm f32.
             else if (wasm_type == wasmer_value_tag::WASM_F32) {
@@ -1580,7 +1580,7 @@ PHP_FUNCTION(wasm_invoke_function)
                 }
 
                 function_inputs[nth].tag = wasmer_value_tag::WASM_F32;
-                function_inputs[nth].value.F32 = (float) value->value.dval;
+                function_inputs[nth].value.F32 = (float) Z_DVAL_P(value);
             }
             // Convert PHP integer to Wasm f64.
             else if (wasm_type == wasmer_value_tag::WASM_F64) {
@@ -1598,7 +1598,7 @@ PHP_FUNCTION(wasm_invoke_function)
                 }
 
                 function_inputs[nth].tag = wasmer_value_tag::WASM_F64;
-                function_inputs[nth].value.F64 = (double) value->value.dval;
+                function_inputs[nth].value.F64 = (double) Z_DVAL_P(value);
             }
             // Unreacheable.
             else {

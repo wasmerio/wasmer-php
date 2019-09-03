@@ -991,7 +991,13 @@ uint64_t imported_function_trampoline(wasm_imported_function *local_context, uin
 
     efree(fci);
 
-    return Z_LVAL(output);
+    switch (local_context->outputs[0]) {
+        case wasmer_value_tag::WASM_I32:
+            return Z_LVAL(output);
+
+        case wasmer_value_tag::WASM_F32:
+            return Z_DVAL(output);
+    }
 }
 
 /**
@@ -1149,7 +1155,8 @@ PHP_FUNCTION(wasm_new_instance)
                     RETURN_NULL();
                 }
 
-                wasmer_value_tag *outputs_signature = (wasmer_value_tag *) emalloc(1 * sizeof(wasmer_value_tag));
+                wasmer_value_tag *outputs_signature = (wasmer_value_tag *) emalloc(sizeof(wasmer_value_tag));
+                uint32_t output_arity = 1;
 
                 {
                     uint32_t return_type = ZEND_TYPE_CODE(fci_cache->function_handler->common.arg_info[-1].type);
@@ -1161,6 +1168,10 @@ PHP_FUNCTION(wasm_new_instance)
 
                         case IS_DOUBLE:
                             outputs_signature[0] = wasmer_value_tag::WASM_F32;
+                            break;
+
+                        case IS_VOID:
+                            output_arity = 0;
                             break;
 
                         default:
@@ -1188,7 +1199,7 @@ PHP_FUNCTION(wasm_new_instance)
                 trampoline_context->inputs = inputs_signature;
                 trampoline_context->input_values = (zval *) emalloc(imported_function_arity * sizeof(zval));
                 trampoline_context->outputs = outputs_signature;
-                trampoline_context->output_arity = 1;
+                trampoline_context->output_arity = output_arity;
                 trampoline_context->fci_cache = fci_cache;
                 trampoline_context->trampoline_buffer = NULL;
 
@@ -1211,7 +1222,7 @@ PHP_FUNCTION(wasm_new_instance)
                     inputs_signature,
                     imported_function_arity,
                     outputs_signature,
-                    1
+                    output_arity
                 );
 
                 char *module_name = (char *) ZSTR_VAL(import_module_name);

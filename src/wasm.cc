@@ -807,22 +807,24 @@ static void wasm_instance_destructor(zend_resource *resource)
         return;
     }
 
-    for (
-         auto iterator = instance->imported_functions->begin();
-         iterator != instance->imported_functions->end();
-         ++iterator
-    ) {
-        wasm_imported_function *imported_function = *iterator;
+    if (NULL != instance->imported_functions) {
+        for (
+            auto iterator = instance->imported_functions->begin();
+            iterator != instance->imported_functions->end();
+            ++iterator
+        ) {
+            wasm_imported_function *imported_function = *iterator;
 
-        efree(imported_function->inputs);
-        efree(imported_function->input_values);
-        efree(imported_function->outputs);
-        efree(imported_function->fci_cache);
-        wasmer_trampoline_buffer_destroy(imported_function->trampoline_buffer);
+            efree(imported_function->inputs);
+            efree(imported_function->input_values);
+            efree(imported_function->outputs);
+            efree(imported_function->fci_cache);
+            wasmer_trampoline_buffer_destroy(imported_function->trampoline_buffer);
+        }
+
+        instance->imported_functions->clear();
+        delete instance->imported_functions;
     }
-
-    instance->imported_functions->clear();
-    delete instance->imported_functions;
 
     for (uint32_t nth = 0; nth < instance->number_of_imports; ++nth) {
         wasmer_import_t import = instance->imports[nth];
@@ -898,7 +900,10 @@ PHP_FUNCTION(wasm_module_new_instance)
     // Create a new Wasm instance.
     wasm_instance *instance = (wasm_instance *) emalloc(sizeof(wasm_instance));
     instance->instance = NULL;
+    instance->imports = NULL;
+    instance->number_of_imports = 0;
     instance->exports = NULL;
+    instance->imported_functions = NULL;
     instance->exported_functions = NULL;
 
     wasmer_result_t wasm_instantiation_result = wasmer_module_instantiate(
@@ -926,15 +931,6 @@ PHP_FUNCTION(wasm_module_new_instance)
 
     RETURN_RES(resource);
 }
-
-/**
- * Declare the parameter information for the `wasm_new_instance`
- * function.
- */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_new_instance, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
-    ZEND_ARG_TYPE_INFO(0, imported_functions, IS_ARRAY, NOT_NULLABLE)
-ZEND_END_ARG_INFO()
 
 uint64_t imported_function_trampoline(wasm_imported_function *local_context, uint64_t *arguments) {
     if (NULL == local_context->fci_cache) {
@@ -1001,6 +997,15 @@ uint64_t imported_function_trampoline(wasm_imported_function *local_context, uin
 }
 
 /**
+ * Declare the parameter information for the `wasm_new_instance`
+ * function.
+ */
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_new_instance, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, wasm_bytes, IS_RESOURCE, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, imported_functions, IS_ARRAY, NOT_NULLABLE)
+ZEND_END_ARG_INFO()
+
+/**
  * Declare the `wasm_new_instance` function.
  *
  * # Usage
@@ -1032,73 +1037,51 @@ PHP_FUNCTION(wasm_new_instance)
         RETURN_NULL();
     }
 
-    uint32_t number_of_imports = (uint32_t) zend_hash_num_elements(wasm_imported_functions);
+    uint32_t number_of_imports = 0;
     wasmer_import_t *imports = NULL;
-
-    if (number_of_imports > 0) {
-        imports = (wasmer_import_t *) emalloc(number_of_imports * sizeof(wasmer_import_t));
-    }
-
     auto instance_imported_functions = new std::list<wasm_imported_function *>();
-
     zend_string *import_module_name;
     zval *imported_functions;
 
-    ZEND_HASH_FOREACH_STR_KEY_VAL(wasm_imported_functions, import_module_name, imported_functions)
-        if (Z_TYPE_P(imported_functions) != IS_ARRAY) {
-            efree(imports);
+    if (NULL != wasm_imported_functions) {
+        number_of_imports = (uint32_t) zend_hash_num_elements(wasm_imported_functions);
 
-            zend_throw_exception_ex(
-                zend_ce_exception,
-                0,
-                "Imported functions must be of the form `['module_name' => ['imported_function_name' => callable, ...], ...]`."
-            );
-
-            RETURN_NULL();
+        if (number_of_imports > 0) {
+            imports = (wasmer_import_t *) emalloc(number_of_imports * sizeof(wasmer_import_t));
         }
 
-        uint32_t import_nth = 0;
-        zend_string *imported_function_name;
-        zval *imported_function_implementation;
+        ZEND_HASH_FOREACH_STR_KEY_VAL(wasm_imported_functions, import_module_name, imported_functions)
+            if (Z_TYPE_P(imported_functions) != IS_ARRAY) {
+                efree(imports);
 
-        ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(imported_functions), imported_function_name, imported_function_implementation)
-            zend_string *callable_name;
-            zend_fcall_info_cache *fci_cache = (zend_fcall_info_cache *) emalloc(sizeof(zend_fcall_info_cache));
+                zend_throw_exception_ex(
+                    zend_ce_exception,
+                    0,
+                    "Imported functions must be of the form `['module_name' => ['imported_function_name' => callable, ...], ...]`."
+                );
 
-            if (zend_is_callable_ex(imported_function_implementation, NULL, 0, &callable_name, fci_cache, NULL)) {
-                uint32_t imported_function_arity = fci_cache->function_handler->common.required_num_args;
+                RETURN_NULL();
+            }
 
-                if (imported_function_arity != fci_cache->function_handler->common.num_args) {
-                    efree(imports);
-                    efree(fci_cache);
+            uint32_t import_nth = 0;
+            zend_string *imported_function_name;
+            zval *imported_function_implementation;
 
-                    zend_throw_exception_ex(
-                        zend_ce_exception,
-                        0,
-                        "Imported function `%s.%s` (implemented by `%s`) has either an optional argument or is variadic; both are unsupported.",
-                        ZSTR_VAL(import_module_name),
-                        ZSTR_VAL(imported_function_name),
-                        ZSTR_VAL(callable_name)
-                    );
+            ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(imported_functions), imported_function_name, imported_function_implementation)
+                zend_string *callable_name;
+                zend_fcall_info_cache *fci_cache = (zend_fcall_info_cache *) emalloc(sizeof(zend_fcall_info_cache));
 
-                    RETURN_NULL();
-                }
+                if (zend_is_callable_ex(imported_function_implementation, NULL, 0, &callable_name, fci_cache, NULL)) {
+                    uint32_t imported_function_arity = fci_cache->function_handler->common.required_num_args;
 
-                wasmer_value_tag *inputs_signature = (wasmer_value_tag *) emalloc(imported_function_arity * sizeof(wasmer_value_tag));
-
-                for (uint32_t nth = 0; nth < imported_function_arity; ++nth) {
-                    zend_arg_info argument_info = fci_cache->function_handler->common.arg_info[nth];
-
-                    if (argument_info.pass_by_reference) {
+                    if (imported_function_arity != fci_cache->function_handler->common.num_args) {
                         efree(imports);
                         efree(fci_cache);
-                        efree(inputs_signature);
 
                         zend_throw_exception_ex(
                             zend_ce_exception,
                             0,
-                            "The argument `$%s` of the imported function `%s.%s` (implemented by `%s`) is a reference; this is not supported.",
-                            ZSTR_VAL(argument_info.name),
+                            "Imported function `%s.%s` (implemented by `%s`) has either an optional argument or is variadic; both are unsupported.",
                             ZSTR_VAL(import_module_name),
                             ZSTR_VAL(imported_function_name),
                             ZSTR_VAL(callable_name)
@@ -1107,18 +1090,12 @@ PHP_FUNCTION(wasm_new_instance)
                         RETURN_NULL();
                     }
 
-                    uint32_t argument_type = ZEND_TYPE_CODE(argument_info.type);
+                    wasmer_value_tag *inputs_signature = (wasmer_value_tag *) emalloc(imported_function_arity * sizeof(wasmer_value_tag));
 
-                    switch (argument_type) {
-                        case IS_LONG:
-                            inputs_signature[nth] = wasmer_value_tag::WASM_I32;
-                            break;
+                    for (uint32_t nth = 0; nth < imported_function_arity; ++nth) {
+                        zend_arg_info argument_info = fci_cache->function_handler->common.arg_info[nth];
 
-                        case IS_DOUBLE:
-                            inputs_signature[nth] = wasmer_value_tag::WASM_F32;
-                            break;
-
-                        default:
+                        if (argument_info.pass_by_reference) {
                             efree(imports);
                             efree(fci_cache);
                             efree(inputs_signature);
@@ -1126,143 +1103,173 @@ PHP_FUNCTION(wasm_new_instance)
                             zend_throw_exception_ex(
                                 zend_ce_exception,
                                 0,
-                                "The argument `$%s` of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given `%s`.",
+                                "The argument `$%s` of the imported function `%s.%s` (implemented by `%s`) is a reference; this is not supported.",
                                 ZSTR_VAL(argument_info.name),
                                 ZSTR_VAL(import_module_name),
                                 ZSTR_VAL(imported_function_name),
-                                ZSTR_VAL(callable_name),
-                                zend_get_type_by_const(argument_type)
+                                ZSTR_VAL(callable_name)
                             );
 
                             RETURN_NULL();
-                    }
-                }
+                        }
 
-                if (!(fci_cache->function_handler->op_array.fn_flags & ZEND_ACC_HAS_RETURN_TYPE)) {
+                        uint32_t argument_type = ZEND_TYPE_CODE(argument_info.type);
+
+                        switch (argument_type) {
+                            case IS_LONG:
+                                inputs_signature[nth] = wasmer_value_tag::WASM_I32;
+                                break;
+
+                            case IS_DOUBLE:
+                                inputs_signature[nth] = wasmer_value_tag::WASM_F32;
+                                break;
+
+                            default:
+                                efree(imports);
+                                efree(fci_cache);
+                                efree(inputs_signature);
+
+                                zend_throw_exception_ex(
+                                    zend_ce_exception,
+                                    0,
+                                    "The argument `$%s` of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given `%s`.",
+                                    ZSTR_VAL(argument_info.name),
+                                    ZSTR_VAL(import_module_name),
+                                    ZSTR_VAL(imported_function_name),
+                                    ZSTR_VAL(callable_name),
+                                    zend_get_type_by_const(argument_type)
+                                );
+
+                                RETURN_NULL();
+                        }
+                    }
+
+                    if (!(fci_cache->function_handler->op_array.fn_flags & ZEND_ACC_HAS_RETURN_TYPE)) {
+                        efree(imports);
+                        efree(fci_cache);
+                        efree(inputs_signature);
+
+                        zend_throw_exception_ex(
+                            zend_ce_exception,
+                            0,
+                            "The return type of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given none.",
+                            ZSTR_VAL(import_module_name),
+                            ZSTR_VAL(imported_function_name),
+                            ZSTR_VAL(callable_name)
+                        );
+
+                        RETURN_NULL();
+                    }
+
+                    wasmer_value_tag *outputs_signature = (wasmer_value_tag *) emalloc(sizeof(wasmer_value_tag));
+                    uint32_t output_arity = 1;
+
+                    {
+                        uint32_t return_type = ZEND_TYPE_CODE(fci_cache->function_handler->common.arg_info[-1].type);
+
+                        switch (return_type) {
+                            case IS_LONG:
+                                outputs_signature[0] = wasmer_value_tag::WASM_I32;
+                                break;
+
+                            case IS_DOUBLE:
+                                outputs_signature[0] = wasmer_value_tag::WASM_F32;
+                                break;
+
+                            case IS_VOID:
+                                output_arity = 0;
+                                break;
+
+                            default:
+                                efree(imports);
+                                efree(fci_cache);
+                                efree(inputs_signature);
+                                efree(outputs_signature);
+
+                                zend_throw_exception_ex(
+                                    zend_ce_exception,
+                                    0,
+                                    "The return type of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given `%s`.",
+                                    ZSTR_VAL(import_module_name),
+                                    ZSTR_VAL(imported_function_name),
+                                    ZSTR_VAL(callable_name),
+                                    zend_get_type_by_const(return_type)
+                                );
+
+                                RETURN_NULL();
+                        }
+                    }
+
+                    wasm_imported_function *trampoline_context = (wasm_imported_function *) emalloc(sizeof(wasm_imported_function));
+                    trampoline_context->input_arity = imported_function_arity;
+                    trampoline_context->inputs = inputs_signature;
+                    trampoline_context->input_values = (zval *) emalloc(imported_function_arity * sizeof(zval));
+                    trampoline_context->outputs = outputs_signature;
+                    trampoline_context->output_arity = output_arity;
+                    trampoline_context->fci_cache = fci_cache;
+                    trampoline_context->trampoline_buffer = NULL;
+
+                    wasmer_trampoline_buffer_builder_t *trampoline_builder = wasmer_trampoline_buffer_builder_new();
+                    unsigned long trampoline_index = wasmer_trampoline_buffer_builder_add_callinfo_trampoline(
+                        trampoline_builder,
+                        (wasmer_trampoline_callable_t *) imported_function_trampoline,
+                        (void *) trampoline_context,
+                        // local context + arity
+                        1 + imported_function_arity
+                    );
+                    wasmer_trampoline_buffer_t *trampoline = wasmer_trampoline_buffer_builder_build(trampoline_builder);
+
+                    trampoline_context->trampoline_buffer = trampoline;
+
+                    const wasmer_trampoline_callable_t *trampoline_callable = wasmer_trampoline_buffer_get_trampoline(trampoline, trampoline_index);
+
+                    wasmer_import_func_t *function = wasmer_import_func_new(
+                        (void (*)(void *)) trampoline_callable,
+                        inputs_signature,
+                        imported_function_arity,
+                        outputs_signature,
+                        output_arity
+                    );
+
+                    char *module_name = (char *) ZSTR_VAL(import_module_name);
+                    wasmer_byte_array module_name_bytes = {
+                        .bytes = (const uint8_t *) module_name,
+                        .bytes_len = static_cast<uint32_t>(ZSTR_LEN(import_module_name))
+                    };
+                    char *import_name = ZSTR_VAL(imported_function_name);
+                    wasmer_byte_array import_name_bytes = {
+                        .bytes = (const uint8_t *) import_name,
+                        .bytes_len = static_cast<uint32_t>(ZSTR_LEN(imported_function_name))
+                    };
+
+                    wasmer_import_t import = {
+                        .module_name = module_name_bytes,
+                        .import_name = import_name_bytes,
+                        .tag = wasmer_import_export_kind::WASM_FUNCTION,
+                        .value.func = function
+                    };
+
+                    imports[import_nth] = import;
+                    ++import_nth;
+
+                    (*instance_imported_functions).push_back(trampoline_context);
+                } else {
                     efree(imports);
                     efree(fci_cache);
-                    efree(inputs_signature);
 
                     zend_throw_exception_ex(
                         zend_ce_exception,
                         0,
-                        "The return type of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given none.",
+                        "The imported function `%s.%s` must be a valid callable.",
                         ZSTR_VAL(import_module_name),
-                        ZSTR_VAL(imported_function_name),
-                        ZSTR_VAL(callable_name)
+                        ZSTR_VAL(imported_function_name)
                     );
 
                     RETURN_NULL();
                 }
-
-                wasmer_value_tag *outputs_signature = (wasmer_value_tag *) emalloc(sizeof(wasmer_value_tag));
-                uint32_t output_arity = 1;
-
-                {
-                    uint32_t return_type = ZEND_TYPE_CODE(fci_cache->function_handler->common.arg_info[-1].type);
-
-                    switch (return_type) {
-                        case IS_LONG:
-                            outputs_signature[0] = wasmer_value_tag::WASM_I32;
-                            break;
-
-                        case IS_DOUBLE:
-                            outputs_signature[0] = wasmer_value_tag::WASM_F32;
-                            break;
-
-                        case IS_VOID:
-                            output_arity = 0;
-                            break;
-
-                        default:
-                            efree(imports);
-                            efree(fci_cache);
-                            efree(inputs_signature);
-                            efree(outputs_signature);
-
-                            zend_throw_exception_ex(
-                                zend_ce_exception,
-                                0,
-                                "The return type of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given `%s`.",
-                                ZSTR_VAL(import_module_name),
-                                ZSTR_VAL(imported_function_name),
-                                ZSTR_VAL(callable_name),
-                                zend_get_type_by_const(return_type)
-                            );
-
-                            RETURN_NULL();
-                    }
-                }
-
-                wasm_imported_function *trampoline_context = (wasm_imported_function *) emalloc(sizeof(wasm_imported_function));
-                trampoline_context->input_arity = imported_function_arity;
-                trampoline_context->inputs = inputs_signature;
-                trampoline_context->input_values = (zval *) emalloc(imported_function_arity * sizeof(zval));
-                trampoline_context->outputs = outputs_signature;
-                trampoline_context->output_arity = output_arity;
-                trampoline_context->fci_cache = fci_cache;
-                trampoline_context->trampoline_buffer = NULL;
-
-                wasmer_trampoline_buffer_builder_t *trampoline_builder = wasmer_trampoline_buffer_builder_new();
-                unsigned long trampoline_index = wasmer_trampoline_buffer_builder_add_callinfo_trampoline(
-                    trampoline_builder,
-                    (wasmer_trampoline_callable_t *) imported_function_trampoline,
-                    (void *) trampoline_context,
-                    // local context + arity
-                    1 + imported_function_arity
-                );
-                wasmer_trampoline_buffer_t *trampoline = wasmer_trampoline_buffer_builder_build(trampoline_builder);
-
-                trampoline_context->trampoline_buffer = trampoline;
-
-                const wasmer_trampoline_callable_t *trampoline_callable = wasmer_trampoline_buffer_get_trampoline(trampoline, trampoline_index);
-
-                wasmer_import_func_t *function = wasmer_import_func_new(
-                    (void (*)(void *)) trampoline_callable,
-                    inputs_signature,
-                    imported_function_arity,
-                    outputs_signature,
-                    output_arity
-                );
-
-                char *module_name = (char *) ZSTR_VAL(import_module_name);
-                wasmer_byte_array module_name_bytes = {
-                    .bytes = (const uint8_t *) module_name,
-                    .bytes_len = static_cast<uint32_t>(ZSTR_LEN(import_module_name))
-                };
-                char *import_name = ZSTR_VAL(imported_function_name);
-                wasmer_byte_array import_name_bytes = {
-                    .bytes = (const uint8_t *) import_name,
-                    .bytes_len = static_cast<uint32_t>(ZSTR_LEN(imported_function_name))
-                };
-
-                wasmer_import_t import = {
-                    .module_name = module_name_bytes,
-                    .import_name = import_name_bytes,
-                    .tag = wasmer_import_export_kind::WASM_FUNCTION,
-                    .value.func = function
-                };
-
-                imports[import_nth] = import;
-                ++import_nth;
-
-                (*instance_imported_functions).push_back(trampoline_context);
-            } else {
-                efree(imports);
-                efree(fci_cache);
-
-                zend_throw_exception_ex(
-                    zend_ce_exception,
-                    0,
-                    "The imported function `%s.%s` must be a valid callable.",
-                    ZSTR_VAL(import_module_name),
-                    ZSTR_VAL(imported_function_name)
-                );
-
-                RETURN_NULL();
-            }
+            ZEND_HASH_FOREACH_END();
         ZEND_HASH_FOREACH_END();
-    ZEND_HASH_FOREACH_END();
+    }
 
     // Create a new Wasm instance.
     wasm_instance *instance = (wasm_instance *) emalloc(sizeof(wasm_instance));

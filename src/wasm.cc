@@ -1044,13 +1044,18 @@ PHP_FUNCTION(wasm_new_instance)
     zval *imported_functions;
 
     if (NULL != wasm_imported_functions) {
-        number_of_imports = (uint32_t) zend_hash_num_elements(wasm_imported_functions);
+        if (zend_hash_num_elements(wasm_imported_functions) > 0) {
+            // Sum all imports in every namespace.
+            ZEND_HASH_FOREACH_VAL(wasm_imported_functions, imported_functions) {
+                if (Z_TYPE_P(imported_functions) == IS_ARRAY) {
+                    number_of_imports += (uint32_t) zend_hash_num_elements(Z_ARR_P(imported_functions));
+                }
+            } ZEND_HASH_FOREACH_END();
 
-        if (number_of_imports > 0) {
             imports = (wasmer_import_t *) emalloc(number_of_imports * sizeof(wasmer_import_t));
         }
 
-        ZEND_HASH_FOREACH_STR_KEY_VAL(wasm_imported_functions, import_module_name, imported_functions)
+        ZEND_HASH_FOREACH_STR_KEY_VAL(wasm_imported_functions, import_module_name, imported_functions) {
             if (Z_TYPE_P(imported_functions) != IS_ARRAY) {
                 efree(imports);
 
@@ -1067,7 +1072,7 @@ PHP_FUNCTION(wasm_new_instance)
             zend_string *imported_function_name;
             zval *imported_function_implementation;
 
-            ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(imported_functions), imported_function_name, imported_function_implementation)
+            ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(imported_functions), imported_function_name, imported_function_implementation) {
                 zend_string *callable_name;
                 zend_fcall_info_cache *fci_cache = (zend_fcall_info_cache *) emalloc(sizeof(zend_fcall_info_cache));
 
@@ -1267,8 +1272,8 @@ PHP_FUNCTION(wasm_new_instance)
 
                     RETURN_NULL();
                 }
-            ZEND_HASH_FOREACH_END();
-        ZEND_HASH_FOREACH_END();
+            } ZEND_HASH_FOREACH_END();
+        } ZEND_HASH_FOREACH_END();
     }
 
     // Create a new Wasm instance.

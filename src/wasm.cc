@@ -1022,7 +1022,7 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(wasm_new_instance)
 {
     zval *wasm_bytes_resource;
-    HashTable* wasm_imported_functions;
+    HashTable* wasm_imported_functions = NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
         Z_PARAM_RESOURCE(wasm_bytes_resource)

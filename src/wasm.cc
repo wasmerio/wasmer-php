@@ -815,6 +815,8 @@ static void wasm_instance_destructor(zend_resource *resource)
         wasm_imported_function *imported_function = *iterator;
 
         efree(imported_function->inputs);
+        efree(imported_function->input_values);
+        efree(imported_function->outputs);
         efree(imported_function->fci_cache);
         wasmer_trampoline_buffer_destroy(imported_function->trampoline_buffer);
     }
@@ -948,15 +950,31 @@ uint64_t imported_function_trampoline(wasm_imported_function *local_context, uin
     zend_fcall_info *fci = (zend_fcall_info *) emalloc(sizeof(zend_fcall_info));
     zend_fcall_info_cache *fci_cache = local_context->fci_cache;
 
-    for (uint32_t nth = 0; nth < local_context->arity; ++nth) {
-        ZVAL_LONG(&local_context->inputs[nth], arguments[1 + nth]);
+    for (uint32_t nth = 0; nth < local_context->input_arity; ++nth) {
+        switch (local_context->inputs[nth]) {
+            case wasmer_value_tag::WASM_I32:
+                ZVAL_LONG(&local_context->input_values[nth], arguments[1 + nth]);
+                break;
+
+            case wasmer_value_tag::WASM_F32:
+                ZVAL_DOUBLE(&local_context->input_values[nth], arguments[1 + nth]);
+                break;
+
+        default:
+            zend_throw_exception_ex(
+                zend_ce_exception,
+                0,
+                "Failed to cast an argument when calling the PHP imported function implementation."
+            );
+            return 0;
+        }
     }
 
     zval output;
 
     fci->retval = &output;
-    fci->param_count = local_context->arity;
-    fci->params = local_context->inputs;
+    fci->param_count = local_context->input_arity;
+    fci->params = local_context->input_values;
     fci->no_separation = 0;
 
     if (zend_call_function(fci, fci_cache) != SUCCESS) {
@@ -1166,8 +1184,11 @@ PHP_FUNCTION(wasm_new_instance)
                 }
 
                 wasm_imported_function *trampoline_context = (wasm_imported_function *) emalloc(sizeof(wasm_imported_function));
-                trampoline_context->arity = imported_function_arity;
-                trampoline_context->inputs = (zval *) emalloc(imported_function_arity * sizeof(zval));
+                trampoline_context->input_arity = imported_function_arity;
+                trampoline_context->inputs = inputs_signature;
+                trampoline_context->input_values = (zval *) emalloc(imported_function_arity * sizeof(zval));
+                trampoline_context->outputs = outputs_signature;
+                trampoline_context->output_arity = 1;
                 trampoline_context->fci_cache = fci_cache;
                 trampoline_context->trampoline_buffer = NULL;
 
@@ -1192,9 +1213,6 @@ PHP_FUNCTION(wasm_new_instance)
                     outputs_signature,
                     1
                 );
-
-                efree(inputs_signature);
-                efree(outputs_signature);
 
                 char *module_name = (char *) ZSTR_VAL(import_module_name);
                 wasmer_byte_array module_name_bytes = {

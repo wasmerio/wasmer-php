@@ -204,8 +204,11 @@ int wasm_instance_resource_number;
  * trampoline.
  */
 typedef struct {
-    uint32_t arity;
-    zval *inputs;
+    wasmer_value_tag *inputs;
+    zval *input_values;
+    uint32_t input_arity;
+    wasmer_value_tag *outputs;
+    uint32_t output_arity;
     zend_fcall_info_cache *fci_cache;
     wasmer_trampoline_buffer_t *trampoline_buffer;
 } wasm_imported_function;

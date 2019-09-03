@@ -2,8 +2,10 @@
 
 declare(strict_types = 1);
 
-$bytes = wasm_fetch_bytes(__DIR__ . '/imported_function.wasm');
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+// Declare the imports. Each callable has a name (here `sum`), within a
+// namespace (here `env`).
 $imports = [
     'env' => [
         'add' => function(int $x, int $y): int {
@@ -12,23 +14,10 @@ $imports = [
     ],
 ];
 
-$instance = wasm_new_instance($bytes, $imports);
+// Instantiate the WebAssembly module with the imported functions.
+$instance = new Wasm\Instance(__DIR__ . '/imported_function.wasm', $imports);
 
-echo 'instance = '; var_dump($instance);
-echo 'last error = '; var_dump(wasm_get_last_error());
-echo 'result = '; var_dump(
-    wasm_invoke_function(
-        $instance,
-        'sum',
-        [1, 2]
-    )
-);
-
-/*
-$instance = new WASM\Instance(__DIR__ . '/imported_function.wasm', $imports);
-
+// Invoke the exported function as usual.
 var_dump(
     $instance->sum(5, 35) // 42
 );
-
-*/

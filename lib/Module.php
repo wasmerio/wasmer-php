@@ -138,9 +138,9 @@ class Module implements Serializable
      * $instance = Wasm\Instance::fromModule($module);
      * ```
      */
-    public function instantiate(): Instance
+    public function instantiate(array $importedFunctions = null): Instance
     {
-        return Instance::fromModule($this);
+        return Instance::fromModule($this, $importedFunctions);
     }
 
     /**

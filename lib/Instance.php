@@ -43,7 +43,7 @@ class Instance
      * The constructor also throws a `RuntimeException` when the compilation
      * or the instantiation failed.
      */
-    public function __construct(string $filePath)
+    public function __construct(string $filePath, array $importedFunctions = null)
     {
         if (false === file_exists($filePath)) {
             throw new RuntimeException("File path to Wasm binary `$filePath` does not exist.");
@@ -54,7 +54,12 @@ class Instance
         }
 
         $wasmBytes = wasm_fetch_bytes($filePath);
-        $this->wasmInstance = wasm_new_instance($wasmBytes);
+
+        if (null === $importedFunctions) {
+            $this->wasmInstance = wasm_new_instance($wasmBytes);
+        } else {
+            $this->wasmInstance = wasm_new_instance($wasmBytes, $importedFunctions);
+        }
 
         if (null === $this->wasmInstance) {
             throw new RuntimeException(
@@ -77,14 +82,18 @@ class Instance
      * $result = $instance->sum(1, 2);
      * ```
      */
-    public static function fromModule(Module $module): self
+    public static function fromModule(Module $module, ?array $importedFunctions = null): self
     {
         // Using an anonymous class allows to overwrite the constructor,
         // and to inject the `wasm_instance` resource and the file path.
         // From a type point of view, there is no difference.
-        return new class($module) extends Instance {
-            public function __construct(Module $module) {
-                $this->wasmInstance = wasm_module_new_instance($module->intoResource());
+        return new class($module, $importedFunctions) extends Instance {
+            public function __construct(Module $module, ?array $importedFunctions = null) {
+                if (null === $importedFunctions) {
+                    $this->wasmInstance = wasm_module_new_instance($module->intoResource());
+                } else {
+                    $this->wasmInstance = wasm_module_new_instance($module->intoResource(), $importedFunctions);
+                }
 
                 if (null === $this->wasmInstance) {
                     throw new RuntimeException(

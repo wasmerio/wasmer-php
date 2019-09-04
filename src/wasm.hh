@@ -27,6 +27,7 @@
 #include "php_wasm.h"
 #include "wasmer.hh"
 #include <unordered_map>
+#include <list>
 #include <string>
 
 #if defined(PHP_WIN32)
@@ -198,6 +199,37 @@ const char* wasm_instance_resource_name;
 int wasm_instance_resource_number;
 
 /**
+ * Represents an imported function.
+ * This structure is used as the local context of an imported function
+ * trampoline.
+ */
+typedef struct {
+    // The input signature of the imported function.
+    wasmer_value_tag *inputs;
+
+    // The pre-allocated input zvals, so that they are not allocated
+    // for each call.
+    zval *input_values;
+
+    // The input arity.
+    uint32_t input_arity;
+
+    // The output signature of the imported function.
+    wasmer_value_tag *outputs;
+
+    // The output arity.
+    uint32_t output_arity;
+
+    // The fcall info cache structure used to call the PHP imported
+    // function implementation.
+    zend_fcall_info_cache *fci_cache;
+
+    // The trampoline buffer used to implement imported function. It
+    // is stored here only to be destroyed by the instance.
+    wasmer_trampoline_buffer_t *trampoline_buffer;
+} wasm_imported_function;
+
+/**
  * Represents an exported function.
  */
 typedef struct {
@@ -224,8 +256,17 @@ typedef struct {
     // The internal opaque instance pointer.
     wasmer_instance_t *instance;
 
+    // An array of opaque import pointers.
+    wasmer_import_t *imports;
+
+    // Number of imports in the array above.
+    uint32_t number_of_imports;
+
     // The internal opaque exports pointer.
     wasmer_exports_t *exports;
+
+    // A list of imported function pointers.
+    std::list<wasm_imported_function *> *imported_functions;
 
     // A map from exported function names to exported function pointers.
     std::unordered_map<std::string, wasm_exported_function *> *exported_functions;

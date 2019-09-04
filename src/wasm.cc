@@ -949,11 +949,7 @@ uint64_t imported_function_trampoline(wasm_imported_function *local_context, uin
     for (uint32_t nth = 0; nth < local_context->input_arity; ++nth) {
         switch (local_context->inputs[nth]) {
             case wasmer_value_tag::WASM_I32:
-                ZVAL_LONG(&local_context->input_values[nth], arguments[1 + nth]);
-                break;
-
-            case wasmer_value_tag::WASM_F32:
-                ZVAL_DOUBLE(&local_context->input_values[nth], arguments[1 + nth]);
+                ZVAL_LONG(&local_context->input_values[nth], (int32_t) arguments[1 + nth]);
                 break;
 
             default:
@@ -987,12 +983,13 @@ uint64_t imported_function_trampoline(wasm_imported_function *local_context, uin
 
     efree(fci);
 
+    if (local_context->output_arity <= 0) {
+        return 0;
+    }
+
     switch (local_context->outputs[0]) {
         case wasmer_value_tag::WASM_I32:
             return Z_LVAL(output);
-
-        case wasmer_value_tag::WASM_F32:
-            return Z_DVAL(output);
 
         default:
             zend_throw_exception_ex(
@@ -1134,10 +1131,6 @@ PHP_FUNCTION(wasm_new_instance)
                                 inputs_signature[nth] = wasmer_value_tag::WASM_I32;
                                 break;
 
-                            case IS_DOUBLE:
-                                inputs_signature[nth] = wasmer_value_tag::WASM_F32;
-                                break;
-
                             default:
                                 efree(imports);
                                 efree(fci_cache);
@@ -1146,7 +1139,7 @@ PHP_FUNCTION(wasm_new_instance)
                                 zend_throw_exception_ex(
                                     zend_ce_exception,
                                     0,
-                                    "The argument `$%s` of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given `%s`.",
+                                    "The argument `$%s` of the imported function `%s.%s` (implemented by `%s`) must be an integer; given `%s`.",
                                     ZSTR_VAL(argument_info.name),
                                     ZSTR_VAL(import_module_name),
                                     ZSTR_VAL(imported_function_name),
@@ -1166,7 +1159,7 @@ PHP_FUNCTION(wasm_new_instance)
                         zend_throw_exception_ex(
                             zend_ce_exception,
                             0,
-                            "The return type of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given none.",
+                            "The return type of the imported function `%s.%s` (implemented by `%s`) must be an integer; given none.",
                             ZSTR_VAL(import_module_name),
                             ZSTR_VAL(imported_function_name),
                             ZSTR_VAL(callable_name)
@@ -1186,10 +1179,6 @@ PHP_FUNCTION(wasm_new_instance)
                                 outputs_signature[0] = wasmer_value_tag::WASM_I32;
                                 break;
 
-                            case IS_DOUBLE:
-                                outputs_signature[0] = wasmer_value_tag::WASM_F32;
-                                break;
-
                             case IS_VOID:
                                 output_arity = 0;
                                 break;
@@ -1203,7 +1192,7 @@ PHP_FUNCTION(wasm_new_instance)
                                 zend_throw_exception_ex(
                                     zend_ce_exception,
                                     0,
-                                    "The return type of the imported function `%s.%s` (implemented by `%s`) must be either an integer or a float; given `%s`.",
+                                    "The return type of the imported function `%s.%s` (implemented by `%s`) must be an integer; given `%s`.",
                                     ZSTR_VAL(import_module_name),
                                     ZSTR_VAL(imported_function_name),
                                     ZSTR_VAL(callable_name),

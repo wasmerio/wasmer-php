@@ -717,6 +717,10 @@ uint64_t imported_function_trampoline(wasm_imported_function *local_context, uin
     fci->params = local_context->input_values;
     fci->no_separation = 0;
 
+#if PHP_VERSION_ID < 70300
+    fci->size = sizeof(zend_fcall_info);
+#endif
+
     if (zend_call_function(fci, fci_cache) != SUCCESS) {
         efree(fci);
 

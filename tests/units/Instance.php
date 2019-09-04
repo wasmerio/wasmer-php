@@ -310,20 +310,11 @@ class Instance extends Suite
                 '_i32_i32' => function (int $x): int {
                     return $x;
                 },
-                '_f32_f32' => function (float $x): float {
-                    return $x;
-                },
-                '_i32_f32_f32' => function (int $a, float $b): float {
-                    return $a + $b;
-                },
                 '_void' => function (): void {}
             ]
         ];
     }
 
-    /**
-     * @tags x
-     */
     public function test_imported_functions()
     {
         $this
@@ -343,26 +334,11 @@ class Instance extends Suite
                 ->integer($result)
                     ->isEqualTo(7)
 
-            /*
-            ->when($result = $wasmInstance->f32_f32(7.42))
-                ->float($result)
-                    ->isEqualTo(7.42);
-            */
-
-            /*
-            ->when($result = $wasmInstance->i32_f32_f32(1, 2.3))
-                ->float($result)
-                    ->isEqualTo(3.3);
-            */
-
             ->when($result = $wasmInstance->void())
                 ->variable($result)
                     ->isNull();
     }
 
-    /**
-     * @tags x
-     */
     public function test_malformed_imported_functions_missing_imported_functions() {
         $this
             ->exception(function () {
@@ -372,9 +348,6 @@ class Instance extends Suite
                 ->hasMessage('Imported functions must be of the form `[\'module_name\' => [\'imported_function_name\' => callable, ...], ...]`, for key `env`.');
     }
 
-    /**
-     * @tags x
-     */
     public function test_malformed_imported_functions_optional_argument() {
         $this
             ->exception(function () {
@@ -389,9 +362,6 @@ class Instance extends Suite
                 ->hasMessage('Imported function `env.sum` (implemented by `Closure::__invoke`) has either an optional argument or is variadic; both are unsupported.');
     }
 
-    /**
-     * @tags x
-     */
     public function test_malformed_imported_functions_pass_by_reference_argument() {
         $this
             ->exception(function () {
@@ -406,9 +376,6 @@ class Instance extends Suite
                 ->hasMessage('The argument `$y` of the imported function `env.sum` (implemented by `Closure::__invoke`) is a reference; this is not supported.');
     }
 
-    /**
-     * @tags x
-     */
     public function test_malformed_imported_functions_invalid_argument_type() {
         $this
             ->exception(function () {
@@ -420,12 +387,9 @@ class Instance extends Suite
                 new SUT(__DIR__ . '/imported_functions_tests.wasm', $importedFunctions);
             })
                 ->isInstanceOf(Exception::class)
-                ->hasMessage('The argument `$y` of the imported function `env.sum` (implemented by `Closure::__invoke`) must be either an integer or a float; given `string`.');
+                ->hasMessage('The argument `$y` of the imported function `env.sum` (implemented by `Closure::__invoke`) must be an integer; given `string`.');
     }
 
-    /**
-     * @tags x
-     */
     public function test_malformed_imported_functions_missing_argument_type() {
         $this
             ->exception(function () {
@@ -437,12 +401,9 @@ class Instance extends Suite
                 new SUT(__DIR__ . '/imported_functions_tests.wasm', $importedFunctions);
             })
                 ->isInstanceOf(Exception::class)
-                ->hasMessage('The argument `$y` of the imported function `env.sum` (implemented by `Closure::__invoke`) must be either an integer or a float; given `unknown`.');
+                ->hasMessage('The argument `$y` of the imported function `env.sum` (implemented by `Closure::__invoke`) must be an integer; given `unknown`.');
     }
 
-    /**
-     * @tags x
-     */
     public function test_malformed_imported_functions_missing_return_type() {
         $this
             ->exception(function () {
@@ -454,12 +415,9 @@ class Instance extends Suite
                 new SUT(__DIR__ . '/imported_functions_tests.wasm', $importedFunctions);
             })
                 ->isInstanceOf(Exception::class)
-                ->hasMessage('The return type of the imported function `env.sum` (implemented by `Closure::__invoke`) must be either an integer or a float; given none.');
+                ->hasMessage('The return type of the imported function `env.sum` (implemented by `Closure::__invoke`) must be an integer; given none.');
     }
 
-    /**
-     * @tags x
-     */
     public function test_malformed_imported_functions_invalid_return_type() {
         $this
             ->exception(function () {
@@ -471,12 +429,9 @@ class Instance extends Suite
                 new SUT(__DIR__ . '/imported_functions_tests.wasm', $importedFunctions);
             })
                 ->isInstanceOf(Exception::class)
-                ->hasMessage('The return type of the imported function `env.sum` (implemented by `Closure::__invoke`) must be either an integer or a float; given `string`.');
+                ->hasMessage('The return type of the imported function `env.sum` (implemented by `Closure::__invoke`) must be an integer; given `string`.');
     }
 
-    /**
-     * @tags x
-     */
     public function test_malformed_imported_functions_not_a_callable() {
         $this
             ->exception(function () {

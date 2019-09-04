@@ -1000,9 +1000,9 @@ bool initialize_wasm_imports(
             wasmer_import_t import = {
                 .module_name = module_name_bytes,
                 .import_name = import_name_bytes,
-                .tag = wasmer_import_export_kind::WASM_FUNCTION,
-                .value.func = function
+                .tag = wasmer_import_export_kind::WASM_FUNCTION
             };
+            import.value.func = function;
 
             // Add the new imported function.
             (*imports)[import_nth] = import;

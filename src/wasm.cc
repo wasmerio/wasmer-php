@@ -1201,6 +1201,7 @@ static void wasm_instance_destructor(zend_resource *resource)
  */
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_new_instance, ZEND_RETURN_VALUE, ARITY(1), IS_RESOURCE, NULLABLE)
     ZEND_ARG_TYPE_INFO(0, wasm_module, IS_RESOURCE, NOT_NULLABLE)
+    ZEND_ARG_TYPE_INFO(0, imported_functions, IS_ARRAY, NOT_NULLABLE)
 ZEND_END_ARG_INFO()
 
 /**
@@ -1225,9 +1226,12 @@ ZEND_END_ARG_INFO()
 PHP_FUNCTION(wasm_module_new_instance)
 {
     zval *wasm_module_resource;
+    HashTable* wasm_imported_functions = NULL;
 
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 2)
         Z_PARAM_RESOURCE(wasm_module_resource)
+        Z_PARAM_OPTIONAL
+        Z_PARAM_ARRAY_HT(wasm_imported_functions)
     ZEND_PARSE_PARAMETERS_END();
 
     // Extract the module from the resource.
@@ -1237,13 +1241,21 @@ PHP_FUNCTION(wasm_module_new_instance)
         RETURN_NULL();
     }
 
+    std::list<wasm_imported_function *> *imported_functions;
+    wasmer_import_t *imports;
+    uint32_t number_of_imports;
+
+    if (false == initialize_wasm_imports(wasm_imported_functions, &imported_functions, &imports, &number_of_imports)) {
+        RETURN_NULL();
+    }
+
     // Create a new Wasm instance.
     wasm_instance *instance = (wasm_instance *) emalloc(sizeof(wasm_instance));
     instance->instance = NULL;
-    instance->imports = NULL;
-    instance->number_of_imports = 0;
+    instance->imports = imports;
+    instance->number_of_imports = number_of_imports;
     instance->exports = NULL;
-    instance->imported_functions = NULL;
+    instance->imported_functions = imported_functions;
     instance->exported_functions = NULL;
 
     wasmer_result_t wasm_instantiation_result = wasmer_module_instantiate(
@@ -1252,9 +1264,9 @@ PHP_FUNCTION(wasm_module_new_instance)
         // Instance.
         &instance->instance,
         // Imports.
-        {},
+        imports,
         // Imports length.
-        0
+        number_of_imports
     );
 
     // Instantiation failed.
@@ -1313,11 +1325,11 @@ PHP_FUNCTION(wasm_new_instance)
         RETURN_NULL();
     }
 
-    std::list<wasm_imported_function *> *instance_imported_functions;
+    std::list<wasm_imported_function *> *imported_functions;
     wasmer_import_t *imports;
     uint32_t number_of_imports;
 
-    if (false == initialize_wasm_imports(wasm_imported_functions, &instance_imported_functions, &imports, &number_of_imports)) {
+    if (false == initialize_wasm_imports(wasm_imported_functions, &imported_functions, &imports, &number_of_imports)) {
         RETURN_NULL();
     }
 
@@ -1327,7 +1339,7 @@ PHP_FUNCTION(wasm_new_instance)
     instance->imports = imports;
     instance->number_of_imports = number_of_imports;
     instance->exports = NULL;
-    instance->imported_functions = instance_imported_functions;
+    instance->imported_functions = imported_functions;
     instance->exported_functions = NULL;
 
     wasmer_result_t wasm_instantiation_result = wasmer_instantiate(

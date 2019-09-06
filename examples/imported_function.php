@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-// Declare the imports. Each callable has a name (here `sum`), within a
+// Declare the imports. Each callable has a name (here `add`), within a
 // namespace (here `env`).
 $imports = [
     'env' => [

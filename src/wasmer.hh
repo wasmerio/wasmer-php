@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <new>
 
+/// List of export/import kinds.
 enum class wasmer_import_export_kind : uint32_t {
   WASM_FUNCTION,
   WASM_GLOBAL,
@@ -29,6 +30,7 @@ struct wasmer_module_t {
 
 };
 
+/// Opaque pointer to `NamedExportDescriptor`.
 struct wasmer_export_descriptor_t {
 
 };
@@ -38,10 +40,12 @@ struct wasmer_byte_array {
   uint32_t bytes_len;
 };
 
+/// Opaque pointer to `NamedExportDescriptors`.
 struct wasmer_export_descriptors_t {
 
 };
 
+/// Opaque pointer to `wasmer_export_t`.
 struct wasmer_export_func_t {
 
 };
@@ -58,6 +62,7 @@ struct wasmer_value_t {
   wasmer_value value;
 };
 
+/// Opaque pointer to `NamedExport`.
 struct wasmer_export_t {
 
 };
@@ -66,6 +71,7 @@ struct wasmer_memory_t {
 
 };
 
+/// Opaque pointer to `NamedExports`.
 struct wasmer_exports_t {
 
 };
@@ -91,11 +97,7 @@ struct wasmer_import_func_t {
 
 };
 
-struct wasmer_instance_t {
-
-};
-
-struct wasmer_instance_context_t {
+struct wasmer_import_object_t {
 
 };
 
@@ -103,6 +105,7 @@ struct wasmer_table_t {
 
 };
 
+/// Union of import/export value.
 union wasmer_import_export_value {
   const wasmer_import_func_t *func;
   const wasmer_table_t *table;
@@ -115,6 +118,14 @@ struct wasmer_import_t {
   wasmer_byte_array import_name;
   wasmer_import_export_kind tag;
   wasmer_import_export_value value;
+};
+
+struct wasmer_instance_t {
+
+};
+
+struct wasmer_instance_context_t {
+
 };
 
 struct wasmer_limit_option_t {
@@ -318,6 +329,18 @@ wasmer_result_t wasmer_import_func_returns(const wasmer_import_func_t *func,
 wasmer_result_t wasmer_import_func_returns_arity(const wasmer_import_func_t *func,
                                                  uint32_t *result);
 
+/// Frees memory of the given ImportObject
+void wasmer_import_object_destroy(wasmer_import_object_t *import_object);
+
+/// Extends an existing import object with new imports
+wasmer_result_t wasmer_import_object_extend(wasmer_import_object_t *import_object,
+                                            wasmer_import_t *imports,
+                                            unsigned int imports_len);
+
+/// Creates a new empty import object.
+/// See also `wasmer_import_object_append`
+wasmer_import_object_t *wasmer_import_object_new();
+
 /// Calls an instances exported function by `name` with the provided parameters.
 /// Results are set using the provided `results` pointer.
 /// Returns `wasmer_result_t::WASMER_OK` upon success.
@@ -336,6 +359,9 @@ void *wasmer_instance_context_data_get(const wasmer_instance_context_t *ctx);
 /// Sets the `data` field of the instance context. This context will be
 /// passed to all imported function for instance.
 void wasmer_instance_context_data_set(wasmer_instance_t *instance, void *data_ptr);
+
+/// Extracts the instance's context and returns it.
+const wasmer_instance_context_t *wasmer_instance_context_get(wasmer_instance_t *instance);
 
 /// Gets the memory within the context at the index `memory_idx`.
 /// The index is always 0 until multiple memories are supported.
@@ -417,6 +443,14 @@ wasmer_result_t wasmer_module_deserialize(wasmer_module_t **module,
 
 /// Frees memory for the given Module
 void wasmer_module_destroy(wasmer_module_t *module);
+
+/// Given:
+///  A prepared `wasmer` import-object
+///  A compiled wasmer module
+/// Instantiates a wasmer instance
+wasmer_result_t wasmer_module_import_instantiate(wasmer_instance_t **instance,
+                                                 const wasmer_module_t *module,
+                                                 const wasmer_import_object_t *import_object);
 
 /// Creates a new Instance from the given module and imports.
 /// Returns `wasmer_result_t::WASMER_OK` upon success.

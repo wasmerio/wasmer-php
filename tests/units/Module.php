@@ -145,4 +145,46 @@ class Module extends Suite
                 ->integer($result->instantiate()->sum(1, 2))
                     ->isEqualTo(3);
     }
+
+    private function get_imported_functions(): array
+    {
+        return [
+            'env' => [
+                '_sum' => function (int $x, int $y): int {
+                    return $x + $y;
+                },
+                '_arity_0' => function (): int {
+                    return 42;
+                },
+                '_i32_i32' => function (int $x): int {
+                    return $x;
+                },
+                '_void' => function (): void {}
+            ]
+        ];
+    }
+
+    public function test_imported_functions()
+    {
+        $this
+            ->given(
+                $importedFunctions = $this->get_imported_functions(),
+                $wasmInstance = (new SUT(__DIR__ . '/imported_functions_tests.wasm'))->instantiate($importedFunctions)
+            )
+            ->when($result = $wasmInstance->sum(1, 2))
+                ->integer($result)
+                    ->isEqualTo(3)
+
+            ->when($result = $wasmInstance->arity_0())
+                ->integer($result)
+                    ->isEqualTo(42)
+
+            ->when($result = $wasmInstance->i32_i32(7))
+                ->integer($result)
+                    ->isEqualTo(7)
+
+            ->when($result = $wasmInstance->void())
+                ->variable($result)
+                    ->isNull();
+    }
 }

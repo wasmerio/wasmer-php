@@ -182,8 +182,9 @@ class Functions extends Suite
             ->when($_result = $result['wasm_module_new_instance'])
             ->then
                 ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(2)
+                ->integer($_result->getNumberOfRequiredParameters())
                     ->isEqualTo(1)
-                    ->isEqualTo($_result->getNumberOfRequiredParameters())
 
                 ->let($parameters = $_result->getParameters())
 
@@ -193,6 +194,15 @@ class Functions extends Suite
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
+
+                ->string($parameters[1]->getName())
+                    ->isEqualTo('imported_functions')
+                ->string($parameters[1]->getType() . '')
+                    ->isEqualTo('array')
+                ->boolean($parameters[1]->getType()->allowsNull())
+                    ->isFalse()
+                ->boolean($parameters[1]->isOptional())
+                    ->isTrue()
 
                 ->let($return_type = $_result->getReturnType())
 
@@ -204,8 +214,9 @@ class Functions extends Suite
             ->when($_result = $result['wasm_new_instance'])
             ->then
                 ->integer($_result->getNumberOfParameters())
+                    ->isEqualTo(2)
+                ->integer($_result->getNumberOfRequiredParameters())
                     ->isEqualTo(1)
-                    ->isEqualTo($_result->getNumberOfRequiredParameters())
 
                 ->let($parameters = $_result->getParameters())
 
@@ -215,6 +226,15 @@ class Functions extends Suite
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
+
+                ->string($parameters[1]->getName())
+                    ->isEqualTo('imported_functions')
+                ->string($parameters[1]->getType() . '')
+                    ->isEqualTo('array')
+                ->boolean($parameters[1]->getType()->allowsNull())
+                    ->isFalse()
+                ->boolean($parameters[1]->isOptional())
+                    ->isTrue()
 
                 ->let($return_type = $_result->getReturnType())
 

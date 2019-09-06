@@ -215,6 +215,28 @@ $instance = wasm_module_new_instance($module);
 
 This function returns a resource of type `wasm_instance`.
 
+The second optional argument of `wasm_module_new_instance` is an array
+representing imported functions, defined by a namespace, an imported
+function name, and a callable (i.e. the imported function
+implementation). All PHP callable formats are accepted. The callable
+must be statically types. For instance, the following example defines
+the `env.sum` imported function.
+
+```php
+$bytes = wasm_fetch_bytes('my_program.wasm');
+$module = wasm_compile($bytes);
+$instance = wasm_module_new_instance(
+    $module,
+    [
+        'env' => [
+            'sum' => function (int $x, int $y): int {
+                return $x + $y;
+            },
+        ],
+    ]
+);
+```
+
 ### Function `wasm_new_instance`
 
 Compiles and instantiates WebAssembly bytes:
@@ -228,6 +250,25 @@ This function returns a resource of type `wasm_instance`.
 
 This function combines `wasm_compile` and
 `wasm_module_new_instance`. It “hides” the module.
+
+The second optional argument of the `wasm_new_instance` function is an
+array representing imported functions. Learn more by reading the
+documentation of the `wasm_module_new_instance` function. Here is a
+quick example though, defining the `env.sum` imported function:
+
+```php
+$bytes = wasm_fetch_bytes('my_program.wasm');
+$instance = wasm_new_instance(
+    $bytes,
+    [
+        'env' => [
+            'sum' => function (int $x, int $y): int {
+                return $x + $y;
+            },
+        ],
+    ]
+);
+```
 
 ### Function `wasm_value`
 

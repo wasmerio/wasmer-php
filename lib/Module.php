@@ -33,6 +33,19 @@ use Serializable;
  * $instance = $module->instantiate();
  * $result = $instance->sum(1, 2);
  * ```
+ *
+ * Imported functions must be passed when instantiating the module:
+ *
+ * ```php,ignore
+ * $module = new Wasm\module('my_program.wasm');
+ * $instance = $module->instantiate([
+ *     'env' => [
+ *         'sum' => function (int $x, int $y): int {
+ *             return $x + $y;
+ *         },
+ *     ],
+ * ]);
+ * ```
  */
 class Module implements Serializable
 {

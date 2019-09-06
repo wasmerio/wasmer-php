@@ -26,6 +26,25 @@ use WasmArrayBuffer;
  * ```
  *
  * That simple.
+ *
+ * If the WebAssembly module needs imported functions, pass PHP functions as
+ * the second parameter of the constructor:
+ *
+ * ```php,ignore
+ * $instance = new Wasm\Instance(
+ *     'my_program.wasm',
+ *     [
+ *         'env' => [
+ *             'sum' => function (int $x, int $y): int {
+ *                 return $x + $y;
+ *             },
+ *         ],
+ *     ]
+ * );
+ * ```
+ *
+ * The callable used as an imported function implementation must be statically
+ * typed (both the inputs and the output).
  */
 class Instance
 {

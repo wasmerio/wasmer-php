@@ -8,6 +8,38 @@ compile-wasm FILE='examples/simple':
 	mv {{FILE}}.opt.wasm {{FILE}}.wasm
 	rm {{FILE}}.raw.wasm
 
+# Build the runtime shared library for this specific system.
+build-runtime:
+	#!/usr/bin/env bash
+	set -euo pipefail
+
+	# Build the shared library.
+	cargo build --release
+
+	# Find the shared library extension.
+	case "{{os()}}" in
+		"macos")
+			dylib_extension="dylib"
+			;;
+		"windows")
+			dylib_extension="dll"
+			;;
+		*)
+			dylib_extension="so"
+	esac
+
+	# Link `src/libwasmer_runtime_c_api.*`.
+	rm -f src/libwasmer_runtime_c_api.${dylib_extension}
+	ln -s \
+		'../'$( find target/release -name "libwasmer_runtime_c_api*.${dylib_extension}" -exec stat -n -f '%m ' {} ';' -print | sort -r | head -n 1 | cut -d ' ' -f 2 ) \
+		src/libwasmer_runtime_c_api.${dylib_extension}
+
+	# Link `src/wasmer.hh`.
+	rm -f src/wasmer.hh
+	ln -s \
+		'../'$( find target/release/build -name 'wasmer.hh' -exec stat -n -f '%m ' {} ';' -print | sort -r | head -n 1 | cut -d ' ' -f 2 ) \
+		src/wasmer.hh
+
 # Compile the PHP extension.
 build:
 	#!/usr/bin/env bash

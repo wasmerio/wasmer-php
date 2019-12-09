@@ -44,5 +44,5 @@ $length_of_output = $nth;
 echo $output, "\n";
 
 // Deallocate the subject, and the output.
-$instance->deallocate($input_pointer, $length_of_subject);
-$instance->deallocate($output_pointer, $length_of_output);
+$instance->deallocate($input_pointer, $length_of_subject+1);
+$instance->deallocate($output_pointer, $length_of_output+1);

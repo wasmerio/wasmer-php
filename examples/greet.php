@@ -12,7 +12,7 @@ $subject = 'Wasmer 🐘';
 $length_of_subject = strlen($subject);
 
 // Allocate memory for the subject, and get a pointer to it.
-$input_pointer = $instance->allocate($length_of_subject);
+$input_pointer = $instance->allocate($length_of_subject+1);
 
 // Write the subject into the memory.
 $memory_buffer = $instance->getMemoryBuffer();

@@ -160,6 +160,9 @@ $ just build
 $ php -d extension=wasm examples/simple.php
 ```
 
+If the provided shared libraries are not compatible with your system,
+please try running `just build-runtime` first.
+
 (Yes, you need [`just`](https://github.com/casey/just/)).
 
 ## Testing

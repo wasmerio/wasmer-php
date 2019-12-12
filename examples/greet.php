@@ -12,7 +12,7 @@ $subject = 'Wasmer 🐘';
 $length_of_subject = strlen($subject);
 
 // Allocate memory for the subject, and get a pointer to it.
-$input_pointer = $instance->allocate($length_of_subject+1);
+$input_pointer = $instance->allocate($length_of_subject + 1);
 
 // Write the subject into the memory.
 $memory_buffer = $instance->getMemoryBuffer();
@@ -44,5 +44,5 @@ $length_of_output = $nth;
 echo $output, "\n";
 
 // Deallocate the subject, and the output.
-$instance->deallocate($input_pointer, $length_of_subject+1);
-$instance->deallocate($output_pointer, $length_of_output+1);
+$instance->deallocate($input_pointer, $length_of_subject + 1);
+$instance->deallocate($output_pointer, $length_of_output + 1);

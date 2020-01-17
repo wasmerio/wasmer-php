@@ -13,4 +13,4 @@ categories = ["wasm"]
 [lib]
 
 [dependencies]
-wasmer-runtime-c-api = "0.11.0"
+wasmer-runtime-c-api = "0.13.1"

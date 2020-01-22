@@ -20,7 +20,7 @@
         "psr/simple-cache": "^1.0"
     },
     "require-dev": {
-        "atoum/atoum": "^3.3",
+        "atoum/atoum": "^3.4",
         "hoa/kitab": "^0.12",
         "phpbench/phpbench": "^0.16.9"
     },

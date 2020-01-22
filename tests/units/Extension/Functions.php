@@ -58,14 +58,14 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('file_path')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('string')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('resource')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -80,14 +80,14 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_bytes')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('bool')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -103,21 +103,21 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_bytes')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->string($parameters[1]->getName())
                     ->isEqualTo('wasm_module_unique_identifier')
-                ->string($parameters[1]->getType() . '')
+                ->string($parameters[1]->getType()->getName())
                     ->isEqualTo('string')
                 ->boolean($parameters[1]->getType()->allowsNull())
                     ->isTrue()
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('resource')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
@@ -130,7 +130,7 @@ class Functions extends Suite
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('void')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -145,14 +145,14 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_module')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('string')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
@@ -167,14 +167,14 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_serialized_module')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('string')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('resource')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
@@ -190,14 +190,14 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_module')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->string($parameters[1]->getName())
                     ->isEqualTo('imported_functions')
-                ->string($parameters[1]->getType() . '')
+                ->string($parameters[1]->getType()->getName())
                     ->isEqualTo('array')
                 ->boolean($parameters[1]->getType()->allowsNull())
                     ->isFalse()
@@ -206,7 +206,7 @@ class Functions extends Suite
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('resource')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
@@ -222,14 +222,14 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_bytes')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->string($parameters[1]->getName())
                     ->isEqualTo('imported_functions')
-                ->string($parameters[1]->getType() . '')
+                ->string($parameters[1]->getType()->getName())
                     ->isEqualTo('array')
                 ->boolean($parameters[1]->getType()->allowsNull())
                     ->isFalse()
@@ -238,7 +238,7 @@ class Functions extends Suite
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('resource')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
@@ -253,7 +253,7 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('type')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('int')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
@@ -265,7 +265,7 @@ class Functions extends Suite
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('resource')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
@@ -280,28 +280,28 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_instance')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->string($parameters[1]->getName())
                     ->isEqualTo('function_name')
-                ->string($parameters[1]->getType() . '')
+                ->string($parameters[1]->getType()->getName())
                     ->isEqualTo('string')
                 ->boolean($parameters[1]->getType()->allowsNull())
                     ->isFalse()
 
                 ->string($parameters[2]->getName())
                     ->isEqualTo('inputs')
-                ->string($parameters[2]->getType() . '')
+                ->string($parameters[2]->getType()->getName())
                     ->isEqualTo('array')
                 ->boolean($parameters[2]->getType()->allowsNull())
                     ->isFalse()
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo(PHP_VERSION_ID < 70300 ? 'unknown' : 'number')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
@@ -316,14 +316,14 @@ class Functions extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_instance')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('resource')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('WasmArrayBuffer')
                 ->boolean($return_type->allowsNull())
                     ->isTrue()
@@ -336,7 +336,7 @@ class Functions extends Suite
 
                 ->let($return_type = $_result->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('string')
                 ->boolean($return_type->allowsNull())
                     ->isTrue();

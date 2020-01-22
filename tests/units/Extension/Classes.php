@@ -74,7 +74,7 @@ class Classes extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('byte_length')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('int')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
@@ -89,7 +89,7 @@ class Classes extends Suite
 
                 ->let($return_type = $methods[1]->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('int')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -106,14 +106,14 @@ class Classes extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('number_of_pages')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo('int')
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
 
                 ->let($return_type = $methods[2]->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('void')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -185,7 +185,7 @@ class Classes extends Suite
 
                 ->string($parameters[0]->getName())
                     ->isEqualTo('wasm_array_buffer')
-                ->string($parameters[0]->getType() . '')
+                ->string($parameters[0]->getType()->getName())
                     ->isEqualTo(WasmArrayBuffer::class)
                 ->boolean($parameters[0]->getType()->allowsNull())
                     ->isFalse()
@@ -194,7 +194,7 @@ class Classes extends Suite
 
                 ->string($parameters[1]->getName())
                     ->isEqualTo('offset')
-                ->string($parameters[1]->getType() . '')
+                ->string($parameters[1]->getType()->getName())
                     ->isEqualTo('int')
                 ->boolean($parameters[1]->getType()->allowsNull())
                     ->isFalse()
@@ -203,7 +203,7 @@ class Classes extends Suite
 
                 ->string($parameters[2]->getName())
                     ->isEqualTo('length')
-                ->string($parameters[1]->getType() . '')
+                ->string($parameters[1]->getType()->getName())
                     ->isEqualTo('int')
                 ->boolean($parameters[2]->getType()->allowsNull())
                     ->isFalse()
@@ -220,7 +220,7 @@ class Classes extends Suite
 
                 ->let($return_type = $methods[1]->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('int')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -235,7 +235,7 @@ class Classes extends Suite
 
                 ->let($return_type = $methods[2]->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('int')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -257,7 +257,7 @@ class Classes extends Suite
 
                 ->let($return_type = $methods[3]->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo(PHP_VERSION_ID < 70300 ? 'unknown' : 'number')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -284,7 +284,7 @@ class Classes extends Suite
 
                 ->let($return_type = $methods[4]->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('void')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -306,7 +306,7 @@ class Classes extends Suite
 
                 ->let($return_type = $methods[5]->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('bool')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()
@@ -328,7 +328,7 @@ class Classes extends Suite
 
                 ->let($return_type = $methods[6]->getReturnType())
 
-                ->string($return_type . '')
+                ->string($return_type->getName())
                     ->isEqualTo('void')
                 ->boolean($return_type->allowsNull())
                     ->isFalse()

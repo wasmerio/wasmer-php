@@ -19,26 +19,21 @@ build-runtime:
 	# Find the shared library extension.
 	case "{{os()}}" in
 		"macos")
-			dylib_extension="dylib"
+			shared_library_path=$( ls -t target/release/deps/libwasmer_runtime_c_api*.dylib | head -n 1 )
+			shared_library=libwasmer_runtime_c_api.dylib
 			;;
 		"windows")
-			dylib_extension="dll"
+			shared_library_path=$( ls -t target/release/deps/wasmer_runtime_c_api*.dll | head -n 1 )
+			shared_library=wasmer_runtime_c_api.dll
 			;;
 		*)
-			dylib_extension="so"
+			shared_library_path=$( ls -t target/release/deps/libwasmer_runtime_c_api*.so | head -n 1 )
+			shared_library=libwasmer_runtime_c_api.so
 	esac
 
-	# Link `src/libwasmer_runtime_c_api.*`.
-	rm -f src/libwasmer_runtime_c_api.${dylib_extension}
-	ln -s \
-		'../'$( find target/release -name "libwasmer_runtime_c_api*.${dylib_extension}" -exec stat -n -f '%m ' {} ';' -print | sort -r | head -n 1 | cut -d ' ' -f 2 ) \
-		src/libwasmer_runtime_c_api.${dylib_extension}
-
-	# Link `src/wasmer.hh`.
-	rm -f src/wasmer.hh
-	ln -s \
-		'../'$( find target/release/build -name 'wasmer.hh' -exec stat -n -f '%m ' {} ';' -print | sort -r | head -n 1 | cut -d ' ' -f 2 ) \
-		src/wasmer.hh
+	# Link `wasmer/*wasmer_runtime_c_api.*`.
+	rm -f wasmer/${shared_library}
+	ln -s "../${shared_library_path}" wasmer/${shared_library}
 
 # Compile the PHP extension.
 build:

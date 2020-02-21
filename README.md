@@ -153,6 +153,25 @@ provide more safety and a more user-friendly API.
 
 See the [API documentations with examples](https://wasmerio.github.io/php-ext-wasm/wasm/).
 
+### Install with PECL (recommended)
+
+PECL is the official repository for PHP extensions. This project is
+hosted on PECL under the name `wasm`: http://pecl.php.net/wasm.
+
+```sh
+$ pecl install -B wasm
+$ cd /tmp/pear/temp/wasm/src
+$ phpize
+$ export CXX='g++'
+$ export CXXFLAGS='-std=c++11'
+$ ./configure --with-php-config=$PHP_PREFIX_BIN/php-config
+$ make install
+```
+
+This process will be easier in a close future.
+
+### Install manually (development)
+
 To compile the entire project, run the following commands:
 
 ```sh

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0"
+         xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+  <name>wasm</name>
+  <channel>pecl.php.net</channel>
+  <summary>Run WebAssembly binaries in PHP</summary>
+  <description>
+    WebAssembly (abbreviated Wasm) is a binary instruction format for
+    a stack-based virtual machine. Wasm is designed as a portable target
+    for compilation of high-level languages like C/C++/Rust, enabling
+    deployment on the web for client and server applications.
+
+    This extension allows to run Wasm binaries inside PHP.
+  </description>
+  <lead>
+    <name>Ivan Enderlin</name>
+    <user>hywan</user>
+    <email>ivan.enderlin@hoa-project.net</email>
+    <active>yes</active>
+  </lead>
+  <date>2019-08-22</date>
+  <time>16:00:00</time>
+  <version>
+    <release>0.5.0</release>
+    <api>0.5</api>
+  </version>
+  <stability>
+    <release>stable</release>
+    <api>stable</api>
+  </stability>
+  <license uri="https://github.com/wasmerio/wasmer/blob/master/LICENSE">MIT</license>
+  <notes>
+    # Features
+
+    ## Extension
+
+    * #71 Use pre-build dynamic libraries (@Hywan)
+    * #70 Improve function invocation time by 77% (@Hywan)
+    * #69 Introduce the `wasm_instance` structure (@Hywan)
+    * #68 Add the `WasmArrayBuffer::grow` method (@Hywan)
+
+    ## Runtime
+
+    * #72 Update Wasmer to 0.5.5 (@Hywan)
+
+    # Bug/security fixes
+
+    * #67 Update smallvec (@Hywan)
+    * #48 Fix the extension compilation on CentOS (@Hywan)
+
+    # Documentation
+
+    * Many improvements related to the new features and bug fixes.
+
+    # Chore
+
+    * #59 Tweak Bors (@Hywan)
+  </notes>
+  <contents>
+    <dir name="/">
+      <!-- ./ -->
+      <file role="doc" name="README.md" />
+      
+      <!-- src/ -->
+      <file role="doc" name="src/CREDITS" />
+      <file role="src" name="src/composer.json" />
+      <file role="src" name="src/config.m4" />
+      <file role="src" name="src/libwasmer_runtime_c_api.dylib" />
+      <file role="src" name="src/libwasmer_runtime_c_api.so" />
+      <file role="src" name="src/php_wasm.h" />
+      <file role="src" name="src/wasm.cc" />
+      <file role="src" name="src/wasm.hh" />
+      <file role="src" name="src/wasmer.hh" />
+
+      <!-- lib/ -->
+      <file role="doc" name="lib/README.md" />
+      <file role="src" name="lib/Cache/CacheInterface.php" />
+      <file role="src" name="lib/Cache/Exception.php" />
+      <file role="src" name="lib/Cache/Filesystem.php" />
+      <file role="src" name="lib/Cache/InvalidArgumentException.php" />
+      <file role="src" name="lib/Cache/README.md" />
+      <file role="src" name="lib/Instance.php" />
+      <file role="src" name="lib/Int16Array.php" />
+      <file role="src" name="lib/Int32Array.php" />
+      <file role="src" name="lib/Int8Array.php" />
+      <file role="src" name="lib/Module.php" />
+      <file role="src" name="lib/Prelude.php" />
+      <file role="src" name="lib/TypedArray.php" />
+      <file role="src" name="lib/Uint16Array.php" />
+      <file role="src" name="lib/Uint32Array.php" />
+      <file role="src" name="lib/Uint8Array.php" />
+
+      <!-- examples/ -->
+      <file role="doc" name="examples/greet.php" />
+      <file role="doc" name="examples/greet.rs" />
+      <file role="doc" name="examples/greet.wasm" />
+      <file role="doc" name="examples/imported_function.php" />
+      <file role="doc" name="examples/imported_function.rs" />
+      <file role="doc" name="examples/imported_function.wasm" />
+      <file role="doc" name="examples/memory.php" />
+      <file role="doc" name="examples/memory.rs" />
+      <file role="doc" name="examples/memory.wasm" />
+      <file role="doc" name="examples/module_caching.php" />
+      <file role="doc" name="examples/simple.php" />
+      <file role="doc" name="examples/simple.rs" />
+      <file role="doc" name="examples/simple.wasm" />
+    </dir>
+  </contents>
+  <dependencies>
+    <required>
+      <php>
+        <min>7.2.0</min>
+      </php>
+      <pearinstaller>
+        <min>1.4.0</min>
+      </pearinstaller>
+    </required>
+  </dependencies>
+  <providesextension>wasm</providesextension>
+  <extsrcrelease></extsrcrelease>
+</package>

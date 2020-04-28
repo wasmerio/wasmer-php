@@ -165,6 +165,9 @@ please try running `just build-runtime` first.
 
 (Yes, you need [`just`](https://github.com/casey/just/)).
 
+### Docker
+* `docker run -it --rm --name phpwasm1 suhanyujie/phpwasm:0.0.1 bash`
+
 ## Testing
 
 Once the extension is compiled and installed (just run `just rust && just php`), run the following commands:

@@ -1,0 +1,57 @@
+name: Test
+
+on:
+  push:
+    branches: [master, trying, staging]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        php-version:
+          - 7.1
+          - 7.2
+          - 7.3
+          - 7.4
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP environment
+        uses: nanasess/setup-php@v3.0.4
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Install Rust
+        run: test -d /usr/local/cargo || curl https://sh.rustup.rs -sSf | sh -s -- -y
+
+      - name: Install just
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          test -f $HOME/.cargo/bin/just || cargo install just
+
+      - name: Install Composer
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php
+          php -r "unlink('composer-setup.php');"
+          mv composer.phar composer
+
+      - name: Compile and install the PHP extension
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          export CXX="gcc"
+          just build
+
+      - name: Test the extension
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          composer install --no-progress
+          vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal --use-dot-report

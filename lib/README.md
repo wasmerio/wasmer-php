@@ -1,6 +1,6 @@
 # The `Wasm` library
 
-The `Wasm` library is a layer on top of the `php-ext-wasm` extension
+The `Wasm` library is a layer on top of the `wasmer-php` extension
 that brings more safety and a more user-friendly API.
 
 This section lists API provided by the `Wasm` library. The entry is
@@ -78,9 +78,9 @@ $module = new Wasm\Module('my_program.wasm.', Wasm\Module::PERSISTENT);
 See [the cache API](./wasm/cache/index.html) to learn about how to serialize a
 module.
 
-# The `php-ext-wasm` raw API
+# The `wasmer-php` raw API
 
-This section presents the raw API provided by the `php-ext-wasm`
+This section presents the raw API provided by the `wasmer-php`
 extension. The entire `Wasm` library is based on this API.
 
 ### Function `wasm_fetch_bytes`

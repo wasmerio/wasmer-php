@@ -1,9 +1,9 @@
 {
     "name": "php-wasm/php-wasm",
-    "description": "Run WebAssembly binaries safely with the `php-ext-wasm` extension.",
+    "description": "Run WebAssembly binaries safely with the `wasmer-php` extension.",
     "type": "library",
     "keywords": ["library", "php", "webassembly", "wasm", "extension"],
-    "homepage": "https://github.com/wasmerio/php-ext-wasm/",
+    "homepage": "https://github.com/wasmerio/wasmer-php/",
     "license": "BSD-3-Clause",
     "authors": [
         {
@@ -36,6 +36,6 @@
     "scripts": {
         "test": "vendor/bin/atoum --php 'php -d extension=wasm' --directories tests/units --force-terminal",
         "bench": "php -d extension=wasm vendor/bin/phpbench run --report default --ansi",
-        "doc": "php -d extension=wasm vendor/bin/kitab compile --with-composer --with-project-name=php-ext-wasm --with-logo-url='https://github.com/wasmerio.png' --output-directory doc lib"
+        "doc": "php -d extension=wasm vendor/bin/kitab compile --with-composer --with-project-name=wasmer-php --with-logo-url='https://github.com/wasmerio.png' --output-directory doc lib"
     }
 }

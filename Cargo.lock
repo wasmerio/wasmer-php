@@ -479,13 +479,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "php-ext-wasm"
-version = "0.5.0"
-dependencies = [
- "wasmer-runtime-c-api 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "ppv-lite86"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -858,6 +851,13 @@ dependencies = [
  "thiserror 1.0.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasmer-clif-fork-frontend 0.52.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasmparser 0.45.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "wasmer-php"
+version = "0.5.0"
+dependencies = [
+ "wasmer-runtime-c-api 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

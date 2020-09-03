@@ -246,7 +246,7 @@ class Filesystem extends Suite
         do {
             $directory =
                 sys_get_temp_dir() . DIRECTORY_SEPARATOR .
-                'php-ext-wasm' . DIRECTORY_SEPARATOR .
+                'wasmer-php' . DIRECTORY_SEPARATOR .
                 'tests' . DIRECTORY_SEPARATOR .
                 uniqid() . '-' . uniqid();
         } while(true === is_dir($directory));

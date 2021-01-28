@@ -3,6 +3,7 @@ typedef struct wasmer_res {
     union wasmer_res_inner {
         wasm_config_t *config;
         wasm_engine_t *engine;
+        wasm_store_t *store;
     } inner;
 } wasmer_res;
 

@@ -22,6 +22,7 @@ static ZEND_RSRC_DTOR_FUNC(wasm_config_dtor) {
     efree(res->ptr);
 }
 WASMER_RESOURCE_DECLARE(engine)
+WASMER_RESOURCE_DECLARE(store)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Type Representations
@@ -37,6 +38,7 @@ PHP_MINIT_FUNCTION(wasmer) {
 
     WASMER_RESOURCE_REGISTER(config)
     WASMER_RESOURCE_REGISTER(engine)
+    WASMER_RESOURCE_REGISTER(store)
 
     ///////////////////////////////////////////////////////////////////////////////
     // Type Representations

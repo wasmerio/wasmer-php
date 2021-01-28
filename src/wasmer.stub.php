@@ -30,6 +30,18 @@ namespace {
     /** @param resource $engine */
     function wasm_engine_delete($engine): bool {}
 
+    // Store
+
+    /**
+     * @param resource $engine
+     *
+     * @return resource
+     */
+    function wasm_store_new($engine) {}
+    /** @param resource $store */
+    function wasm_store_delete($store): bool {}
+
+
     ///////////////////////////////////////////////////////////////////////////////
     // Wamser API
 

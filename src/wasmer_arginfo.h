@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 57c133e11c692061b204697591fa86f4613949fe */
+ * Stub hash: e3d72a2686fc4cdc77acb4a7bcad8fbc2dc9a5ea */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -28,6 +28,14 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_engine_delete, 0, 1, _IS_BO
 	ZEND_ARG_INFO(0, engine)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_store_new, 0, 0, 1)
+	ZEND_ARG_INFO(0, engine)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_store_delete, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_INFO(0, store)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasmer_version, 0, 0, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
@@ -48,6 +56,8 @@ ZEND_FUNCTION(wasm_config_set_engine);
 ZEND_FUNCTION(wasm_engine_new);
 ZEND_FUNCTION(wasm_engine_new_with_config);
 ZEND_FUNCTION(wasm_engine_delete);
+ZEND_FUNCTION(wasm_store_new);
+ZEND_FUNCTION(wasm_store_delete);
 ZEND_FUNCTION(wasmer_version);
 ZEND_FUNCTION(wasmer_version_major);
 ZEND_FUNCTION(wasmer_version_minor);
@@ -63,6 +73,8 @@ static const zend_function_entry ext_functions[] = {
 	ZEND_FE(wasm_engine_new, arginfo_wasm_engine_new)
 	ZEND_FE(wasm_engine_new_with_config, arginfo_wasm_engine_new_with_config)
 	ZEND_FE(wasm_engine_delete, arginfo_wasm_engine_delete)
+	ZEND_FE(wasm_store_new, arginfo_wasm_store_new)
+	ZEND_FE(wasm_store_delete, arginfo_wasm_store_delete)
 	ZEND_FE(wasmer_version, arginfo_wasmer_version)
 	ZEND_FE(wasmer_version_major, arginfo_wasmer_version_major)
 	ZEND_FE(wasmer_version_minor, arginfo_wasmer_version_minor)

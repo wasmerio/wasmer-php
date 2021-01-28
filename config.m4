@@ -9,7 +9,7 @@ if test "$PHP_WASMER" != "no"; then
     PHP_SUBST(WASMER_SHARED_LIBADD)
     PHP_ADD_LIBRARY_WITH_PATH(wasmer, ./lib, WASMER_SHARED_LIBADD)
 
-    WASMER_API="src/api/config.c src/api/engine.c src/api/wasmer.c"
+    WASMER_API="src/api/config.c src/api/engine.c src/api/store.c src/api/wasmer.c"
     WASMER_API_OBJECTS=""
     WASMER_API_TYPES=""
     WASMER_SOURCES="src/wasmer.c"

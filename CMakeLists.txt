@@ -3,7 +3,7 @@ project(wasmer-php C)
 
 add_compile_definitions(HAVE_WASMER)
 
-set(WASMER_API src/api/config.c src/api/engine.c src/api/wasmer.c)
+set(WASMER_API src/api/config.c src/api/engine.c src/api/store.c src/api/wasmer.c)
 set(WASMER_API_OBJECTS)
 set(WASMER_API_TYPES)
 set(WASMER_SOURCES src/php_wasmer.h src/wasmer.c src/wasmer_arginfo.h)

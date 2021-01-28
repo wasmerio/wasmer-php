@@ -10,7 +10,7 @@ if test "$PHP_WASMER" != "no"; then
     PHP_ADD_LIBRARY_WITH_PATH(wasmer, ./lib, WASMER_SHARED_LIBADD)
 
     WASMER_API="src/api/config.c src/api/engine.c src/api/store.c src/api/wasmer.c"
-    WASMER_API_OBJECTS="src/api/objects/val.c"
+    WASMER_API_OBJECTS="src/api/objects/instance.c src/api/objects/modulce.c src/api/objects/val.c"
     WASMER_API_TYPES="src/api/types/exporttype.c src/api/types/externtype.c src/api/types/functype.c src/api/types/globaltype.c src/api/types/importtype.c src/api/types/limits.c src/api/types/memorytype.c src/api/types/tabletype.c src/api/types/valkind.c src/api/types/valtype.c"
     WASMER_SOURCES="src/wasmer.c"
     WASMER_ALL_SOURCES="${WASMER_API} ${WASMER_API_OBJECTS} ${WASMER_API_TYPES} ${WASMER_SOURCES}"

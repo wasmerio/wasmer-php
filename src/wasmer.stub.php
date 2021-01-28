@@ -403,6 +403,30 @@ namespace {
     ///////////////////////////////////////////////////////////////////////////////
     // Runtime Objects
 
+    // Module Instances
+
+    /**
+     * @param resource $store
+     * @param resource $module
+     *
+     * @return resource
+     */
+    function wasm_instance_new($store, $module, Wasm\Vec\Extern $externs) {}
+    /** @param resource $instance */
+    function wasm_instance_delete($instance): bool {}
+    /**
+     * @param resource $instance
+     *
+     * @return resource
+     */
+    function wasm_instance_exports($instance): Wasm\Vec\Extern {}
+    /**
+     * @param resource $instance
+     *
+     * @return resource
+     */
+    function wasm_instance_copy($instance) {}
+
     //Values
 
     /** @param resource $val */
@@ -425,6 +449,48 @@ namespace {
     function wasm_val_f32(float $val) {}
     /** @return resource */
     function wasm_val_f64(float $val) {}
+
+    // Modules
+
+    /**
+     * @param resource $store
+     *
+     * @return resource
+     */
+    function wasm_module_new($store, string $wasm) {}
+    /** @param resource $module */
+    function wasm_module_delete($module): bool {}
+    /**
+     * @param resource $store
+     * @param resource $module
+     */
+    function wasm_module_validate($store, $module): bool {}
+    /** @param resource $module */
+    function wasm_module_imports($module): Wasm\Vec\ImportType {}
+    /** @param resource $module */
+    function wasm_module_exports($module): Wasm\Vec\ExportType {}
+    /** @param resource $module */
+    function wasm_module_serialize($module): string {}
+    /**
+     * @param resource $store
+     *
+     * @return resource
+     */
+    function wasm_module_deserialize($store, string $wasm) {}
+    /**
+     * @param resource $module
+     */
+    function wasm_module_name($module): string {}
+    /**
+     * @param resource $module
+     */
+    function wasm_module_set_name($module, string $name): bool {}
+    /**
+     * @param resource $module
+     *
+     * @return resource
+     */
+    function wasm_module_copy($module) {}
 
 
     ///////////////////////////////////////////////////////////////////////////////

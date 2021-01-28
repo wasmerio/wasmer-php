@@ -15,6 +15,8 @@ typedef struct wasmer_res {
         wasm_valtype_t *valtype;
         wasm_limits_t limits;
 
+        wasm_instance_t *instance;
+        wasm_module_t *module;
         wasm_val_t val;
     } inner;
 } wasmer_res;

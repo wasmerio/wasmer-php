@@ -51,6 +51,8 @@ WASMER_VEC_CLASS_ENTRY_DECLARE(exporttype)
 ///////////////////////////////////////////////////////////////////////////////
 // Runtime Objects
 
+WASMER_RESOURCE_DECLARE(instance)
+WASMER_RESOURCE_DECLARE(module)
 WASMER_RESOURCE_DECLARE_WITHOUT_DTOR(val)
 static ZEND_RSRC_DTOR_FUNC(wasm_val_dtor) {
     wasmer_res *val_res = (wasmer_res*) res->ptr;

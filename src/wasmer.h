@@ -14,6 +14,8 @@ typedef struct wasmer_res {
         wasm_importtype_t *importtype;
         wasm_valtype_t *valtype;
         wasm_limits_t limits;
+
+        wasm_val_t val;
     } inner;
 } wasmer_res;
 
@@ -86,3 +88,9 @@ WASMER_CE_STRUCT_DECLARE(functype)
  * Convert a zval* into a wasm_functype_vec_c*
  */
 #define WASMER_FUNCTYPE_VEC_P(zv) WASMER_DECLARE_CE_P(functype, zv)
+
+WASMER_CE_STRUCT_DECLARE(val)
+/**
+ * Convert a zval* into a wasm_val_vec_c*
+ */
+#define WASMER_VAL_VEC_P(zv) WASMER_DECLARE_CE_P(val, zv)

@@ -98,6 +98,18 @@ namespace Wasm\Vec {
         /** @throw \Exception */
         public function offsetUnset(mixed $offset): void {}
     }
+
+    final class Val implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrVals = null) {}
+        public function count(): int {}
+        public function offsetExists(mixed $offset): bool {}
+        /** @return resource */
+        public function offsetGet(mixed $offset): mixed {}
+        /** @param resource $value */
+        public function offsetSet(mixed $offset, mixed $value): void {}
+        /** @throw \Exception */
+        public function offsetUnset(mixed $offset): void {}
+    }
 }
 
 namespace {
@@ -386,6 +398,34 @@ namespace {
      * @return resource
      */
     function wasm_exporttype_copy($exportype) {}
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Runtime Objects
+
+    //Values
+
+    /** @param resource $val */
+    function wasm_val_delete($val): bool {}
+    /** @param resource $val */
+    function wasm_val_value($val): mixed {}
+    /** @param resource $val */
+    function wasm_val_kind($val): int {}
+    /**
+     * @param resource $val
+     *
+     * @return resource
+     */
+    function wasm_val_copy($val) {}
+    /** @return resource */
+    function wasm_val_i32(int $val) {}
+    /** @return resource */
+    function wasm_val_i64(int $val) {}
+    /** @return resource */
+    function wasm_val_f32(float $val) {}
+    /** @return resource */
+    function wasm_val_f64(float $val) {}
+
 
     ///////////////////////////////////////////////////////////////////////////////
     // Wamser API

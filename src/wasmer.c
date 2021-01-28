@@ -51,6 +51,21 @@ WASMER_VEC_CLASS_ENTRY_DECLARE(exporttype)
 ///////////////////////////////////////////////////////////////////////////////
 // Runtime Objects
 
+WASMER_RESOURCE_DECLARE_WITHOUT_DTOR(val)
+static ZEND_RSRC_DTOR_FUNC(wasm_val_dtor) {
+    wasmer_res *val_res = (wasmer_res*) res->ptr;
+    wasm_val_t wasm_val = val_res->inner.val;
+
+    if (val_res->owned) {
+        wasm_val_delete(&wasm_val);
+    }
+
+    if (res->ptr != NULL) {
+        efree(res->ptr);
+    }
+}
+WASMER_VEC_CLASS_ENTRY_DECLARE(val)
+
 ///////////////////////////////////////////////////////////////////////////////
 
 PHP_MINIT_FUNCTION(wasmer) {
@@ -86,6 +101,9 @@ PHP_MINIT_FUNCTION(wasmer) {
 
     ///////////////////////////////////////////////////////////////////////////////
     // Runtime Objects
+
+    WASMER_RESOURCE_REGISTER(val)
+    WASMER_VEC_CLASS_REGISTER(Val, val)
 
     ///////////////////////////////////////////////////////////////////////////////
     // Type Representations

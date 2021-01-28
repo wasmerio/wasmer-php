@@ -21,6 +21,7 @@ static ZEND_RSRC_DTOR_FUNC(wasm_config_dtor) {
     // TODO(jubianchi): Add call to wasm_config_delete (see https://github.com/wasmerio/wasmer/pull/2054)
     efree(res->ptr);
 }
+WASMER_RESOURCE_DECLARE(engine)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Type Representations
@@ -35,6 +36,7 @@ PHP_MINIT_FUNCTION(wasmer) {
     // Runtime Environment
 
     WASMER_RESOURCE_REGISTER(config)
+    WASMER_RESOURCE_REGISTER(engine)
 
     ///////////////////////////////////////////////////////////////////////////////
     // Type Representations

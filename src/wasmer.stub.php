@@ -17,6 +17,19 @@ namespace {
     /** @param resource $config */
     function wasm_config_set_engine($config, int $engine): bool {}
 
+    // Engine
+
+    /** @return resource */
+    function wasm_engine_new() {}
+    /**
+     * @param resource $config
+     *
+     * @return resource
+     */
+    function wasm_engine_new_with_config($config) {}
+    /** @param resource $engine */
+    function wasm_engine_delete($engine): bool {}
+
     ///////////////////////////////////////////////////////////////////////////////
     // Wamser API
 

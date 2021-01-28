@@ -2,6 +2,7 @@ typedef struct wasmer_res {
     bool owned;
     union wasmer_res_inner {
         wasm_config_t *config;
+        wasm_engine_t *engine;
     } inner;
 } wasmer_res;
 

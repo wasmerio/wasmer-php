@@ -43,6 +43,18 @@ namespace {
 
 
     ///////////////////////////////////////////////////////////////////////////////
+    // Type Representations
+
+    // Limits
+
+    /** @return resource */
+    function wasm_limits_new(int $min, int $max) {}
+    /** @param resource $limits */
+    function wasm_limits_min($limits): int {}
+    /** @param resource $limits */
+    function wasm_limits_max($limits): int {}
+
+    ///////////////////////////////////////////////////////////////////////////////
     // Wamser API
 
     /**

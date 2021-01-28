@@ -11,7 +11,7 @@ if test "$PHP_WASMER" != "no"; then
 
     WASMER_API="src/api/config.c src/api/engine.c src/api/store.c src/api/wasmer.c"
     WASMER_API_OBJECTS=""
-    WASMER_API_TYPES=""
+    WASMER_API_TYPES="src/api/types/limits.c"
     WASMER_SOURCES="src/wasmer.c"
     WASMER_ALL_SOURCES="${WASMER_API} ${WASMER_API_OBJECTS} ${WASMER_API_TYPES} ${WASMER_SOURCES}"
 

@@ -4,6 +4,8 @@ typedef struct wasmer_res {
         wasm_config_t *config;
         wasm_engine_t *engine;
         wasm_store_t *store;
+
+        wasm_limits_t limits;
     } inner;
 } wasmer_res;
 

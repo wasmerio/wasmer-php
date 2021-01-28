@@ -6,18 +6,26 @@ typedef struct wasmer_res {
         wasm_store_t *store;
 
         wasm_exporttype_t *exporttype;
+        wasm_externtype_t *externtype;
         wasm_functype_t *functype;
         wasm_globaltype_t *globaltype;
-        wasm_tabletype_t *tabletype;
-        wasm_memorytype_t *memorytype;
-        wasm_externtype_t *externtype;
         wasm_importtype_t *importtype;
-        wasm_valtype_t *valtype;
         wasm_limits_t limits;
+        wasm_memorytype_t *memorytype;
+        wasm_tabletype_t *tabletype;
+        wasm_valtype_t *valtype;
 
+        wasm_global_t *global;
         wasm_instance_t *instance;
+        wasm_foreign_t *foreign;
+        wasm_frame_t *frame;
+        wasm_func_t *func;
+        wasm_memory_t *memory;
         wasm_module_t *module;
+        wasm_table_t *table;
+        wasm_trap_t *trap;
         wasm_val_t val;
+        wasm_extern_t *xtern;
     } inner;
 } wasmer_res;
 
@@ -90,6 +98,18 @@ WASMER_CE_STRUCT_DECLARE(functype)
  * Convert a zval* into a wasm_functype_vec_c*
  */
 #define WASMER_FUNCTYPE_VEC_P(zv) WASMER_DECLARE_CE_P(functype, zv)
+
+WASMER_CE_STRUCT_DECLARE(extern)
+/**
+ * Convert a zval* into a wasm_extern_vec_c*
+ */
+#define WASMER_EXTERN_VEC_P(zv) WASMER_DECLARE_CE_P(extern, zv)
+
+WASMER_CE_STRUCT_DECLARE(frame)
+/**
+ * Convert a zval* into a wasm_frame_vec_c*
+ */
+#define WASMER_FRAME_VEC_P(zv) WASMER_DECLARE_CE_P(frame, zv)
 
 WASMER_CE_STRUCT_DECLARE(val)
 /**

@@ -99,6 +99,30 @@ namespace Wasm\Vec {
         public function offsetUnset(mixed $offset): void {}
     }
 
+    final class Extern implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrExterns = null) {}
+        public function count(): int {}
+        public function offsetExists(mixed $offset): bool {}
+        /** @return resource */
+        public function offsetGet(mixed $offset): mixed {}
+        /** @param resource $value */
+        public function offsetSet(mixed $offset, mixed $value): void {}
+        /** @throw \Exception */
+        public function offsetUnset(mixed $offset): void {}
+    }
+
+    final class Frame implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrFrames = null) {}
+        public function count(): int {}
+        public function offsetExists(mixed $offset): bool {}
+        /** @return resource */
+        public function offsetGet(mixed $offset): mixed {}
+        /** @param resource $value */
+        public function offsetSet(mixed $offset, mixed $value): void {}
+        /** @throw \Exception */
+        public function offsetUnset(mixed $offset): void {}
+    }
+
     final class Val implements \Countable, \ArrayAccess {
         public function __construct(array|int|null $sizeOrVals = null) {}
         public function count(): int {}
@@ -403,6 +427,107 @@ namespace {
     ///////////////////////////////////////////////////////////////////////////////
     // Runtime Objects
 
+    // Externals
+
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_as_func($extern) {}
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_as_global($extern) {}
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_as_table($extern) {}
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_as_memory($extern) {}
+
+    // Function Instances
+
+    /**
+     * @param resource $store
+     * @param resource $functype
+     *
+     * @return resource
+     */
+    function wasm_func_new($store, $functype, callable $func) {}
+    /** @param resource $func */
+    function wasm_func_delete($func): bool {}
+    /**
+     * @param resource $func
+     *
+     * @return resource
+     */
+    function wasm_func_type($func) {}
+    /** @param resource $func */
+    function wasm_func_call($func, Wasm\Vec\Val $args): Wasm\Vec\Val {}
+    /**
+     * @param resource $func
+     *
+     * @return resource
+     */
+    function wasm_func_as_extern($func) {}
+
+
+    // Global Instances
+
+    /**
+     * @param resource $store
+     * @param resource $globaltype
+     * @param resource $val
+     *
+     * @return resource
+     */
+    function wasm_global_new($store, $globaltype, $val) {}
+    /** @param resource $global */
+    function wasm_global_delete($global): bool {}
+    /**
+     * @param resource $global
+     *
+     * @return resource
+     */
+    function wasm_global_type($global) {}
+    /**
+     * @param resource $global
+     *
+     * @return resource
+     */
+    function wasm_global_get($global) {}
+    /**
+     * @param resource $global
+     * @param resource $val
+     */
+    function wasm_global_set($global, $val): void {}
+    /**
+     * @param resource $global
+     *
+     * @return resource
+     */
+    function wasm_global_copy($global) {}
+    /**
+     * @param resource $left
+     * @param resource $right
+     */
+    function wasm_global_same($left, $right): bool {}
+    /**
+     * @param resource $global
+     *
+     * @return resource
+     */
+    function wasm_global_as_extern($global) {}
+
     // Module Instances
 
     /**
@@ -492,6 +617,15 @@ namespace {
      */
     function wasm_module_copy($module) {}
 
+    // Table Instances
+
+    // TODO(jubianchi): Add table
+
+
+    // Memory Instances
+
+    // TODO(jubianchi): Add memory
+
 
     ///////////////////////////////////////////////////////////////////////////////
     // Wamser API
@@ -557,4 +691,7 @@ namespace {
      * ```
      */
     function wasmer_version_pre(): string {}
+
+    /** @return resource */
+    function wat2wasm(string $wat): string {}
 }

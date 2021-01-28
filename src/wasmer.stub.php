@@ -3,44 +3,11 @@
 /** @generate-function-entries */
 
 namespace Wasm\Vec {
-    final class ValType implements \Countable, \ArrayAccess {
-        public function __construct(array|int|null $sizeOrValtypes = null) {}
-        public function count(): int {}
-        public function offsetExists(mixed $offset): bool {}
-        /** @return resource */
-        public function offsetGet(mixed $offset): mixed {}
-        /** @param resource $value */
-        public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
-        public function offsetUnset(mixed $offset): void {}
-    }
+    ///////////////////////////////////////////////////////////////////////////////
+    // Type Representations
 
-    final class GlobalType implements \Countable, \ArrayAccess {
-        public function __construct(array|int|null $sizeOrGlobaltypes = null) {}
-        public function count(): int {}
-        public function offsetExists(mixed $offset): bool {}
-        /** @return resource */
-        public function offsetGet(mixed $offset): mixed {}
-        /** @param resource $value */
-        public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
-        public function offsetUnset(mixed $offset): void {}
-    }
-
-    final class TableType implements \Countable, \ArrayAccess {
-        public function __construct(array|int|null $sizeOrTabletypes = null) {}
-        public function count(): int {}
-        public function offsetExists(mixed $offset): bool {}
-        /** @return resource */
-        public function offsetGet(mixed $offset): mixed {}
-        /** @param resource $value */
-        public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
-        public function offsetUnset(mixed $offset): void {}
-    }
-
-    final class MemoryType implements \Countable, \ArrayAccess {
-        public function __construct(array|int|null $sizeOrMemorytypes = null) {}
+    final class ExportType implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrExporttypes = null) {}
         public function count(): int {}
         public function offsetExists(mixed $offset): bool {}
         /** @return resource */
@@ -63,6 +30,30 @@ namespace Wasm\Vec {
         public function offsetUnset(mixed $offset): void {}
     }
 
+    final class FuncType implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrFunctypes = null) {}
+        public function count(): int {}
+        public function offsetExists(mixed $offset): bool {}
+        /** @return resource */
+        public function offsetGet(mixed $offset): mixed {}
+        /** @param resource $value */
+        public function offsetSet(mixed $offset, mixed $value): void {}
+        /** @throw \Exception */
+        public function offsetUnset(mixed $offset): void {}
+    }
+
+    final class GlobalType implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrGlobaltypes = null) {}
+        public function count(): int {}
+        public function offsetExists(mixed $offset): bool {}
+        /** @return resource */
+        public function offsetGet(mixed $offset): mixed {}
+        /** @param resource $value */
+        public function offsetSet(mixed $offset, mixed $value): void {}
+        /** @throw \Exception */
+        public function offsetUnset(mixed $offset): void {}
+    }
+
     final class ImportType implements \Countable, \ArrayAccess {
         public function __construct(array|int|null $sizeOrImporttypes = null) {}
         public function count(): int {}
@@ -75,8 +66,8 @@ namespace Wasm\Vec {
         public function offsetUnset(mixed $offset): void {}
     }
 
-    final class ExportType implements \Countable, \ArrayAccess {
-        public function __construct(array|int|null $sizeOrExporttypes = null) {}
+    final class MemoryType implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrMemorytypes = null) {}
         public function count(): int {}
         public function offsetExists(mixed $offset): bool {}
         /** @return resource */
@@ -87,8 +78,8 @@ namespace Wasm\Vec {
         public function offsetUnset(mixed $offset): void {}
     }
 
-    final class FuncType implements \Countable, \ArrayAccess {
-        public function __construct(array|int|null $sizeOrFunctypes = null) {}
+    final class TableType implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrTabletypes = null) {}
         public function count(): int {}
         public function offsetExists(mixed $offset): bool {}
         /** @return resource */
@@ -98,6 +89,21 @@ namespace Wasm\Vec {
         /** @throw \Exception */
         public function offsetUnset(mixed $offset): void {}
     }
+
+    final class ValType implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrValtypes = null) {}
+        public function count(): int {}
+        public function offsetExists(mixed $offset): bool {}
+        /** @return resource */
+        public function offsetGet(mixed $offset): mixed {}
+        /** @param resource $value */
+        public function offsetSet(mixed $offset, mixed $value): void {}
+        /** @throw \Exception */
+        public function offsetUnset(mixed $offset): void {}
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Runtime Objects
 
     final class Extern implements \Countable, \ArrayAccess {
         public function __construct(array|int|null $sizeOrExterns = null) {}
@@ -137,6 +143,7 @@ namespace Wasm\Vec {
 }
 
 namespace {
+
     ///////////////////////////////////////////////////////////////////////////////
     // Runtime Environment
 
@@ -427,32 +434,126 @@ namespace {
     ///////////////////////////////////////////////////////////////////////////////
     // Runtime Objects
 
-    // Externals
+    //Values
+
+    /** @param resource $val */
+    function wasm_val_delete($val): bool {}
+    /** @param resource $val */
+    function wasm_val_value($val): mixed {}
+    /** @param resource $val */
+    function wasm_val_kind($val): int {}
+    /**
+     * @param resource $val
+     *
+     * @return resource
+     */
+    function wasm_val_copy($val) {}
+    /** @return resource */
+    function wasm_val_i32(int $val) {}
+    /** @return resource */
+    function wasm_val_i64(int $val) {}
+    /** @return resource */
+    function wasm_val_f32(float $val) {}
+    /** @return resource */
+    function wasm_val_f64(float $val) {}
+
+    // References
+
+    // TODO(jubianchi): Add ref
+
+
+    // Frames
+    /**
+     * @param resource $frame
+     *
+     * @return resource
+     */
+    function wasm_frame_copy($frame) {}
+    /**
+     * @param resource $frame
+     *
+     * @return resource
+     */
+    function wasm_frame_instance($frame) {}
+    /** @param resource $frame */
+    function wasm_frame_func_index($frame): int {}
+    /** @param resource $frame */
+    function wasm_frame_func_offset($frame): int {}
+    /** @param resource $frame */
+    function wasm_frame_module_offset($frame): int {}
+
+
+    // Traps
+    /**
+     * @param resource $store
+     *
+     * @return resource
+     */
+    function wasm_trap_new($store, string $message) {}
+    /**
+     * @param resource $trap
+     *
+     * @return resource
+     */
+    function wasm_trap_copy($trap) {}
+    /** @param resource $trap */
+    function wasm_trap_message($trap): string {}
+    /**
+     * @param resource $trap
+     *
+     * @return resource
+     */
+    function wasm_trap_origin($trap) {}
+    /** @param resource $trap */
+    function wasm_trap_trace($trap): \Wasm\Vec\Frame {}
+
+
+    // Foreign Objects
+
+    // TODO(jubianchi): Add foreign
+
+
+    // Modules
 
     /**
-     * @param resource $extern
+     * @param resource $store
      *
      * @return resource
      */
-    function wasm_extern_as_func($extern) {}
+    function wasm_module_new($store, string $wasm) {}
+    /** @param resource $module */
+    function wasm_module_delete($module): bool {}
     /**
-     * @param resource $extern
-     *
-     * @return resource
+     * @param resource $store
+     * @param resource $module
      */
-    function wasm_extern_as_global($extern) {}
+    function wasm_module_validate($store, $module): bool {}
+    /** @param resource $module */
+    function wasm_module_imports($module): Wasm\Vec\ImportType {}
+    /** @param resource $module */
+    function wasm_module_exports($module): Wasm\Vec\ExportType {}
+    /** @param resource $module */
+    function wasm_module_serialize($module): string {}
     /**
-     * @param resource $extern
+     * @param resource $store
      *
      * @return resource
      */
-    function wasm_extern_as_table($extern) {}
+    function wasm_module_deserialize($store, string $wasm) {}
     /**
-     * @param resource $extern
+     * @param resource $module
+     */
+    function wasm_module_name($module): string {}
+    /**
+     * @param resource $module
+     */
+    function wasm_module_set_name($module, string $name): bool {}
+    /**
+     * @param resource $module
      *
      * @return resource
      */
-    function wasm_extern_as_memory($extern) {}
+    function wasm_module_copy($module) {}
 
     // Function Instances
 
@@ -483,6 +584,7 @@ namespace {
 
     // Global Instances
 
+    // TODO(jubianchi): Add global
     /**
      * @param resource $store
      * @param resource $globaltype
@@ -528,6 +630,43 @@ namespace {
      */
     function wasm_global_as_extern($global) {}
 
+    // Table Instances
+
+    // TODO(jubianchi): Add table
+
+
+    // Memory Instances
+
+    // TODO(jubianchi): Add memory
+
+
+    // Externals
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_as_func($extern) {}
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_as_global($extern) {}
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_as_table($extern) {}
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_as_memory($extern) {}
+
+
     // Module Instances
 
     /**
@@ -551,81 +690,6 @@ namespace {
      * @return resource
      */
     function wasm_instance_copy($instance) {}
-
-    //Values
-
-    /** @param resource $val */
-    function wasm_val_delete($val): bool {}
-    /** @param resource $val */
-    function wasm_val_value($val): mixed {}
-    /** @param resource $val */
-    function wasm_val_kind($val): int {}
-    /**
-     * @param resource $val
-     *
-     * @return resource
-     */
-    function wasm_val_copy($val) {}
-    /** @return resource */
-    function wasm_val_i32(int $val) {}
-    /** @return resource */
-    function wasm_val_i64(int $val) {}
-    /** @return resource */
-    function wasm_val_f32(float $val) {}
-    /** @return resource */
-    function wasm_val_f64(float $val) {}
-
-    // Modules
-
-    /**
-     * @param resource $store
-     *
-     * @return resource
-     */
-    function wasm_module_new($store, string $wasm) {}
-    /** @param resource $module */
-    function wasm_module_delete($module): bool {}
-    /**
-     * @param resource $store
-     * @param resource $module
-     */
-    function wasm_module_validate($store, $module): bool {}
-    /** @param resource $module */
-    function wasm_module_imports($module): Wasm\Vec\ImportType {}
-    /** @param resource $module */
-    function wasm_module_exports($module): Wasm\Vec\ExportType {}
-    /** @param resource $module */
-    function wasm_module_serialize($module): string {}
-    /**
-     * @param resource $store
-     *
-     * @return resource
-     */
-    function wasm_module_deserialize($store, string $wasm) {}
-    /**
-     * @param resource $module
-     */
-    function wasm_module_name($module): string {}
-    /**
-     * @param resource $module
-     */
-    function wasm_module_set_name($module, string $name): bool {}
-    /**
-     * @param resource $module
-     *
-     * @return resource
-     */
-    function wasm_module_copy($module) {}
-
-    // Table Instances
-
-    // TODO(jubianchi): Add table
-
-
-    // Memory Instances
-
-    // TODO(jubianchi): Add memory
-
 
     ///////////////////////////////////////////////////////////////////////////////
     // Wamser API

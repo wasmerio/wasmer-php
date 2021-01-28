@@ -5,6 +5,7 @@ typedef struct wasmer_res {
         wasm_engine_t *engine;
         wasm_store_t *store;
 
+        wasm_valtype_t *valtype;
         wasm_limits_t limits;
     } inner;
 } wasmer_res;
@@ -30,3 +31,10 @@ typedef struct wasm_##name##_vec_c {\
 } wasm_##name##_vec_c;
 
 #define WASMER_DECLARE_CE_P(name, zv) ((wasm_##name##_vec_c*)((char*)(Z_OBJ_P(zv)) - XtOffsetOf(wasm_##name##_vec_c, std)))
+
+WASMER_CE_STRUCT_DECLARE(valtype)
+/**
+ * Convert a zval* into a wasm_valtype_vec_c*
+ */
+#define WASMER_VALTYPE_VEC_P(zv) WASMER_DECLARE_CE_P(valtype, zv)
+

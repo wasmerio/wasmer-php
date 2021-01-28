@@ -5,7 +5,7 @@ add_compile_definitions(HAVE_WASMER)
 
 set(WASMER_API src/api/config.c src/api/engine.c src/api/store.c src/api/wasmer.c)
 set(WASMER_API_OBJECTS)
-set(WASMER_API_TYPES src/api/types/limits.c)
+set(WASMER_API_TYPES src/api/types/limits.c src/api/types/valkind.c src/api/types/valtype.c)
 set(WASMER_SOURCES src/php_wasmer.h src/wasmer.c src/wasmer_arginfo.h)
 set(WASMER_ALL_SOURCES ${WASMER_API} ${WASMER_API_OBJECTS} ${WASMER_API_TYPES} ${WASMER_SOURCES})
 

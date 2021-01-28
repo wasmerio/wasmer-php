@@ -27,6 +27,8 @@ WASMER_RESOURCE_DECLARE(store)
 ///////////////////////////////////////////////////////////////////////////////
 // Type Representations
 
+WASMER_RESOURCE_DECLARE(valtype)
+WASMER_VEC_CLASS_ENTRY_DECLARE(valtype)
 WASMER_RESOURCE_DECLARE_WITHOUT_DTOR(limits)
 static ZEND_RSRC_DTOR_FUNC(wasm_limits_dtor) {
     efree(res->ptr);
@@ -38,6 +40,8 @@ static ZEND_RSRC_DTOR_FUNC(wasm_limits_dtor) {
 ///////////////////////////////////////////////////////////////////////////////
 
 PHP_MINIT_FUNCTION(wasmer) {
+    zend_class_entry ce;
+
     ///////////////////////////////////////////////////////////////////////////////
     // Runtime Environment
 
@@ -48,6 +52,8 @@ PHP_MINIT_FUNCTION(wasmer) {
     ///////////////////////////////////////////////////////////////////////////////
     // Type Representations
 
+    WASMER_RESOURCE_REGISTER(valtype)
+    WASMER_VEC_CLASS_REGISTER(ValType, valtype)
     WASMER_RESOURCE_REGISTER(limits)
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -65,6 +71,14 @@ PHP_MINIT_FUNCTION(wasmer) {
     REGISTER_LONG_CONSTANT("WASM_COMPILER_CRANELIFT", CRANELIFT, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("WASM_COMPILER_LLVM", LLVM, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("WASM_COMPILER_SINGLEPASS", SINGLEPASS, CONST_CS | CONST_PERSISTENT);
+
+    // Value Types
+    REGISTER_LONG_CONSTANT("WASM_I32", WASM_I32, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_I64", WASM_I64, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_F32", WASM_F32, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_F64", WASM_F64, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_ANYREF", WASM_ANYREF, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("WASM_FUNCREF", WASM_FUNCREF, CONST_CS | CONST_PERSISTENT);
 
     return SUCCESS;
 }

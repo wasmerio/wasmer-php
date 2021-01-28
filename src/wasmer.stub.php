@@ -2,6 +2,20 @@
 
 /** @generate-function-entries */
 
+namespace Wasm\Vec {
+    final class ValType implements \Countable, \ArrayAccess {
+        public function __construct(array|int|null $sizeOrValtypes = null) {}
+        public function count(): int {}
+        public function offsetExists(mixed $offset): bool {}
+        /** @return resource */
+        public function offsetGet(mixed $offset): mixed {}
+        /** @param resource $value */
+        public function offsetSet(mixed $offset, mixed $value): void {}
+        /** @throw \Exception */
+        public function offsetUnset(mixed $offset): void {}
+    }
+}
+
 namespace {
     ///////////////////////////////////////////////////////////////////////////////
     // Runtime Environment
@@ -44,6 +58,28 @@ namespace {
 
     ///////////////////////////////////////////////////////////////////////////////
     // Type Representations
+
+    // Value Types
+
+    /** @return resource */
+    function wasm_valtype_new(int $kind) {}
+    /** @param resource $valtype */
+    function wasm_valtype_delete($valtype): bool {}
+    /** @param resource $valtype */
+    function wasm_valtype_kind($valtype): int {}
+    /** @param resource $valtype */
+    function wasm_valtype_is_num($valtype): bool {}
+    /** @param resource $valtype */
+    function wasm_valtype_is_ref($valtype): bool {}
+    /**
+     * @param resource $valtype
+     *
+     * @return resource
+     */
+    function wasm_valtype_copy($valtype) {}
+
+    function wasm_valkind_is_num(int $kind): bool {}
+    function wasm_valkind_is_ref(int $kind): bool {}
 
     // Limits
 

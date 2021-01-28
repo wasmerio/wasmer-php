@@ -69,8 +69,6 @@ $result = wasm_val_value($results[0]);
 echo '> ' . $result . PHP_EOL;
 assert($result === 49);
 
-exit(42);
-
 echo 'Shutting down...' . PHP_EOL;
 wasm_store_delete($store);
 wasm_engine_delete($engine);

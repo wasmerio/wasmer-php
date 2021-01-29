@@ -168,8 +168,8 @@ You can go through more advanced examples in the [dedicated directory][examples]
 | module   | ✅      |
 | func     | ✅      |
 | global   | ✅      |
-| table    | ✅      |
-| memory   | ✅      |
+| table    | 🧑‍💻      |
+| memory   | 🧑‍💻      |
 | extern   | ✅      |
 | instance | ✅      |
 

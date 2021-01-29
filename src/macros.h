@@ -40,13 +40,17 @@ wasm_vec_##name##_ce->create_object = wasm_##name##_vec_create;\
 \
 memcpy(&wasm_##name##_vec_object_handlers, &std_object_handlers, sizeof(zend_object_handlers));\
 wasm_##name##_vec_object_handlers.offset = XtOffsetOf(struct wasm_##name##_vec_c, std);\
+wasm_##name##_vec_object_handlers.free_obj = wasm_##name##_vec_free;\
+wasm_##name##_vec_object_handlers.clone_obj = NULL;\
 \
 zend_class_implements(wasm_vec_##name##_ce, 1, zend_ce_countable);\
 zend_class_implements(wasm_vec_##name##_ce, 1, zend_ce_arrayaccess);
 
 #define WASMER_VEC_CLASS_ENTRY_DECLARE(name)\
 zend_class_entry *wasm_vec_##name##_ce;\
-static zend_object_handlers wasm_##name##_vec_object_handlers;\
+static zend_object_handlers wasm_##name##_vec_object_handlers;
+
+#define WASMER_VEC_CLASS_HANDLERS_DECLARE(name, alias)\
 zend_object *wasm_##name##_vec_create(zend_class_entry *ce)\
 {\
     wasm_##name##_vec_c *wasm_##name##_vec = zend_object_alloc(sizeof(wasm_##name##_vec_c), ce);\
@@ -55,4 +59,25 @@ zend_object *wasm_##name##_vec_create(zend_class_entry *ce)\
     wasm_##name##_vec->std.handlers = &wasm_##name##_vec_object_handlers;\
     \
     return &wasm_##name##_vec->std;\
+}\
+void wasm_##name##_vec_free(zend_object *object) {\
+    wasm_##name##_vec_c *vec = (wasm_##name##_vec_c*) ((char *)(object) - XtOffsetOf(wasm_##name##_vec_c, std));\
+    \
+    if (vec->vec.owned) {\
+        wasm_##name##_vec_delete(vec->vec.inner.alias);\
+    }\
+    \
+    if (vec->vec.owned || vec->vec.allocated) {\
+        efree(vec->vec.inner.alias);\
+    }\
+    \
+    vec->vec.inner.alias = NULL;\
+    \
+    zend_object_std_dtor(object);\
 }
+
+#define WASMER_VEC_CLASS_DECLARE_WITH_ALIAS(name, alias)\
+WASMER_VEC_CLASS_ENTRY_DECLARE(name)\
+WASMER_VEC_CLASS_HANDLERS_DECLARE(name, alias)
+
+#define WASMER_VEC_CLASS_DECLARE(name) WASMER_VEC_CLASS_DECLARE_WITH_ALIAS(name, name)

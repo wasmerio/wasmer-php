@@ -112,7 +112,9 @@ PHP_FUNCTION (wasm_func_new) {
     func->owned = true;
 
     if (!func->inner.func) {
-        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Failed to create function");\
+        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Failed to create function");
+
+        return;
     }
 
     zend_resource *func_res = zend_register_resource(func, le_wasm_func);
@@ -190,7 +192,7 @@ PHP_FUNCTION (wasm_func_call) {
     wasm_val_vec_t *results = emalloc(sizeof(wasm_val_vec_t));
     wasm_val_vec_new_uninitialized(results, wasm_func_result_arity(func));
 
-    wasm_trap_t *trap = wasm_func_call(func, &args->vec, results);
+    wasm_trap_t *trap = wasm_func_call(func, args->vec.inner.val, results);
 
     if (trap != NULL) {
         wasm_byte_vec_t *message_vec = emalloc(sizeof(wasm_byte_vec_t));
@@ -199,15 +201,17 @@ PHP_FUNCTION (wasm_func_call) {
         zend_throw_exception_ex(zend_ce_exception, 0, "%s", message_vec->data);
 
         efree(message_vec);
+        efree(results);
+
+        return;
     }
 
-    // TODO(jubianchi): Handle vec ownership (not owned)
     zval obj;
     object_init_ex(&obj, wasm_vec_val_ce);
     wasm_val_vec_c *ce = WASMER_VAL_VEC_P(&obj);
-    ce->vec = *results;
-
-    efree(results);
+    ce->vec.inner.val = results;
+    ce->vec.owned = false;
+    ce->vec.allocated = true;
 
     RETURN_OBJ(Z_OBJ(obj));
 }

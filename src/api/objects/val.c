@@ -151,13 +151,13 @@ PHP_METHOD (Wasm_Vec_Val, __construct) {
     ZEND_PARSE_PARAMETERS_END();
 
     wasm_val_vec_c *wasm_val_vec = WASMER_VAL_VEC_P(ZEND_THIS);
-    wasm_val_vec_t vec;
+    wasm_val_vec_t *vec = emalloc(sizeof(wasm_val_vec_t));
 
     if (is_null) {
-        wasm_val_vec_new_empty(&vec);\
+        wasm_val_vec_new_empty(vec);\
     } else if(vals_ht) {
         int len = zend_hash_num_elements(vals_ht);
-        wasm_val_vec_new_uninitialized(&vec, len);
+        wasm_val_vec_new_uninitialized(vec, len);
 
         zval *tmp;
         zend_ulong index;
@@ -166,13 +166,14 @@ PHP_METHOD (Wasm_Vec_Val, __construct) {
                 wasmer_res *val_res = WASMER_RES_P(tmp);
                 val_res->owned = false;
 
-                vec.data[index] = WASMER_RES_INNER(val_res, val);
+                vec->data[index] = WASMER_RES_INNER(val_res, val);
         } ZEND_HASH_FOREACH_END();
     } else {
-        wasm_val_vec_new_uninitialized(&vec, size);
+        wasm_val_vec_new_uninitialized(vec, size);
     }
 
-    wasm_val_vec->vec = vec;
+    wasm_val_vec->vec.inner.val = vec;
+    wasm_val_vec->vec.owned = true;
 }
 
 PHP_METHOD (Wasm_Vec_Val, count) {
@@ -180,7 +181,7 @@ PHP_METHOD (Wasm_Vec_Val, count) {
 
     wasm_val_vec_c *wasm_val_vec = WASMER_VAL_VEC_P(ZEND_THIS);
 
-    RETURN_LONG(wasm_val_vec->vec.size);
+    RETURN_LONG(wasm_val_vec->vec.inner.val->size);
 }
 
 PHP_METHOD (Wasm_Vec_Val, offsetExists) {
@@ -192,11 +193,11 @@ PHP_METHOD (Wasm_Vec_Val, offsetExists) {
 
     wasm_val_vec_c *wasm_val_vec = WASMER_VAL_VEC_P(ZEND_THIS);
 
-    if(offset >= wasm_val_vec->vec.size) {
+    if(offset >= wasm_val_vec->vec.inner.val->size) {
         RETURN_FALSE;
     }
 
-    RETURN_BOOL(offset < wasm_val_vec->vec.size);
+    RETURN_BOOL(offset < wasm_val_vec->vec.inner.val->size);
 }
 
 PHP_METHOD (Wasm_Vec_Val, offsetGet) {
@@ -208,16 +209,18 @@ PHP_METHOD (Wasm_Vec_Val, offsetGet) {
 
     wasm_val_vec_c *wasm_val_vec = WASMER_VAL_VEC_P(ZEND_THIS);
 
-    if(offset >= wasm_val_vec->vec.size) {
+    if(offset >= wasm_val_vec->vec.inner.val->size) {
         zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\Val::offsetGet($offset) index out of bounds");
+
+        return;
     }
 
-    if(&wasm_val_vec->vec.data[offset] == NULL) {
+    if(&wasm_val_vec->vec.inner.val->data[offset] == NULL) {
         RETURN_NULL();
     }
 
     wasmer_res *val_res = emalloc(sizeof(wasmer_res));
-    val_res->inner.val = wasm_val_vec->vec.data[offset];
+    val_res->inner.val = wasm_val_vec->vec.inner.val->data[offset];
     val_res->owned = false;
 
     RETURN_RES(zend_register_resource(val_res, le_wasm_val));
@@ -236,14 +239,16 @@ PHP_METHOD (Wasm_Vec_Val, offsetSet) {
 
     wasm_val_vec_c *wasm_val_vec = WASMER_VAL_VEC_P(ZEND_THIS);
 
-    if(offset >= wasm_val_vec->vec.size) {
+    if(offset >= wasm_val_vec->vec.inner.val->size) {
         zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\Val::offsetSet($offset) index out of bounds");
+
+        return;
     }
 
     wasmer_res *val_res = WASMER_RES_P(val_val);
     val_res->owned = false;
 
-    wasm_val_vec->vec.data[offset] = WASMER_RES_INNER(val_res, val);
+    wasm_val_vec->vec.inner.val->data[offset] = WASMER_RES_INNER(val_res, val);
 }
 
 PHP_METHOD (Wasm_Vec_Val, offsetUnset) {\

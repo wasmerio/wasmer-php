@@ -21,13 +21,13 @@ PHP_FUNCTION (wasm_functype_new) {
             Z_PARAM_OBJECT(results_val)
     ZEND_PARSE_PARAMETERS_END();
 
-    // TODO(jubianchi): Handle vec ownership (ownership transfered)
     wasm_valtype_vec_c *params = WASMER_VALTYPE_VEC_P(params_val);
-    // TODO(jubianchi): Handle vec ownership (ownership transfered)
+    params->vec.owned = false;
     wasm_valtype_vec_c *results = WASMER_VALTYPE_VEC_P(results_val);
+    params->vec.owned = false;
 
     wasmer_res *functype = emalloc(sizeof(wasmer_res));
-    functype->inner.functype = wasm_functype_new(&params->vec, &results->vec);
+    functype->inner.functype = wasm_functype_new(params->vec.inner.valtype, results->vec.inner.valtype);
     functype->owned = true;
 
     zend_resource *functype_res = zend_register_resource(functype, le_wasm_functype);
@@ -46,11 +46,11 @@ PHP_FUNCTION (wasm_functype_params) {
 
     const wasm_valtype_vec_t *valtypes = wasm_functype_params(WASMER_RES_P_INNER(functype_val, functype));
 
-    // TODO(jubianchi): Handle vec ownership (not owned)
     zval obj;
     object_init_ex(&obj, wasm_vec_valtype_ce);
     wasm_valtype_vec_c *ce = WASMER_VALTYPE_VEC_P(&obj);
-    ce->vec = *valtypes;
+    ce->vec.inner.valtype = valtypes;
+    ce->vec.owned = false;
 
     RETURN_OBJ(Z_OBJ(obj));
 }
@@ -66,11 +66,11 @@ PHP_FUNCTION (wasm_functype_results) {
 
     const wasm_valtype_vec_t *valtypes = wasm_functype_results(WASMER_RES_P_INNER(functype_val, functype));
 
-    // TODO(jubianchi): Handle vec ownership (not owned)
     zval obj;
     object_init_ex(&obj, wasm_vec_valtype_ce);
     wasm_valtype_vec_c *ce = WASMER_VALTYPE_VEC_P(&obj);
-    ce->vec = *valtypes;
+    ce->vec.inner.valtype = valtypes;
+    ce->vec.owned = false;
 
     RETURN_OBJ(Z_OBJ(obj));
 }

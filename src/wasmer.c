@@ -28,25 +28,25 @@ WASMER_RESOURCE_DECLARE(store)
 // Type Representations
 
 WASMER_RESOURCE_DECLARE(exporttype)
-WASMER_VEC_CLASS_ENTRY_DECLARE(exporttype)
+WASMER_VEC_CLASS_DECLARE(exporttype)
 WASMER_RESOURCE_DECLARE(externtype)
-WASMER_VEC_CLASS_ENTRY_DECLARE(externtype)
+WASMER_VEC_CLASS_DECLARE(externtype)
 WASMER_RESOURCE_DECLARE(functype)
-WASMER_VEC_CLASS_ENTRY_DECLARE(functype)
+WASMER_VEC_CLASS_DECLARE(functype)
 WASMER_RESOURCE_DECLARE(globaltype)
-WASMER_VEC_CLASS_ENTRY_DECLARE(globaltype)
+WASMER_VEC_CLASS_DECLARE(globaltype)
 WASMER_RESOURCE_DECLARE(importtype)
-WASMER_VEC_CLASS_ENTRY_DECLARE(importtype)
+WASMER_VEC_CLASS_DECLARE(importtype)
 WASMER_RESOURCE_DECLARE_WITHOUT_DTOR(limits)
 static ZEND_RSRC_DTOR_FUNC(wasm_limits_dtor) {
     efree(res->ptr);
 }
 WASMER_RESOURCE_DECLARE(memorytype)
-WASMER_VEC_CLASS_ENTRY_DECLARE(memorytype)
+WASMER_VEC_CLASS_DECLARE(memorytype)
 WASMER_RESOURCE_DECLARE(tabletype)
-WASMER_VEC_CLASS_ENTRY_DECLARE(tabletype)
+WASMER_VEC_CLASS_DECLARE(tabletype)
 WASMER_RESOURCE_DECLARE(valtype)
-WASMER_VEC_CLASS_ENTRY_DECLARE(valtype)
+WASMER_VEC_CLASS_DECLARE(valtype)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Runtime Objects
@@ -64,10 +64,10 @@ static ZEND_RSRC_DTOR_FUNC(wasm_extern_dtor) {
         efree(res->ptr);
     }
 }
-WASMER_VEC_CLASS_ENTRY_DECLARE(extern)
+WASMER_VEC_CLASS_DECLARE_WITH_ALIAS(extern, xtern)
 WASMER_RESOURCE_DECLARE(foreign)
 WASMER_RESOURCE_DECLARE(frame)
-WASMER_VEC_CLASS_ENTRY_DECLARE(frame)
+WASMER_VEC_CLASS_DECLARE(frame)
 WASMER_RESOURCE_DECLARE(func)
 WASMER_RESOURCE_DECLARE(global)
 WASMER_RESOURCE_DECLARE(instance)
@@ -88,7 +88,7 @@ static ZEND_RSRC_DTOR_FUNC(wasm_val_dtor) {
         efree(res->ptr);
     }
 }
-WASMER_VEC_CLASS_ENTRY_DECLARE(val)
+WASMER_VEC_CLASS_DECLARE(val)
 
 ///////////////////////////////////////////////////////////////////////////////
 

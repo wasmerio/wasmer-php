@@ -34,7 +34,7 @@ PHP_FUNCTION (wasm_instance_new) {
 
     wasm_trap_t *trap;
     memset(&trap, 0, sizeof(wasm_trap_t*));
-    wasm_instance_t *wasm_instance = wasm_instance_new(store, module, &externs->vec, &trap);
+    wasm_instance_t *wasm_instance = wasm_instance_new(store, module, externs->vec.inner.xtern, &trap);
 
     WASMER_HANDLE_ERROR
 
@@ -45,6 +45,8 @@ PHP_FUNCTION (wasm_instance_new) {
         zend_throw_exception_ex(zend_ce_exception, 0, "%s", message_vec->data);
 
         efree(message_vec);
+
+        return;
     }
 
     wasmer_res *instance = emalloc(sizeof(wasmer_res));
@@ -73,9 +75,8 @@ PHP_FUNCTION (wasm_instance_exports) {
     zval obj;
     object_init_ex(&obj, wasm_vec_extern_ce);
     wasm_extern_vec_c *ce = WASMER_EXTERN_VEC_P(&obj);
-    ce->vec = *externs;
-
-    efree(externs);
+    ce->vec.inner.xtern = externs;
+    ce->vec.owned = true;
 
     RETURN_OBJ(Z_OBJ(obj));
 }

@@ -83,13 +83,11 @@ PHP_FUNCTION (wasm_module_imports) {
     wasm_importtype_vec_t *importtypes = emalloc(sizeof(wasm_exporttype_vec_t));
     wasm_module_imports(WASMER_RES_P_INNER(module_val, module), importtypes);
 
-    // TODO(jubianchi): Handle vec ownership (owned)
     zval obj;
     object_init_ex(&obj, wasm_vec_importtype_ce);
     wasm_importtype_vec_c *ce = WASMER_IMPORTTYPE_VEC_P(&obj);
-    ce->vec = *importtypes;
-
-    efree(importtypes);
+    ce->vec.inner.importtype = importtypes;
+    ce->vec.owned = true;
 
     RETURN_OBJ(Z_OBJ(obj));
 }
@@ -106,13 +104,11 @@ PHP_FUNCTION (wasm_module_exports) {
     wasm_exporttype_vec_t *exporttypes = emalloc(sizeof(wasm_exporttype_vec_t));
     wasm_module_exports(WASMER_RES_P_INNER(module_val, module), exporttypes);
 
-    // TODO(jubianchi): Handle vec ownership (owned)
     zval obj;
     object_init_ex(&obj, wasm_vec_exporttype_ce);
     wasm_exporttype_vec_c *ce = WASMER_EXPORTTYPE_VEC_P(&obj);
-    ce->vec = *exporttypes;
-
-    efree(exporttypes);
+    ce->vec.inner.exporttype = exporttypes;
+    ce->vec.owned = true;
 
     RETURN_OBJ(Z_OBJ(obj));
 }

@@ -1,6 +1,6 @@
 typedef struct wasmer_res {
     bool owned;
-    union wasmer_res_inner {
+    union {
         wasm_config_t *config;
         wasm_engine_t *engine;
         wasm_store_t *store;
@@ -29,6 +29,25 @@ typedef struct wasmer_res {
     } inner;
 } wasmer_res;
 
+typedef struct wasmer_vec {
+    bool owned;
+    bool allocated;
+    union {
+        wasm_exporttype_vec_t *exporttype;
+        wasm_externtype_vec_t *externtype;
+        wasm_functype_vec_t *functype;
+        wasm_globaltype_vec_t *globaltype;
+        wasm_importtype_vec_t *importtype;
+        wasm_memorytype_vec_t *memorytype;
+        wasm_tabletype_vec_t *tabletype;
+        wasm_valtype_vec_t *valtype;
+
+        wasm_frame_vec_t *frame;
+        wasm_val_vec_t *val;
+        wasm_extern_vec_t *xtern;
+    } inner;
+} wasmer_vec;
+
 /**
  * Convert a zval* into a wasmer_res*
  */
@@ -45,7 +64,7 @@ typedef struct wasmer_res {
 
 #define WASMER_CE_STRUCT_DECLARE(name)\
 typedef struct wasm_##name##_vec_c {\
-    wasm_##name##_vec_t vec;\
+    wasmer_vec vec;\
     zend_object std;\
 } wasm_##name##_vec_c;
 

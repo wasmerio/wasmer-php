@@ -57,6 +57,8 @@ PHP_FUNCTION (wasm_extern_as_func) {
 
     if (!wasm_func) {
         zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to func");
+
+        return;
     }
 
     wasmer_res *func = emalloc(sizeof(wasmer_res));
@@ -79,6 +81,8 @@ PHP_FUNCTION (wasm_extern_as_global) {
 
     if (!wasm_global) {
         zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to global");
+
+        return;
     }
 
     wasmer_res *global = emalloc(sizeof(wasmer_res));
@@ -101,6 +105,8 @@ PHP_FUNCTION (wasm_extern_as_table) {
 
     if (!wasm_table) {
         zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to table");
+
+        return;
     }
 
     wasmer_res *table = emalloc(sizeof(wasmer_res));
@@ -124,6 +130,8 @@ PHP_FUNCTION (wasm_extern_as_memory) {
 
     if (!wasm_memory) {
         zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to table");
+
+        return;
     }
 
     wasmer_res *memory = emalloc(sizeof(wasmer_res));
@@ -145,14 +153,14 @@ PHP_METHOD (Wasm_Vec_Extern, __construct) {
     ZEND_PARSE_PARAMETERS_END();
 
     wasm_extern_vec_c *wasm_extern_vec = WASMER_EXTERN_VEC_P(ZEND_THIS);
-    wasm_extern_vec_t vec;
+    wasm_extern_vec_t *vec = emalloc(sizeof(wasm_extern_vec_t));
 
     if (is_null) {
-        wasm_extern_vec_new_empty(&vec);\
+        wasm_extern_vec_new_empty(vec);\
     } else if(externs_ht) {
         int len = zend_hash_num_elements(externs_ht);
 
-        wasm_extern_vec_new_uninitialized(&vec, len);
+        wasm_extern_vec_new_uninitialized(vec, len);
 
         zval *tmp;
         zend_ulong index;
@@ -161,13 +169,14 @@ PHP_METHOD (Wasm_Vec_Extern, __construct) {
                     wasmer_res *extern_res = WASMER_RES_P(tmp);
                     extern_res->owned = false;
 
-                    vec.data[index] = WASMER_RES_INNER(extern_res, xtern);
+                    vec->data[index] = WASMER_RES_INNER(extern_res, xtern);
         } ZEND_HASH_FOREACH_END();
     } else {
-        wasm_extern_vec_new_uninitialized(&vec, size);
+        wasm_extern_vec_new_uninitialized(vec, size);
     }
 
-    wasm_extern_vec->vec = vec;
+    wasm_extern_vec->vec.inner.xtern = vec;
+    wasm_extern_vec->vec.owned = true;
 }
 
 PHP_METHOD (Wasm_Vec_Extern, count) {
@@ -175,7 +184,7 @@ PHP_METHOD (Wasm_Vec_Extern, count) {
 
     wasm_extern_vec_c *wasm_extern_vec = WASMER_EXTERN_VEC_P(ZEND_THIS);
 
-    RETURN_LONG(wasm_extern_vec->vec.size);
+    RETURN_LONG(wasm_extern_vec->vec.inner.xtern->size);
 }
 
 PHP_METHOD (Wasm_Vec_Extern, offsetExists) {
@@ -187,11 +196,11 @@ PHP_METHOD (Wasm_Vec_Extern, offsetExists) {
 
     wasm_extern_vec_c *wasm_extern_vec = WASMER_EXTERN_VEC_P(ZEND_THIS);
 
-    if(offset >= wasm_extern_vec->vec.size) {
+    if(offset >= wasm_extern_vec->vec.inner.xtern->size) {
         RETURN_FALSE;
     }
 
-    RETURN_BOOL(offset < wasm_extern_vec->vec.size);
+    RETURN_BOOL(offset < wasm_extern_vec->vec.inner.xtern->size);
 }
 
 PHP_METHOD (Wasm_Vec_Extern, offsetGet) {
@@ -203,16 +212,18 @@ PHP_METHOD (Wasm_Vec_Extern, offsetGet) {
 
     wasm_extern_vec_c *wasm_extern_vec = WASMER_EXTERN_VEC_P(ZEND_THIS);
 
-    if(offset >= wasm_extern_vec->vec.size) {
+    if(offset >= wasm_extern_vec->vec.inner.xtern->size) {
         zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\Extern::offsetGet($offset) index out of bounds");
+
+        return;
     }
 
-    if(!wasm_extern_vec->vec.data[offset]) {
+    if(!wasm_extern_vec->vec.inner.xtern->data[offset]) {
         RETURN_NULL();
     }
 
     wasmer_res *xtern = emalloc(sizeof(wasmer_res));
-    xtern->inner.xtern = wasm_extern_vec->vec.data[offset];
+    xtern->inner.xtern = wasm_extern_vec->vec.inner.xtern->data[offset];
     xtern->owned = false;
 
     RETURN_RES(zend_register_resource(xtern, le_wasm_extern));
@@ -231,14 +242,16 @@ PHP_METHOD (Wasm_Vec_Extern, offsetSet) {
 
     wasm_extern_vec_c *wasm_extern_vec = WASMER_EXTERN_VEC_P(ZEND_THIS);
 
-    if(offset >= wasm_extern_vec->vec.size) {
+    if(offset >= wasm_extern_vec->vec.inner.xtern->size) {
         zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\Extern::offsetSet($offset) index out of bounds");
+
+        return;
     }
 
     wasmer_res *extern_res = WASMER_RES_P(extern_val);
     extern_res->owned = false;
 
-    wasm_extern_vec->vec.data[offset] = WASMER_RES_INNER(extern_res, xtern);
+    wasm_extern_vec->vec.inner.xtern->data[offset] = WASMER_RES_INNER(extern_res, xtern);
 }
 
 PHP_METHOD (Wasm_Vec_Extern, offsetUnset) {\

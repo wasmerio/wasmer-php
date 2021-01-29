@@ -47,7 +47,6 @@ PHP_FUNCTION (wasm_##name##_delete) {\
 }
 
 // TODO(jubianchi): Implement clone (via wasm_vec_##name##_copy)
-// TODO(jubianchi): Implement destruct (via wasm_vec_##name##_delete)
 #define WASMER_DECLARE_VEC(class_name, macro, name)\
 WASMER_DECLARE_VEC_CONSTRUCT(class_name, name, macro)\
 WASMER_DECLARE_VEC_COUNT(class_name, macro, name)\
@@ -68,14 +67,14 @@ PHP_METHOD (Wasm_Vec_##class_name, __construct) {\
     ZEND_PARSE_PARAMETERS_END();\
     \
     wasm_##name##_vec_c *wasm_##name##_vec = WASMER_##macro##_VEC_P(ZEND_THIS);\
-    wasm_##name##_vec_t vec;\
+    wasm_##name##_vec_t *vec = emalloc(sizeof(wasm_##name##_vec_t));\
     \
     if (is_null) {\
-        wasm_##name##_vec_new_empty(&vec);\
+        wasm_##name##_vec_new_empty(vec);\
     } else if(name##s_ht) {\
         int len = zend_hash_num_elements(name##s_ht);\
         \
-        wasm_##name##_vec_new_uninitialized(&vec, len);\
+        wasm_##name##_vec_new_uninitialized(vec, len);\
         \
         zval *tmp;\
         zend_ulong index;\
@@ -84,13 +83,15 @@ PHP_METHOD (Wasm_Vec_##class_name, __construct) {\
                 wasmer_res *name##_res = WASMER_RES_P(tmp);\
                 name##_res->owned = false;\
                 \
-                vec.data[index] = WASMER_RES_INNER(name##_res, name);\
+                vec->data[index] = WASMER_RES_INNER(name##_res, name);\
         } ZEND_HASH_FOREACH_END();\
     } else {\
-        wasm_##name##_vec_new_uninitialized(&vec, size);\
+        wasm_##name##_vec_new_uninitialized(vec, size);\
     }\
     \
-    wasm_##name##_vec->vec = vec;\
+    wasm_##name##_vec->vec.inner.name = vec;\
+    wasm_##name##_vec->vec.owned = true;\
+    wasm_##name##_vec->vec.allocated = true;\
 }
 
 #define WASMER_DECLARE_VEC_COUNT(class_name, macro, name)\
@@ -99,7 +100,7 @@ PHP_METHOD (Wasm_Vec_##class_name, count) {\
     \
     wasm_##name##_vec_c *wasm_##name##_vec = WASMER_##macro##_VEC_P(ZEND_THIS);\
     \
-    RETURN_LONG(wasm_##name##_vec->vec.size);\
+    RETURN_LONG(wasm_##name##_vec->vec.inner.name->size);\
 }
 
 #define WASMER_DECLARE_VEC_OFFSET_EXISTS(class_name, macro, name)\
@@ -112,11 +113,11 @@ PHP_METHOD (Wasm_Vec_##class_name, offsetExists) {\
     \
     wasm_##name##_vec_c *wasm_##name##_vec = WASMER_##macro##_VEC_P(ZEND_THIS);\
     \
-    if(offset >= wasm_##name##_vec->vec.size) {\
+    if(offset >= wasm_##name##_vec->vec.inner.name->size) {\
         RETURN_FALSE;\
     }\
     \
-    RETURN_BOOL(offset < wasm_##name##_vec->vec.size);\
+    RETURN_BOOL(offset < wasm_##name##_vec->vec.inner.name->size);\
 }
 
 #define WASMER_DECLARE_VEC_OFFSET_GET(class_name, macro, name)\
@@ -129,16 +130,18 @@ PHP_METHOD (Wasm_Vec_##class_name, offsetGet) {\
     \
     wasm_##name##_vec_c *wasm_##name##_vec = WASMER_##macro##_VEC_P(ZEND_THIS);\
     \
-    if(offset >= wasm_##name##_vec->vec.size) {\
+    if(offset >= wasm_##name##_vec->vec.inner.name->size) {\
         zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\" #class_name "::offsetGet($offset) index out of bounds");\
+        \
+        return;\
     }\
     \
-    if(!wasm_##name##_vec->vec.data[offset]) {\
+    if(!wasm_##name##_vec->vec.inner.name->data[offset]) {\
         RETURN_NULL();\
     }\
     \
     wasmer_res *wasm_##name = emalloc(sizeof(wasmer_res));\
-    wasm_##name->inner.name = wasm_##name##_vec->vec.data[offset];\
+    wasm_##name->inner.name = wasm_##name##_vec->vec.inner.name->data[offset];\
     wasm_##name->owned = false;\
     \
     RETURN_RES(zend_register_resource(wasm_##name, le_wasm_##name));\
@@ -158,14 +161,16 @@ PHP_METHOD (Wasm_Vec_##class_name, offsetSet) {\
     \
     wasm_##name##_vec_c *wasm_##name##_vec = WASMER_##macro##_VEC_P(ZEND_THIS);\
     \
-    if(offset >= wasm_##name##_vec->vec.size) {\
+    if(offset >= wasm_##name##_vec->vec.inner.name->size) {\
         zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\" #class_name "::offsetSet($offset) index out of bounds");\
+        \
+        return;\
     }\
     \
     wasmer_res *name##_res = WASMER_RES_P(name##_val);\
     name##_res->owned = false;\
     \
-    wasm_##name##_vec->vec.data[offset] = WASMER_RES_INNER(name##_res, name);\
+    wasm_##name##_vec->vec.inner.name->data[offset] = WASMER_RES_INNER(name##_res, name);\
 }
 
 #define WASMER_DECLARE_VEC_OFFSET_UNSET(class_name)\

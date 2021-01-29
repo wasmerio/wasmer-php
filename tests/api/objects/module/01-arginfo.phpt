@@ -40,6 +40,7 @@ $reflection = new ReflectionFunction('wasm_module_set_name');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType()->getName());
 
+?>
 --EXPECTF--
 int(2)
 NULL

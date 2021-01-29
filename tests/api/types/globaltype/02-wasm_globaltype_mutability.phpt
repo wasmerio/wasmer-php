@@ -9,5 +9,6 @@ $globaltype = wasm_globaltype_new($valtype, WASM_CONST);
 $mutability = wasm_globaltype_mutability($globaltype);
 var_dump($mutability == WASM_CONST);
 
+?>
 --EXPECTF--
 bool(true)

@@ -12,6 +12,7 @@ $exports = wasm_module_exports($module);
 var_dump($exports);
 var_dump($exports->count());
 
+?>
 --EXPECTF--
 object(Wasm\Vec\ExportType)#%d (0) {
 }

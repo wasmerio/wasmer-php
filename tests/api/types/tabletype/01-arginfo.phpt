@@ -24,6 +24,7 @@ $reflection = new ReflectionFunction('wasm_tabletype_copy');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType());
 
+?>
 --EXPECTF--
 int(2)
 NULL

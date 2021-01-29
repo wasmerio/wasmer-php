@@ -10,5 +10,6 @@ $wasm = wat2wasm('(module $test)');
 $module = wasm_module_new($store, $wasm);
 var_dump(wasm_module_name($module));
 
+?>
 --EXPECTF--
 string(4) "test"

@@ -15,4 +15,5 @@ $wat = <<<'WAT'
 WAT;
 $wasm = wat2wasm($wat);
 
+?>
 --EXPECTF--

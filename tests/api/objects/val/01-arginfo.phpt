@@ -12,6 +12,7 @@ $reflection = new ReflectionFunction('wasm_val_copy');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType());
 
+?>
 --EXPECTF--
 int(1)
 string(4) "bool"

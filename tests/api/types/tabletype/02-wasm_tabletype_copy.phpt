@@ -14,5 +14,6 @@ $tabletype = wasm_tabletype_new($valtype, $limits);
 $tabletypeCopy = wasm_tabletype_copy($tabletype);
 var_dump($tabletypeCopy);
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_tabletype_t)

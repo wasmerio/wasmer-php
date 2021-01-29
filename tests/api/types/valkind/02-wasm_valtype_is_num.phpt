@@ -10,6 +10,7 @@ var_dump($isNum);
 $isNum = wasm_valkind_is_num(WASM_ANYREF);
 var_dump($isNum);
 
+?>
 --EXPECTF--
 bool(true)
 bool(false)

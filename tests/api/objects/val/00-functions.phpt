@@ -9,6 +9,7 @@ var_dump(
     function_exists('wasm_val_copy'),
 );
 
+?>
 --EXPECTF--
 bool(true)
 bool(true)

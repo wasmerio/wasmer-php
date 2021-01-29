@@ -12,6 +12,7 @@ var_dump(wasm_module_name($module));
 wasm_module_set_name($module, 'new_name');
 var_dump(wasm_module_name($module));
 
+?>
 --EXPECTF--
 string(4) "test"
 string(8) "new_name"

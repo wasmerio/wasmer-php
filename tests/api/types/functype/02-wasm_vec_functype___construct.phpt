@@ -19,6 +19,8 @@ $functypes = [$functype1, $functype2, $functype3];
 $vec = new Wasm\Vec\FuncType($functypes);
 var_dump($vec);
 var_dump(count($vec));
+
+?>
 --EXPECTF--
 object(Wasm\Vec\FuncType)#%d (%d) {
 }

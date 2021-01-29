@@ -20,6 +20,7 @@ $reflection = new ReflectionFunction('wasm_memorytype_copy');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType());
 
+?>
 --EXPECTF--
 int(1)
 NULL

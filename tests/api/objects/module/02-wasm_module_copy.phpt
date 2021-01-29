@@ -15,5 +15,6 @@ $module = wasm_module_new($store, $wasm);
 $moduleCopy = wasm_module_copy($module);
 var_dump($moduleCopy);
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_module_t)

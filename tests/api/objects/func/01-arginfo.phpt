@@ -12,6 +12,7 @@ $reflection = new ReflectionFunction('wasm_func_as_extern');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType());
 
+?>
 --EXPECTF--
 int(3)
 NULL

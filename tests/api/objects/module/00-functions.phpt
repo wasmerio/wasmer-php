@@ -16,6 +16,7 @@ var_dump(
     function_exists('wasm_module_set_name'),
 );
 
+?>
 --EXPECTF--
 bool(true)
 bool(true)

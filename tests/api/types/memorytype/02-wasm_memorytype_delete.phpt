@@ -14,6 +14,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 bool(true)
 string(85) "wasm_memorytype_delete(): supplied resource is not a valid wasm_memorytype_t resource"

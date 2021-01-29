@@ -15,6 +15,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 bool(true)
 string(83) "wasm_tabletype_delete(): supplied resource is not a valid wasm_tabletype_t resource"

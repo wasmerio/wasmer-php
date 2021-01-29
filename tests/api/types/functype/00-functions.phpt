@@ -13,6 +13,7 @@ var_dump(
     function_exists('wasm_functype_as_externtype'),
 );
 
+?>
 --EXPECTF--
 bool(true)
 bool(true)

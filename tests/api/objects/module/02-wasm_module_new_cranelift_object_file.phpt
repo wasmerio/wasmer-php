@@ -17,5 +17,6 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 string(121) "Compilation error: The `ObjectFileEngine` is operating in headless mode, so it can only execute already compiled Modules."

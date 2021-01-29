@@ -12,6 +12,7 @@ var_dump(
     function_exists('wasm_exporttype_copy'),
 );
 
+?>
 --EXPECTF--
 bool(true)
 bool(true)

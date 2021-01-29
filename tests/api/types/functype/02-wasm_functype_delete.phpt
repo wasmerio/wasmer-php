@@ -13,6 +13,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 bool(true)
 string(81) "wasm_functype_delete(): supplied resource is not a valid wasm_functype_t resource"

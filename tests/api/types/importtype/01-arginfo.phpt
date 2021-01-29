@@ -28,6 +28,7 @@ $reflection = new ReflectionFunction('wasm_importtype_copy');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType());
 
+?>
 --EXPECTF--
 int(3)
 NULL

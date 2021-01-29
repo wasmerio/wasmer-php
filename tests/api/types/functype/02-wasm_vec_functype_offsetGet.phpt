@@ -15,6 +15,8 @@ try {
 } catch (Exception $e) {
     var_dump($e->getMessage());
 }
+
+?>
 --EXPECTF--
 resource(%d) of type (wasm_functype_t)
 resource(%d) of type (wasm_functype_t)

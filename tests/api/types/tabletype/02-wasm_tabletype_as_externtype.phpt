@@ -10,5 +10,6 @@ $tabletype = wasm_tabletype_new($valtype, $limits);
 $externtype = wasm_tabletype_as_externtype($tabletype);
 var_dump($externtype);
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_externtype_t)

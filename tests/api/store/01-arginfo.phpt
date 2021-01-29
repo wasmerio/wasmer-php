@@ -12,6 +12,7 @@ $reflection = new ReflectionFunction('wasm_store_delete');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType()->getName());
 
+?>
 --EXPECTF--
 int(1)
 NULL

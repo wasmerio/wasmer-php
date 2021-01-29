@@ -14,6 +14,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 bool(true)
 string(85) "wasm_globaltype_delete(): supplied resource is not a valid wasm_globaltype_t resource"

@@ -11,5 +11,6 @@ $externtype = wasm_globaltype_as_externtype($globaltype);
 $exporttype = wasm_exporttype_new($name, $externtype);
 var_dump(wasm_exporttype_name($exporttype) === $name);
 
+?>
 --EXPECTF--
 bool(true)

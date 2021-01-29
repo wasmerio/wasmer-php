@@ -28,6 +28,7 @@ $reflection = new ReflectionFunction('wasm_globaltype_as_externtype');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType());
 
+?>
 --EXPECTF--
 int(2)
 NULL

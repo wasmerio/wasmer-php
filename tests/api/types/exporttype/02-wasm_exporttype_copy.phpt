@@ -16,5 +16,6 @@ $exporttype = wasm_exporttype_new($name, $externtype);
 $exporttypeCopy = wasm_exporttype_copy($exporttype);
 var_dump($exporttypeCopy);
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_exporttype_t)

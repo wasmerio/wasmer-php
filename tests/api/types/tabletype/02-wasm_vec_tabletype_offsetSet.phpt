@@ -3,6 +3,7 @@ TableType API: Wasm\Vec\TableType::offsetSet()
 
 --FILE--
 <?php
+
 $tabletype1 = wasm_tabletype_new(wasm_valtype_new(WASM_I32), wasm_limits_new(1, 2));
 $tabletype2 = wasm_tabletype_new(wasm_valtype_new(WASM_I32), wasm_limits_new(1, 2));
 $vec = new Wasm\Vec\TableType(2);
@@ -17,6 +18,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_tabletype_t)
 resource(%d) of type (wasm_tabletype_t)

@@ -19,6 +19,8 @@ $valtypes = [$globaltype1, $globaltype2, $globaltype3];
 $vec = new Wasm\Vec\GlobalType($valtypes);
 var_dump($vec);
 var_dump(count($vec));
+
+?>
 --EXPECTF--
 object(Wasm\Vec\GlobalType)#%d (%d) {
 }

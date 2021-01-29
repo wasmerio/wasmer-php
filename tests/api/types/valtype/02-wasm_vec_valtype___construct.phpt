@@ -18,6 +18,8 @@ $valtypes = [$valtype1, $valtype2, wasm_valtype_new(WASM_F32)];
 $vec = new Wasm\Vec\ValType($valtypes);
 var_dump($vec);
 var_dump(count($vec));
+
+?>
 --EXPECTF--
 object(Wasm\Vec\ValType)#%d (%d) {
 }

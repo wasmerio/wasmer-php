@@ -24,6 +24,7 @@ $reflection = new ReflectionFunction('wasm_valtype_is_ref');
 var_dump($reflection->getNumberOfParameters());
 var_dump($reflection->getReturnType()->getName());
 
+?>
 --EXPECTF--
 int(1)
 NULL

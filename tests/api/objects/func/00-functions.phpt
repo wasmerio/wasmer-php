@@ -9,6 +9,7 @@ var_dump(
     function_exists('wasm_func_as_extern'),
 );
 
+?>
 --EXPECTF--
 bool(true)
 bool(true)

@@ -13,5 +13,6 @@ $globaltype = wasm_globaltype_new($valtype, WASM_CONST);
 $globaltypeCopy = wasm_globaltype_copy($globaltype);
 var_dump($globaltypeCopy);
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_globaltype_t)

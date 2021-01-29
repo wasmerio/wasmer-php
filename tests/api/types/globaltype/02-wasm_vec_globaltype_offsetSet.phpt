@@ -3,6 +3,7 @@ GlobalType API: Wasm\Vec\GlobalType::offsetSet()
 
 --FILE--
 <?php
+
 $valtype1 = wasm_valtype_new(WASM_I32);
 $globaltype1 = wasm_globaltype_new($valtype1, WASM_CONST);
 $valtype2 = wasm_valtype_new(WASM_I32);
@@ -20,6 +21,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_globaltype_t)
 resource(%d) of type (wasm_globaltype_t)

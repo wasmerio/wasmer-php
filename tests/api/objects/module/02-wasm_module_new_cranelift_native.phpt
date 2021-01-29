@@ -13,5 +13,6 @@ $wasm = wat2wasm('(module)');
 $module = wasm_module_new($store, $wasm);
 var_dump($module);
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_module_t)

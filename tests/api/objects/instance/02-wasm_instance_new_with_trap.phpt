@@ -23,6 +23,5 @@ try {
 }
 
 ?>
-
 --EXPECTF--
 string(11) "unreachable"

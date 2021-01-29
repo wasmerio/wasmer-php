@@ -12,6 +12,7 @@ var_dump(
     function_exists('wasm_externtype_as_tabletype'),
 );
 
+?>
 --EXPECTF--
 bool(true)
 bool(true)

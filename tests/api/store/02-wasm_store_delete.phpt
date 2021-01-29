@@ -14,6 +14,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 bool(true)
 string(75) "wasm_store_delete(): supplied resource is not a valid wasm_store_t resource"

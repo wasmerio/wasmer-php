@@ -19,6 +19,8 @@ $tabletypes = [$tabletype1, $tabletype2, $tabletype3];
 $vec = new Wasm\Vec\TableType($tabletypes);
 var_dump($vec);
 var_dump(count($vec));
+
+?>
 --EXPECTF--
 object(Wasm\Vec\TableType)#%d (%d) {
 }

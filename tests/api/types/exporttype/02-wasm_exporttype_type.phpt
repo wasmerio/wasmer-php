@@ -11,5 +11,6 @@ $externtype = wasm_globaltype_as_externtype($globaltype);
 $exporttype = wasm_exporttype_new($name, $externtype);
 var_dump(wasm_exporttype_type($exporttype));
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_externtype_t)

@@ -10,5 +10,6 @@ $tabletype = wasm_tabletype_new($valtype, $limits);
 $kind = wasm_valtype_kind(wasm_tabletype_element($tabletype));
 var_dump($kind == WASM_I32);
 
+?>
 --EXPECTF--
 bool(true)

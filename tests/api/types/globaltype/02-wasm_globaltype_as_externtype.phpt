@@ -9,5 +9,6 @@ $globaltype = wasm_globaltype_new($valtype, WASM_CONST);
 $externtype = wasm_globaltype_as_externtype($globaltype);
 var_dump($externtype);
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_externtype_t)

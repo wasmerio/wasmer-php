@@ -12,6 +12,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 string(62) "expected `(`
      --> <anon>:1:1

@@ -7,5 +7,6 @@ Limits API: wasm_limits_min
 $limits = wasm_limits_new(1, 2);
 var_dump(wasm_limits_min($limits));
 
+?>
 --EXPECTF--
 int(1)

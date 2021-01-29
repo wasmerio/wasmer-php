@@ -49,7 +49,7 @@ typedef struct wasm_##name##_vec_c {\
     zend_object std;\
 } wasm_##name##_vec_c;
 
-#define WASMER_DECLARE_CE_P(name, zv) ((wasm_##name##_vec_c*)((char*)(Z_OBJ_P(zv)) - XtOffsetOf(wasm_##name##_vec_c, std)))
+#define WASMER_DECLARE_CE_P(name, zv) (wasm_##name##_vec_c*)((char*)(Z_OBJ_P(zv)) - Z_OBJ_P(zv)->handlers->offset)
 
 WASMER_CE_STRUCT_DECLARE(valtype)
 /**

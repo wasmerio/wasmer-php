@@ -13,5 +13,6 @@ $memorytype = wasm_memorytype_new($limits);
 $memorytypeCopy = wasm_memorytype_copy($memorytype);
 var_dump($memorytypeCopy);
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_memorytype_t)

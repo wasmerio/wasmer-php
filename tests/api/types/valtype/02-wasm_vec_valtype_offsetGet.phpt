@@ -15,6 +15,7 @@ try {
     var_dump($e->getMessage());
 }
 
+?>
 --EXPECTF--
 resource(%d) of type (wasm_valtype_t)
 resource(%d) of type (wasm_valtype_t)

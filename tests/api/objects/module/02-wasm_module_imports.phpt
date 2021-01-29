@@ -12,6 +12,7 @@ $imports = wasm_module_imports($module);
 var_dump($imports);
 var_dump($imports->count());
 
+?>
 --EXPECTF--
 object(Wasm\Vec\ImportType)#%d (0) {
 }

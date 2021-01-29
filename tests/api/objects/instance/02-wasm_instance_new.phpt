@@ -12,6 +12,5 @@ $instance = wasm_instance_new($store, $module, new Wasm\Vec\Extern());
 var_dump($instance);
 
 ?>
-
 --EXPECTF--
 resource(%d) of type (wasm_instance_t)

@@ -11,6 +11,7 @@ var_dump(
     function_exists('wasm_memorytype_copy'),
 );
 
+?>
 --EXPECTF--
 bool(true)
 bool(true)

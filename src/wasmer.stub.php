@@ -646,6 +646,18 @@ namespace {
      *
      * @return resource
      */
+    function wasm_extern_kind($extern) {}
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
+    function wasm_extern_type($extern) {}
+    /**
+     * @param resource $extern
+     *
+     * @return resource
+     */
     function wasm_extern_as_func($extern) {}
     /**
      * @param resource $extern

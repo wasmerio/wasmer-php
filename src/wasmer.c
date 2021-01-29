@@ -207,9 +207,9 @@ zend_module_entry wasmer_module_entry = {
     "wasmer",
     ext_functions,
     PHP_MINIT(wasmer),
-    PHP_MSHUTDOWN(wasmer),
-    PHP_RINIT(wasmer),
-    PHP_RSHUTDOWN(wasmer),
+    NULL, //PHP_MSHUTDOWN(wasmer),
+    NULL, //PHP_RINIT(wasmer),
+    NULL, //PHP_RSHUTDOWN(wasmer),
     PHP_MINFO(wasmer),
     PHP_WASMER_VERSION,
     STANDARD_MODULE_PROPERTIES};

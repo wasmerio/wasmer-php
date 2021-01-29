@@ -12,19 +12,36 @@ WASMER_IMPORT_RESOURCE(func)
 WASMER_IMPORT_RESOURCE(global)
 WASMER_IMPORT_RESOURCE(table)
 WASMER_IMPORT_RESOURCE(memory)
+WASMER_IMPORT_RESOURCE(externtype)
 
 PHP_FUNCTION (wasm_extern_kind) {
-    ZEND_PARSE_PARAMETERS_NONE();
+    zval *extern_val;
 
-    // TODO(jubianchi): Implement
-    zend_throw_error(NULL, "Not yet implemented");
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+            Z_PARAM_RESOURCE(extern_val)
+    ZEND_PARSE_PARAMETERS_END();
+
+    WASMER_FETCH_RESOURCE(extern)
+
+    int kind = wasm_extern_kind(WASMER_RES_P_INNER(extern_val, xtern));
+
+    RETURN_LONG(kind);
 }
 
 PHP_FUNCTION (wasm_extern_type) {
-    ZEND_PARSE_PARAMETERS_NONE();
+    zval *extern_val;
 
-    // TODO(jubianchi): Implement
-    zend_throw_error(NULL, "Not yet implemented");
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+            Z_PARAM_RESOURCE(extern_val)
+    ZEND_PARSE_PARAMETERS_END();
+
+    WASMER_FETCH_RESOURCE(extern)
+
+    wasmer_res *externtype = emalloc(sizeof(wasmer_res));
+    externtype->inner.externtype = wasm_extern_type(WASMER_RES_P_INNER(extern_val, xtern));
+    externtype->owned = false;
+
+    RETURN_RES(zend_register_resource(externtype, le_wasm_externtype));
 }
 
 PHP_FUNCTION (wasm_extern_as_func) {
@@ -36,8 +53,14 @@ PHP_FUNCTION (wasm_extern_as_func) {
 
     WASMER_FETCH_RESOURCE(extern)
 
+    wasm_func_t *wasm_func = wasm_extern_as_func(WASMER_RES_P_INNER(extern_val, xtern));
+
+    if (!wasm_func) {
+        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to func");
+    }
+
     wasmer_res *func = emalloc(sizeof(wasmer_res));
-    func->inner.func = wasm_extern_as_func(WASMER_RES_P_INNER(extern_val, xtern));
+    func->inner.func = wasm_func;
     func->owned = true;
 
     RETURN_RES(zend_register_resource(func, le_wasm_func));
@@ -52,8 +75,14 @@ PHP_FUNCTION (wasm_extern_as_global) {
 
     WASMER_FETCH_RESOURCE(extern)
 
+    wasm_global_t *wasm_global = wasm_extern_as_global(WASMER_RES_P_INNER(extern_val, xtern));
+
+    if (!wasm_global) {
+        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to global");
+    }
+
     wasmer_res *global = emalloc(sizeof(wasmer_res));
-    global->inner.global = wasm_extern_as_global(WASMER_RES_P_INNER(extern_val, xtern));
+    global->inner.global = wasm_global;
     global->owned = false;
 
     RETURN_RES(zend_register_resource(global, le_wasm_global));
@@ -68,13 +97,20 @@ PHP_FUNCTION (wasm_extern_as_table) {
 
     WASMER_FETCH_RESOURCE(extern)
 
+    wasm_table_t *wasm_table = wasm_extern_as_table(WASMER_RES_P_INNER(extern_val, xtern));
+
+    if (!wasm_table) {
+        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to table");
+    }
+
     wasmer_res *table = emalloc(sizeof(wasmer_res));
-    table->inner.table = wasm_extern_as_table(WASMER_RES_P_INNER(extern_val, xtern));
+    table->inner.table = wasm_table;
     table->owned = false;
 
     RETURN_RES(zend_register_resource(table, le_wasm_table));
 }
 
+// TODO(jubianchi): Add a test for this function
 PHP_FUNCTION (wasm_extern_as_memory) {
     zval *extern_val;
 
@@ -84,13 +120,20 @@ PHP_FUNCTION (wasm_extern_as_memory) {
 
     WASMER_FETCH_RESOURCE(extern)
 
+    wasm_memory_t *wasm_memory = wasm_extern_as_memory(WASMER_RES_P_INNER(extern_val, xtern));
+
+    if (!wasm_memory) {
+        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to table");
+    }
+
     wasmer_res *memory = emalloc(sizeof(wasmer_res));
-    memory->inner.memory = wasm_extern_as_memory(WASMER_RES_P_INNER(extern_val, xtern));
+    memory->inner.memory = wasm_memory;
     memory->owned = false;
 
     RETURN_RES(zend_register_resource(memory, le_wasm_memory));
 }
 
+// TODO(jubianchi): Add a test for this function
 PHP_METHOD (Wasm_Vec_Extern, __construct) {
     zend_array *externs_ht;
     zend_long size;
@@ -108,6 +151,7 @@ PHP_METHOD (Wasm_Vec_Extern, __construct) {
         wasm_extern_vec_new_empty(&vec);\
     } else if(externs_ht) {
         int len = zend_hash_num_elements(externs_ht);
+
         wasm_extern_vec_new_uninitialized(&vec, len);
 
         zval *tmp;
@@ -163,7 +207,7 @@ PHP_METHOD (Wasm_Vec_Extern, offsetGet) {
         zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\Extern::offsetGet($offset) index out of bounds");
     }
 
-    if(wasm_extern_vec->vec.data[offset] == NULL) {
+    if(!wasm_extern_vec->vec.data[offset]) {
         RETURN_NULL();
     }
 

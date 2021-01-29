@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 5078cedad90b0c4472978c8ee551434a6c1d4e74 */
+ * Stub hash: 3c81f49fe1efb3564ef4992d95abb37dd703b354 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -354,15 +354,19 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_wasm_global_as_extern arginfo_wasm_global_type
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_extern_as_func, 0, 0, 1)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_extern_kind, 0, 0, 1)
 	ZEND_ARG_INFO(0, extern)
 ZEND_END_ARG_INFO()
 
-#define arginfo_wasm_extern_as_global arginfo_wasm_extern_as_func
+#define arginfo_wasm_extern_type arginfo_wasm_extern_kind
 
-#define arginfo_wasm_extern_as_table arginfo_wasm_extern_as_func
+#define arginfo_wasm_extern_as_func arginfo_wasm_extern_kind
 
-#define arginfo_wasm_extern_as_memory arginfo_wasm_extern_as_func
+#define arginfo_wasm_extern_as_global arginfo_wasm_extern_kind
+
+#define arginfo_wasm_extern_as_table arginfo_wasm_extern_kind
+
+#define arginfo_wasm_extern_as_memory arginfo_wasm_extern_kind
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_instance_new, 0, 0, 3)
 	ZEND_ARG_INFO(0, store)
@@ -662,6 +666,8 @@ ZEND_FUNCTION(wasm_global_set);
 ZEND_FUNCTION(wasm_global_copy);
 ZEND_FUNCTION(wasm_global_same);
 ZEND_FUNCTION(wasm_global_as_extern);
+ZEND_FUNCTION(wasm_extern_kind);
+ZEND_FUNCTION(wasm_extern_type);
 ZEND_FUNCTION(wasm_extern_as_func);
 ZEND_FUNCTION(wasm_extern_as_global);
 ZEND_FUNCTION(wasm_extern_as_table);
@@ -845,6 +851,8 @@ static const zend_function_entry ext_functions[] = {
 	ZEND_FE(wasm_global_copy, arginfo_wasm_global_copy)
 	ZEND_FE(wasm_global_same, arginfo_wasm_global_same)
 	ZEND_FE(wasm_global_as_extern, arginfo_wasm_global_as_extern)
+	ZEND_FE(wasm_extern_kind, arginfo_wasm_extern_kind)
+	ZEND_FE(wasm_extern_type, arginfo_wasm_extern_type)
 	ZEND_FE(wasm_extern_as_func, arginfo_wasm_extern_as_func)
 	ZEND_FE(wasm_extern_as_global, arginfo_wasm_extern_as_global)
 	ZEND_FE(wasm_extern_as_table, arginfo_wasm_extern_as_table)

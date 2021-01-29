@@ -98,9 +98,8 @@ PHP_METHOD (Wasm_Vec_##class_name, count) {\
     ZEND_PARSE_PARAMETERS_NONE();\
     \
     wasm_##name##_vec_c *wasm_##name##_vec = WASMER_##macro##_VEC_P(ZEND_THIS);\
-    wasm_##name##_vec_t vec = wasm_##name##_vec->vec;\
     \
-    RETURN_LONG(vec.size);\
+    RETURN_LONG(wasm_##name##_vec->vec.size);\
 }
 
 #define WASMER_DECLARE_VEC_OFFSET_EXISTS(class_name, macro, name)\
@@ -134,17 +133,15 @@ PHP_METHOD (Wasm_Vec_##class_name, offsetGet) {\
         zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\" #class_name "::offsetGet($offset) index out of bounds");\
     }\
     \
-    if(wasm_##name##_vec->vec.data[offset] == NULL) {\
+    if(!wasm_##name##_vec->vec.data[offset]) {\
         RETURN_NULL();\
     }\
     \
-    wasmer_res *(name) = emalloc(sizeof(wasmer_res));\
-    (name)->inner.name = wasm_##name##_vec->vec.data[offset];\
-    (name)->owned = false;\
+    wasmer_res *wasm_##name = emalloc(sizeof(wasmer_res));\
+    wasm_##name->inner.name = wasm_##name##_vec->vec.data[offset];\
+    wasm_##name->owned = false;\
     \
-    zend_resource *name##_res = zend_register_resource(name, le_wasm_##name);\
-    \
-    RETURN_RES(name##_res);\
+    RETURN_RES(zend_register_resource(wasm_##name, le_wasm_##name));\
 }
 
 #define WASMER_DECLARE_VEC_OFFSET_SET(class_name, macro, name)\

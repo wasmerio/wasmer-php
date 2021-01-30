@@ -37,21 +37,21 @@ jobs:
             php: '8.1'
             allow_failure: false
           - id: macos-x64
-            os: ubuntu-18.04
+            os: macos-latest
             php: '7.3'
             # TODO(jubianchi): Remove this once PHP 7.3 is supported
             allow_failure: true
           - id: macos-x64
-            os: ubuntu-18.04
+            os: macos-latest
             # TODO(jubianchi): Remove this once PHP 7.4 is supported
             php: '7.4'
             allow_failure: true
           - id: macos-x64
-            os: ubuntu-18.04
+            os: macos-latest
             php: '8.0'
             allow_failure: false
           - id: macos-x64
-            os: ubuntu-18.04
+            os: macos-latest
             php: '8.1'
             allow_failure: false
     steps:

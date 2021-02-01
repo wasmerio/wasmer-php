@@ -134,7 +134,7 @@ PHP_FUNCTION (wasm_global_as_extern) {
 
     wasmer_res *wasm_extern = emalloc(sizeof(wasmer_res));
     wasm_extern->inner.xtern = wasm_global_as_extern(WASMER_RES_P_INNER(global_val, global));
-    wasm_extern->owned = false;
+    wasm_extern->owned = true;
 
     RETURN_RES(zend_register_resource(wasm_extern, le_wasm_extern));
 }

@@ -584,7 +584,6 @@ namespace {
 
     // Global Instances
 
-    // TODO(jubianchi): Add global
     /**
      * @param resource $store
      * @param resource $globaltype

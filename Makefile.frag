@@ -1,6 +1,6 @@
 .PHONY: examples
 .SILENT: examples
-examples:
+examples: all
 	FAILURES=(); \
 	for EXAMPLE in examples/*.php; \
 	do \

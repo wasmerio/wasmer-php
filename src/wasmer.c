@@ -68,7 +68,11 @@ WASMER_VEC_CLASS_DECLARE_WITH_ALIAS(extern, xtern)
 WASMER_RESOURCE_DECLARE(foreign)
 WASMER_RESOURCE_DECLARE(frame)
 WASMER_VEC_CLASS_DECLARE(frame)
-WASMER_RESOURCE_DECLARE(func)
+WASMER_RESOURCE_DECLARE_WITHOUT_DTOR(func)
+static ZEND_RSRC_DTOR_FUNC(wasm_func_dtor) {
+    // TODO: If we call wasm_func_delete here, the function environment gets freed two times which is incorrect. Fix that.
+    efree(res->ptr);
+}
 WASMER_RESOURCE_DECLARE(global)
 WASMER_RESOURCE_DECLARE(instance)
 WASMER_RESOURCE_DECLARE(memory)

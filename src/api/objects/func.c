@@ -1,5 +1,6 @@
 #include "php.h"
 #include "Zend/zend_exceptions.h"
+#include "Zend/zend_closures.h"
 
 #include "wasmer_wasm.h"
 
@@ -14,21 +15,16 @@ WASMER_IMPORT_RESOURCE(functype)
 WASMER_IMPORT_RESOURCE(store)
 WASMER_IMPORT_RESOURCE(extern)
 
-typedef struct {
-    zend_fcall_info fci;
-    zend_fcall_info_cache fcc;
-} func_env;
-
 wasm_trap_t *func_trampoline(void *env, const wasm_val_vec_t *args, wasm_val_vec_t *results) {
-    func_env *fenv = (func_env *) env;
+    wasmer_func_env *fenv = (wasmer_func_env*) env;
     zval retval;
 
-    ZVAL_UNDEF(&retval);
-
-    zend_fcall_info fci = fenv->fci;
+    zend_fcall_info fci;
+    fci.size = sizeof(zend_fcall_info);
     fci.retval = &retval;
+    fci.params = emalloc(sizeof(zval) * args->size);
     fci.param_count = args->size;
-    fci.params = emalloc(fci.param_count * sizeof(zval));
+    fci.named_params = NULL;
 
     for (int i = 0; i < args->size; i++) {
         wasm_val_t val = args->data[i];
@@ -54,7 +50,7 @@ wasm_trap_t *func_trampoline(void *env, const wasm_val_vec_t *args, wasm_val_vec
         }
     }
 
-    // TODO(jubianchi): Fix tests
+    ZVAL_UNDEF(&retval);
     zend_call_function(&fci, &fenv->fcc);
     int type = Z_TYPE(retval);
 
@@ -86,15 +82,25 @@ wasm_trap_t *func_trampoline(void *env, const wasm_val_vec_t *args, wasm_val_vec
     return NULL;
 }
 
+void func_env_finalizer(void *env) {
+    wasmer_func_env *fenv = (wasmer_func_env*) env;
+
+    if (fenv->fcc.function_handler->common.fn_flags & ZEND_ACC_CLOSURE) {
+        OBJ_RELEASE(ZEND_CLOSURE_OBJECT(fenv->fcc.function_handler));
+    }
+}
+
 PHP_FUNCTION (wasm_func_new) {
     zval *store_val;
     zval *functype_val;
-    func_env *env = malloc(sizeof(func_env));
+    zend_fcall_info fci;
+    // TODO: Env finalizer has some problem, we have to use malloc instead of emalloc. Fix that.
+    wasmer_func_env *env = malloc(sizeof(wasmer_func_env));
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 3, 3)
             Z_PARAM_RESOURCE(store_val)
             Z_PARAM_RESOURCE(functype_val)
-            Z_PARAM_FUNC(env->fci, env->fcc)
+            Z_PARAM_FUNC(fci, env->fcc)
     ZEND_PARSE_PARAMETERS_END();
 
     WASMER_FETCH_RESOURCE(store)
@@ -104,10 +110,9 @@ PHP_FUNCTION (wasm_func_new) {
     func->inner.func = wasm_func_new_with_env(
             WASMER_RES_P_INNER(store_val, store),
             WASMER_RES_P_INNER(functype_val, functype),
-            &func_trampoline,
+            func_trampoline,
             env,
-            // TODO(jubianchi): Implement env finalizer
-            NULL
+            func_env_finalizer
     );
     func->owned = true;
 
@@ -118,6 +123,10 @@ PHP_FUNCTION (wasm_func_new) {
     }
 
     zend_resource *func_res = zend_register_resource(func, le_wasm_func);
+
+    if (env->fcc.function_handler->common.fn_flags & ZEND_ACC_CLOSURE) {
+        GC_ADDREF(ZEND_CLOSURE_OBJECT(env->fcc.function_handler));
+    }
 
     RETURN_RES(func_res);
 }

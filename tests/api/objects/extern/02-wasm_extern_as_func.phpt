@@ -12,6 +12,7 @@ function foo() { var_dump('Hello from PHP user function'); }
 $func = wasm_func_new($store, $functype, "foo");
 $extern = wasm_func_as_extern($func);
 var_dump(wasm_extern_as_func($extern));
+wasm_func_delete($func);
 
 $globaltype = wasm_globaltype_new(wasm_valtype_new(WASM_I32), WASM_CONST);
 $global = wasm_global_new($store, $globaltype, wasm_val_i32(1));

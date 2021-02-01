@@ -1,3 +1,7 @@
+typedef struct wasmer_func_env {
+    zend_fcall_info_cache fcc;
+} wasmer_func_env;
+
 typedef struct wasmer_res {
     bool owned;
     union {

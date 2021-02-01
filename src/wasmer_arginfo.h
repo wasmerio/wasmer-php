@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 614579e53424a4ab2651f46cea0b8814cb9c7dc8 */
+ * Stub hash: 5d279406689dce1f53bc76a4e609aea169f0b2a2 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -354,6 +354,10 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_wasm_global_as_extern arginfo_wasm_global_type
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_extern_delete, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_INFO(0, extern)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_extern_kind, 0, 0, 1)
 	ZEND_ARG_INFO(0, extern)
 ZEND_END_ARG_INFO()
@@ -666,6 +670,7 @@ ZEND_FUNCTION(wasm_global_set);
 ZEND_FUNCTION(wasm_global_copy);
 ZEND_FUNCTION(wasm_global_same);
 ZEND_FUNCTION(wasm_global_as_extern);
+ZEND_FUNCTION(wasm_extern_delete);
 ZEND_FUNCTION(wasm_extern_kind);
 ZEND_FUNCTION(wasm_extern_type);
 ZEND_FUNCTION(wasm_extern_as_func);
@@ -851,6 +856,7 @@ static const zend_function_entry ext_functions[] = {
 	ZEND_FE(wasm_global_copy, arginfo_wasm_global_copy)
 	ZEND_FE(wasm_global_same, arginfo_wasm_global_same)
 	ZEND_FE(wasm_global_as_extern, arginfo_wasm_global_as_extern)
+	ZEND_FE(wasm_extern_delete, arginfo_wasm_extern_delete)
 	ZEND_FE(wasm_extern_kind, arginfo_wasm_extern_kind)
 	ZEND_FE(wasm_extern_type, arginfo_wasm_extern_type)
 	ZEND_FE(wasm_extern_as_func, arginfo_wasm_extern_as_func)

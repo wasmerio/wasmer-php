@@ -640,6 +640,8 @@ namespace {
 
 
     // Externals
+    /** @param resource $extern */
+    function wasm_extern_delete($extern): bool {}
     /**
      * @param resource $extern
      *

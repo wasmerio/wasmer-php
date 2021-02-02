@@ -1,0 +1,89 @@
+name: Tests
+
+on:
+  # TODO(jubianchi): Remove this once bors is available
+  pull_request:
+  push:
+    branches:
+      - 'master'
+      # TODO(jubianchi): Uncomment this once bors is available
+      # - 'staging'
+      # - 'trying'
+
+jobs:
+  test:
+    name: Test on ${{ matrix.id }} with ${{ matrix.php }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: linux-x64
+            os: ubuntu-18.04
+            php: '7.3'
+            # TODO(jubianchi): Remove this once PHP 7.3 is supported
+            allow_failure: true
+          - id: linux-x64
+            os: ubuntu-18.04
+            php: '7.4'
+            # TODO(jubianchi): Remove this once PHP 7.4 is supported
+            allow_failure: true
+          - id: linux-x64
+            os: ubuntu-18.04
+            php: '8.0'
+            allow_failure: false
+          - id: linux-x64
+            os: ubuntu-18.04
+            php: '8.1'
+            allow_failure: false
+          - id: macos-x64
+            os: macos-latest
+            php: '7.3'
+            # TODO(jubianchi): Remove this once PHP 7.3 is supported
+            allow_failure: true
+          - id: macos-x64
+            os: macos-latest
+            # TODO(jubianchi): Remove this once PHP 7.4 is supported
+            php: '7.4'
+            allow_failure: true
+          - id: macos-x64
+            os: macos-latest
+            php: '8.0'
+            allow_failure: false
+          - id: macos-x64
+            os: macos-latest
+            php: '8.1'
+            allow_failure: false
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Configure
+        run: |
+          phpize
+          ./configure
+      - name: Build
+        # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
+        run: |
+          make || ${{ matrix.allow_failure }}
+      - name: Run tests (phpt)
+        # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
+        run: |
+          make test || ${{ matrix.allow_failure }}
+      - name: Run examples
+        # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
+        run: |
+          make examples || ${{ matrix.allow_failure }}
+      - name: Archive test results
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: results-${{ matrix.id }}-${{ matrix.php }}
+          retention-days: 3
+          path: |
+            tests/**/*.diff
+            tests/**/*.exp
+            tests/**/*.out

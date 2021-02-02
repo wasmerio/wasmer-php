@@ -1,172 +1,190 @@
-# <img height="48" src="https://wasmer.io/static/icons/favicon-96x96.png" alt="Wasmer logo" valign="middle"> Wasmer PHP [![Packagist version](https://img.shields.io/packagist/v/php-wasm/php-wasm)](https://packagist.org/packages/php-wasm/php-wasm) [![Wasmer PHP Documentation](https://img.shields.io/badge/documentation-API-ff0066.svg)](https://wasmerio.github.io/wasmer-php/wasm/) [![Wasmer Packagist downloads](https://img.shields.io/packagist/dt/php-wasm/php-wasm.svg)](https://packagist.org/packages/php-wasm/php-wasm) [![Wasmer Slack Channel](https://img.shields.io/static/v1?label=chat&message=on%20Slack&color=green)](https://slack.wasmer.io)
+<div align="center">
+  <a href="https://wasmer.io" target="_blank" rel="noopener noreferrer">
+    <img width="300" src="https://raw.githubusercontent.com/wasmerio/wasmer/master/assets/logo.png" alt="Wasmer logo">
+  </a>
+  
+  <h1>Wasmer PHP</h1>
+  
+  <p>
+    <a href="https://github.com/wasmerio/llvm-custom-builds/actions?query=workflow%3A%22Build%22">
+      <img src="https://github.com/wasmerio/llvm-custom-builds/workflows/Build/badge.svg" alt="Build Status">
+    </a>
+    <a href="https://github.com/wasmerio/llvm-custom-builds/blob/master/LICENSE">
+      <img src="https://img.shields.io/github/license/wasmerio/llvm-custom-builds.svg" alt="License">
+    </a>
+  </p>
+
+  <h3>
+    <a href="https://wasmer.io/">Website</a>
+    <span> • </span>
+    <a href="https://docs.wasmer.io">Docs</a>
+    <span> • </span>
+    <a href="https://slack.wasmer.io/">Slack Channel</a>
+  </h3>
+
+</div>
+
+<hr/>
 
 A complete and mature WebAssembly runtime for PHP based on [Wasmer].
 
-Features:
-
-  * **Easy to use**: The `wasmer` API mimics the standard WebAssembly API,
-  * **Fast**: `wasmer` executes the WebAssembly modules as fast as
-    possible, close to **native speed**,
-  * **Safe**: All calls to WebAssembly will be fast, but more
-    importantly, completely safe and sandboxed.
+**You are seeing the readme for the latest Wasmer Go version, if you are using an older version, please go to:**
+* [1.0.0-alpha1]
 
 [Wasmer]: https://github.com/wasmerio/wasmer
+[1.0.0-alpha1]: https://github.com/wasmerio/wasmer-php/tree/1.0.0-alpha1/README.md
 
-## Example
+# Features
 
-There is a toy program in `examples/simple.rs`, written in Rust (or
-any other language that compiles to WebAssembly):
+* **Easy to use**: The `wasmer` API mimics the standard WebAssembly C API,
+* **Fast**: `wasmer` executes the WebAssembly modules as fast as possible, close to **native speed**,
+* **Safe**: All calls to WebAssembly will be fast, but more importantly, completely safe and sandboxed.
 
-```rust
-#[no_mangle]
-pub extern fn sum(x: i32, y: i32) -> i32 {
-    x + y
-}
+# Install
+
+To install the library, follow the classical:
+
+```bash
+git clone https://github.com/wasmerio/wasmer-php
+cd wasmer-php
+phpize
+./configure --enable-wasmer
+make
+make test
+make install
 ```
 
-After compilation to WebAssembly, the
-[`examples/simple.wasm`](https://github.com/wasmerio/wasmer-php/blob/master/examples/simple.wasm)
-binary file is generated. ([Download
-it](https://github.com/wasmerio/wasmer-php/raw/master/examples/simple.wasm)).
+> Note: Wasmer doesn't work on Windows yet.
 
-Then, we can execute it in PHP (!) with the `examples/simple.php` file:
+# Examples
 
 ```php
-$instance = new Wasm\Instance(__DIR__ . '/simple.wasm');
+<?php declare(strict_types=1);
 
-var_dump(
-    $instance->sum(5, 37) // 42!
-);
+$engine = wasm_engine_new();
+$store = wasm_store_new($engine);
+$wasm = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'hello.wasm');
+$module = wasm_module_new($store, $wasm);
+
+function hello_callback() {
+    echo 'Calling back...' . PHP_EOL;
+    echo '> Hello World!' . PHP_EOL;
+
+    return null;
+}
+
+$functype = wasm_functype_new(new Wasm\Vec\ValType(), new Wasm\Vec\ValType());
+$func = wasm_func_new($store, $functype, 'hello_callback');
+wasm_functype_delete($functype);
+
+$extern = wasm_func_as_extern($func);
+$externs = new Wasm\Vec\Extern([$extern]);
+$instance = wasm_instance_new($store, $module, $externs);
+
+wasm_func_delete($func);
+
+$exports = wasm_instance_exports($instance);
+$run = wasm_extern_as_func($exports[0]);
+
+wasm_module_delete($module);
+wasm_instance_delete($instance);
+
+$results = wasm_func_call($run, new Wasm\Vec\Val());
+
+wasm_store_delete($store);
+wasm_engine_delete($engine);
 ```
 
-And then, finally, enjoy by running:
+This example covers the most basic Wasm use case: we take a Wasm module (in its text representation form), create
+an instance from it, get an exported function and run it.
 
-```sh
-$ php -d extension=wasm examples/simple.php
-int(42)
-```
+You can go through more advanced examples in the [dedicated directory][examples].
 
-## Usage
+[examples]: ./examples
 
-This repository contains basically two things:
+# Supported platforms and features
 
-1. The `wasmer-php` extension, and
-2. The `Wasm` library.
-  
-The `wasmer-php` extension provides a raw API around
-WebAssembly. The `Wasm` library is a layer on top of `wasmer-php` to
-provide more safety and a more user-friendly API.
+## Platforms
 
-See the [API documentations with examples](https://wasmerio.github.io/wasmer-php/wasm/).
+| Platform | Architecture | Status |
+|----------|--------------|:------:|
+| Linux    | `amd64`      | ✅      |
+| Linux    | `aarch64`    | ❌      |
+| Windows  | `amd64`      | ❌      |
+| Darwin   | `amd64`      | ✅      |
+| Darwin   | `aarch64`    | ❌      |
 
-To compile the entire project, run the following commands:
+| PHP | Status |
+|-----|:------:|
+| 8.0 | ✅      |
+| 7.4 | ❌      |
+| 7.3 | ❌      |
 
-```sh
-$ just build
-$ php -d extension=wasm examples/simple.php
-```
+## Features
 
-If the provided shared libraries are not compatible with your system,
-please try running `just build-runtime` first.
+## Compilers and engines
 
-(Yes, you need [`just`](https://github.com/casey/just/)).
+| Compiler   | Status |
+|------------|:------:|
+| Cranelift  | ❌      |
+| LLVM       | ❌      |
+| Singlepass | ✅      |
 
-## Testing
+| Engine      | Status |
+|-------------|:------:|
+| Native      | ✅      |
+| JIT         | ✅      | 
+| Object File | ❌      |
 
-Once the extension is compiled and installed (just run `just rust && just php`), run the following commands:
+## Runtime
 
-```sh
-$ composer install
-$ composer test
-```
+| Object      | Status |
+|-------------|:------:|
+| config      | ✅      |
+| engine      | ✅      | 
+| store       | ✅      |
 
+## Types
 
-## What is WebAssembly?
+| Type       | Status |
+|------------|:------:|
+| valtype    | ✅      |
+| functype   | ✅      |
+| globaltype | ✅      |
+| tabletype  | ✅      |
+| memorytype | ✅      |
+| externtype | ✅      |
+| importtype | ✅      |
+| exporttype | ✅      |
 
-Quoting [the WebAssembly site](https://webassembly.org/):
+## Objects
 
-> WebAssembly (abbreviated Wasm) is a binary instruction format for a
-> stack-based virtual machine. Wasm is designed as a portable target
-> for compilation of high-level languages like C/C++/Rust, enabling
-> deployment on the web for client and server applications.
+| Object | Status |
+|----------|:------:|
+| val      | ✅      |
+| frame    | ✅      |
+| trap     | ✅      |
+| foreign  | ✅      |
+| module   | ✅      |
+| func     | ✅      |
+| global   | ✅      |
+| table    | 🧑‍💻      |
+| memory   | 🧑‍💻      |
+| extern   | ✅      |
+| instance | ✅      |
 
-About speed:
+## Misc
 
-> WebAssembly aims to execute at native speed by taking advantage of
-> [common hardware
-> capabilities](https://webassembly.org/docs/portability/#assumptions-for-efficient-execution)
-> available on a wide range of platforms.
+| Feature           | Status |
+|-------------------|:------:|
+| WAT               | ✅      |
+| WASI              | ❌      |
+| Cross Compilation | ❌      |
 
-About safety:
-
-> WebAssembly describes a memory-safe, sandboxed [execution
-> environment](https://webassembly.org/docs/semantics/#linear-memory) […].
-
-## Goals
-
-This extension has some goals in minds. Let's list some of them:
-
-### Write PHP extensions
-
-Taking the example of an image manipulation library, like face
-detection, one can use an existing Rust or C++ library, then compile
-it to a WebAssembly binary, and use it directly in PHP through the
-`wasmer-php` extension.
-
-Writing a C extension for PHP with the Zend API is no longer necessary.
-
-### Cross-platform distribution and packaging (feat. Composer)
-
-Because WebAssembly is a portable target, i.e. binaries are platform
-agnostics, once a library has been compiled to a WebAssembly binary,
-it is immediately distributable on all platforms where PHP runs. There
-is no compilation steps required. And to be clear, compiling a library
-to a WebAssembly binary does not required any PHP headers.
-
-To push the logic further, a library compiled as a WebAssembly binary
-can be packaged with [Composer](https://getcomposer.org/) (the PHP
-dependency manager), along with some PHP code to ease the manipulation
-of the compiled library.
-
-Distributing a new version of a WebAssembly binary simply reduces to
-distributing a new file. Composer can also add [constraints over the
-available extensions with their
-versions](https://getcomposer.org/doc/04-schema.md#package-links) (see
-<code>ext-<em>name</em></code>). All packaging scenarios are handled.
-
-### As fast as possible
-
-We are working on being as fast as native code (see [this blog post to
-learn more][wasmi-to-wasmer]). So far, the extension provides a faster
-execution than PHP itself. With the `nbody` benchmark, the
-`wasmer-php` is 9.5 times faster than pure PHP:
-
-| subject | mean | mode | best | rstdev |
-|--|-:|-:|-:|-:|
-| `wasm_extension` | 2,009.335μs | 1,991.778μs | 1,968.595μs | 2.17% |
-| `pure_php` | 19,714.738μs | 19,143.083μs | 18,853.399μs | 3.58% |
-
-
-[wasmi-to-wasmer]: https://medium.com/wasmer/wasmer-php-migrating-from-wasmi-to-wasmer-4d1014f41c88
-
-### Safety first
-
-WebAssembly brings safety guarantees, notably due to its memory model
-and its sandboxed [execution
-environment](https://webassembly.org/docs/semantics/#linear-memory). If
-Rust is used as the source of a WebAssembly binary, then more safety
-is brought in the game. In any case, without real numbers or studies,
-we imagine that it is safer to use a WebAssembly binary extension
-rather than writing C code.
-
-A WebAssembly binary has no access to the PHP environment (so no
-access to its memory or functions). It is executed in a sandbox. A
-WebAssembly binary is totally blind regarding the host/the system
-where it runs: Whether it runs in a Web browser, a server, or a PHP
-process, this is the same.
-
-## License
+# License
 
 The entire project is under the MIT License. Please read [the
-`LICENSE`
-file](https://github.com/wasmerio/wasmer/blob/master/LICENSE).
+`LICENSE` file][license].
+
+
+[license]: https://github.com/wasmerio/wasmer/blob/master/LICENSE

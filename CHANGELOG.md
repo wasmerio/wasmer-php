@@ -5,7 +5,7 @@
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 
 
-## **[Unreleased]**
+## **[1.0.0-beta1] - 2021-02-02**
 
 ### Breaking changes
 
@@ -75,3 +75,6 @@ wasm_func_call($run, new Wasm\Vec\Val());
 * Implement the `instance` API
 * Implement the `module` API
 * Implement the `trap` API
+
+
+[1.0.0-beta1]: https://github.com/wasmerio/wasmer-php/tree/1.0.0-beta1/README.md

@@ -3,8 +3,10 @@ GlobalType API: wasm_globaltype_copy
 
 --SKIPIF--
 <?php
+
 if (true) print 'skip wasm_globaltype_copy not available';
 
+?>
 --FILE--
 <?php
 

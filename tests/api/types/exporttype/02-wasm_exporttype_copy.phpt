@@ -3,8 +3,10 @@ ExportType API: wasm_exporttype_copy
 
 --SKIPIF--
 <?php
+
 if (true) print 'skip wasm_exporttype_copy not available';
 
+?>
 --FILE--
 <?php
 

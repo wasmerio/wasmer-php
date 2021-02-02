@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 5d279406689dce1f53bc76a4e609aea169f0b2a2 */
+ * Stub hash: fe28a55ecc695c17d33d53d1a06725afef8a8fb1 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -248,6 +248,10 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_trap_new, 0, 0, 2)
 	ZEND_ARG_INFO(0, store)
 	ZEND_ARG_TYPE_INFO(0, message, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_trap_delete, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_INFO(0, trap)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_trap_copy, 0, 0, 1)
@@ -643,6 +647,7 @@ ZEND_FUNCTION(wasm_frame_func_index);
 ZEND_FUNCTION(wasm_frame_func_offset);
 ZEND_FUNCTION(wasm_frame_module_offset);
 ZEND_FUNCTION(wasm_trap_new);
+ZEND_FUNCTION(wasm_trap_delete);
 ZEND_FUNCTION(wasm_trap_copy);
 ZEND_FUNCTION(wasm_trap_message);
 ZEND_FUNCTION(wasm_trap_origin);
@@ -829,6 +834,7 @@ static const zend_function_entry ext_functions[] = {
 	ZEND_FE(wasm_frame_func_offset, arginfo_wasm_frame_func_offset)
 	ZEND_FE(wasm_frame_module_offset, arginfo_wasm_frame_module_offset)
 	ZEND_FE(wasm_trap_new, arginfo_wasm_trap_new)
+	ZEND_FE(wasm_trap_delete, arginfo_wasm_trap_delete)
 	ZEND_FE(wasm_trap_copy, arginfo_wasm_trap_copy)
 	ZEND_FE(wasm_trap_message, arginfo_wasm_trap_message)
 	ZEND_FE(wasm_trap_origin, arginfo_wasm_trap_origin)

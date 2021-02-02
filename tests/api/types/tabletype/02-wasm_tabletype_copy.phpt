@@ -3,8 +3,10 @@ TableType API: wasm_tabletype_copy
 
 --SKIPIF--
 <?php
+
 if (true) print 'skip wasm_tabletype_copy not available';
 
+?>
 --FILE--
 <?php
 

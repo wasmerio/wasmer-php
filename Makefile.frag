@@ -1,3 +1,5 @@
+PHP_TEST_SETTINGS += -d report_memleaks=Off
+
 .PHONY: examples
 .SILENT: examples
 examples: all

@@ -3,8 +3,10 @@ Module API: wasm_module_copy
 
 --SKIPIF--
 <?php
+
 if (true) print 'skip wasm_module_copy not available';
 
+?>
 --FILE--
 <?php
 

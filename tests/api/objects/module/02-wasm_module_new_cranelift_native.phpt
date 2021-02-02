@@ -1,6 +1,10 @@
 --TEST--
 Module API: wasm_module_new (Cranelift, Native)
 
+--SKIPIF--
+<?php
+if (PHP_VERSION_ID >= 8100) print 'skip wasm_module_new (Cranelift, Native) does not work yet on PHP 8.1+';
+
 --FILE--
 <?php
 

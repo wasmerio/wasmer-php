@@ -29,10 +29,10 @@
 A complete and mature WebAssembly runtime for PHP based on [Wasmer].
 
 **You are seeing the readme for the latest Wasmer Go version, if you are using an older version, please go to:**
-* [1.0.0-alpha1]
+* [1.0.0-beta1]
 
 [Wasmer]: https://github.com/wasmerio/wasmer
-[1.0.0-alpha1]: https://github.com/wasmerio/wasmer-php/tree/1.0.0-alpha1/README.md
+[1.0.0-beta1]: https://github.com/wasmerio/wasmer-php/tree/1.0.0-beta1/README.md
 
 # Features
 

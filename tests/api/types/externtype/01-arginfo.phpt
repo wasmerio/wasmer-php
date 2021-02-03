@@ -1,12 +1,12 @@
 --TEST--
-GlobalType API functions arguments information
+ExternType API functions arguments information
 
 --FILE--
 <?php
 
 $reflection = new ReflectionFunction('wasm_externtype_kind');
 var_dump($reflection->getNumberOfParameters());
-var_dump($reflection->getReturnType());
+var_dump($reflection->getReturnType()->getName());
 
 $reflection = new ReflectionFunction('wasm_externtype_as_functype');
 var_dump($reflection->getNumberOfParameters());
@@ -27,7 +27,7 @@ var_dump($reflection->getReturnType());
 ?>
 --EXPECTF--
 int(1)
-NULL
+string(3) "int"
 int(1)
 NULL
 int(1)

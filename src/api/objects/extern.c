@@ -15,6 +15,7 @@ WASMER_IMPORT_RESOURCE(memory)
 WASMER_IMPORT_RESOURCE(externtype)
 
 extern zend_class_entry *wasm_exception_oob_ce;
+extern zend_class_entry *wasm_exception_runtime_ce;
 
 PHP_FUNCTION (wasm_extern_kind) {
     zval *extern_val;
@@ -58,7 +59,7 @@ PHP_FUNCTION (wasm_extern_as_func) {
     wasm_func_t *wasm_func = wasm_extern_as_func(WASMER_RES_P_INNER(extern_val, xtern));
 
     if (!wasm_func) {
-        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to func");
+        zend_throw_exception_ex(wasm_exception_runtime_ce, 0, "%s", "Unable to convert extern to func");
 
         return;
     }
@@ -82,7 +83,7 @@ PHP_FUNCTION (wasm_extern_as_global) {
     wasm_global_t *wasm_global = wasm_extern_as_global(WASMER_RES_P_INNER(extern_val, xtern));
 
     if (!wasm_global) {
-        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to global");
+        zend_throw_exception_ex(wasm_exception_runtime_ce, 0, "%s", "Unable to convert extern to global");
 
         return;
     }
@@ -106,7 +107,7 @@ PHP_FUNCTION (wasm_extern_as_table) {
     wasm_table_t *wasm_table = wasm_extern_as_table(WASMER_RES_P_INNER(extern_val, xtern));
 
     if (!wasm_table) {
-        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to table");
+        zend_throw_exception_ex(wasm_exception_runtime_ce, 0, "%s", "Unable to convert extern to table");
 
         return;
     }
@@ -131,7 +132,7 @@ PHP_FUNCTION (wasm_extern_as_memory) {
     wasm_memory_t *wasm_memory = wasm_extern_as_memory(WASMER_RES_P_INNER(extern_val, xtern));
 
     if (!wasm_memory) {
-        zend_throw_exception_ex(zend_ce_exception, 0, "%s", "Unable to convert extern to table");
+        zend_throw_exception_ex(wasm_exception_runtime_ce, 0, "%s", "Unable to convert extern to table");
 
         return;
     }

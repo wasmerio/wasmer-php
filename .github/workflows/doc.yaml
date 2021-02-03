@@ -1,0 +1,41 @@
+name: Documentation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - 'master'
+    tags:
+
+jobs:
+  test:
+    name: Documentation
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Configure
+        run: |
+          phpize
+          ./configure
+      - name: Build
+        run: |
+          make documentation
+      - name: Publish
+        if: github.ref == 'refs/heads/master'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.phpdoc/build
+      - name: Archive
+        if: github.ref != 'refs/heads/master'
+        uses: actions/upload-artifact@v2
+        with:
+          name: documentation
+          retention-days: 3
+          path: |
+            ./.phpdoc/build

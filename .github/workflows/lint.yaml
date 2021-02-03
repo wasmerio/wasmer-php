@@ -1,0 +1,27 @@
+name: Lint
+
+on:
+  # TODO(jubianchi): Remove this before merge
+  pull_request:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  test:
+    name: Lint
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Configure
+        run: |
+          phpize
+          ./configure
+      - name: Lint
+        run: |
+          make lint

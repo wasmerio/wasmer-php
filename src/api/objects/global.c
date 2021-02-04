@@ -97,7 +97,7 @@ PHP_FUNCTION (wasm_global_set) {
 
     wasm_global_set(WASMER_RES_P_INNER(global_val, global), &WASMER_RES_P_INNER(val_val, val));
 
-    WASMER_HANDLE_ERROR
+    WASMER_HANDLE_ERROR(zend_ce_exception)
 }
 
 PHP_FUNCTION (wasm_global_same) {

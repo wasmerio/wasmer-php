@@ -48,6 +48,7 @@ PHP_FUNCTION (wasm_##name##_delete) {\
 
 // TODO(jubianchi): Implement clone (via wasm_vec_##name##_copy)
 #define WASMER_DECLARE_VEC(class_name, macro, name)\
+extern zend_class_entry *wasm_exception_oob_ce; \
 WASMER_DECLARE_VEC_CONSTRUCT(class_name, name, macro)\
 WASMER_DECLARE_VEC_COUNT(class_name, macro, name)\
 WASMER_DECLARE_VEC_OFFSET_EXISTS(class_name, macro, name)\
@@ -131,7 +132,7 @@ PHP_METHOD (Wasm_Vec_##class_name, offsetGet) {\
     wasm_##name##_vec_c *wasm_##name##_vec = WASMER_##macro##_VEC_P(ZEND_THIS);\
     \
     if(offset >= wasm_##name##_vec->vec.inner.name->size) {\
-        zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\" #class_name "::offsetGet($offset) index out of bounds");\
+        zend_throw_exception_ex(wasm_exception_oob_ce, 0, "Wasm\\Vec\\" #class_name "::offsetGet($offset) index out of bounds");\
         \
         return;\
     }\
@@ -162,7 +163,7 @@ PHP_METHOD (Wasm_Vec_##class_name, offsetSet) {\
     wasm_##name##_vec_c *wasm_##name##_vec = WASMER_##macro##_VEC_P(ZEND_THIS);\
     \
     if(offset >= wasm_##name##_vec->vec.inner.name->size) {\
-        zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\" #class_name "::offsetSet($offset) index out of bounds");\
+        zend_throw_exception_ex(wasm_exception_oob_ce, 0, "Wasm\\Vec\\" #class_name "::offsetSet($offset) index out of bounds");\
         \
         return;\
     }\
@@ -196,13 +197,13 @@ WASMER_COPY(name)
         wasmer_last_error_message(buffer, error_length);\
 
 
-#define WASMER_HANDLE_ERROR_END \
-        zend_throw_exception_ex(zend_ce_exception, 0, "%s", buffer);\
+#define WASMER_HANDLE_ERROR_END(exception) \
+        zend_throw_exception_ex(exception, 0, "%s", buffer);\
         \
         return;\
     }\
 }
 
-#define WASMER_HANDLE_ERROR \
+#define WASMER_HANDLE_ERROR(exception) \
 WASMER_HANDLE_ERROR_START \
-WASMER_HANDLE_ERROR_END
+WASMER_HANDLE_ERROR_END(exception)

@@ -17,7 +17,7 @@ var_dump($vec[1]);
 
 try {
     $vec[2] = $globaltype2;
-} catch (Exception $e) {
+} catch (Wasm\Exception\OutOfBoundsException $e) {
     var_dump($e->getMessage());
 }
 

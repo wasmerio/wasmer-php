@@ -40,7 +40,7 @@ PHP_FUNCTION (wasm_externtype_as_functype) {
     functype->inner.functype = wasm_externtype_as_functype(WASMER_RES_P_INNER(externtype_val, externtype));
     functype->owned = false;
 
-    WASMER_HANDLE_ERROR
+    WASMER_HANDLE_ERROR(zend_ce_exception)
 
     zend_resource *functype_res = zend_register_resource(functype, le_wasm_functype);
 
@@ -60,7 +60,7 @@ PHP_FUNCTION (wasm_externtype_as_globaltype) {
     globaltype->inner.globaltype = wasm_externtype_as_globaltype(WASMER_RES_P_INNER(externtype_val, externtype));
     globaltype->owned = false;
 
-    WASMER_HANDLE_ERROR
+    WASMER_HANDLE_ERROR(zend_ce_exception)
 
     zend_resource *globaltype_res = zend_register_resource(globaltype, le_wasm_globaltype);
 
@@ -80,7 +80,7 @@ PHP_FUNCTION (wasm_externtype_as_memorytype) {
     memorytype->inner.memorytype = wasm_externtype_as_memorytype(WASMER_RES_P_INNER(externtype_val, externtype));
     memorytype->owned = false;
 
-    WASMER_HANDLE_ERROR
+    WASMER_HANDLE_ERROR(zend_ce_exception)
 
     zend_resource *memorytype_res = zend_register_resource(memorytype, le_wasm_memorytype);
 
@@ -100,7 +100,7 @@ PHP_FUNCTION (wasm_externtype_as_tabletype) {
     tabletype->inner.tabletype = wasm_externtype_as_tabletype(WASMER_RES_P_INNER(externtype_val, externtype));
     tabletype->owned = false;
 
-    WASMER_HANDLE_ERROR
+    WASMER_HANDLE_ERROR(zend_ce_exception)
 
     zend_resource *tabletype_res = zend_register_resource(tabletype, le_wasm_tabletype);
 

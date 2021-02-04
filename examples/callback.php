@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 echo 'Initializing...' . PHP_EOL;
 $engine = wasm_engine_new();

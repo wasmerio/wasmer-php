@@ -10,8 +10,10 @@ WASMER_DECLARE_OWN(trap)
 WASMER_COPY(trap)
 
 WASMER_IMPORT_RESOURCE(store)
+WASMER_IMPORT_RESOURCE(frame)
 
-// TODO(jubianchi): Handle wasmer errors
+extern zend_class_entry *wasm_vec_frame_ce;
+
 PHP_FUNCTION (wasm_trap_new) {
     zval *store_val;
     char *name;
@@ -63,15 +65,44 @@ PHP_FUNCTION (wasm_trap_message) {
 }
 
 PHP_FUNCTION (wasm_trap_origin) {
-    ZEND_PARSE_PARAMETERS_NONE();
+    zval *trap_val;
 
-    // TODO(jubianchi): Implement
-    zend_throw_error(NULL, "Not yet implemented");
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+            Z_PARAM_RESOURCE(trap_val)
+    ZEND_PARSE_PARAMETERS_END();
+
+    WASMER_FETCH_RESOURCE(trap)
+
+    wasm_frame_t *wasm_frame = wasm_trap_origin(WASMER_RES_P_INNER(trap_val, trap));
+
+    if (wasm_frame) {
+        wasmer_res *frame = emalloc(sizeof(wasmer_res));
+        frame->inner.frame = wasm_trap_origin(WASMER_RES_P_INNER(trap_val, trap));
+        frame->owned = true;
+
+        RETURN_RES(zend_register_resource(frame, le_wasm_frame));
+    }
+
+    RETURN_NULL();
 }
 
 PHP_FUNCTION (wasm_trap_trace) {
-    ZEND_PARSE_PARAMETERS_NONE();
+    zval *trap_val;
 
-    // TODO(jubianchi): Implement
-    zend_throw_error(NULL, "Not yet implemented");
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 1, 1)
+            Z_PARAM_RESOURCE(trap_val)
+    ZEND_PARSE_PARAMETERS_END();
+
+    WASMER_FETCH_RESOURCE(trap)
+
+    wasm_frame_vec_t *frames = emalloc(sizeof(wasm_exporttype_vec_t));
+    wasm_trap_trace(WASMER_RES_P_INNER(trap_val, trap), frames);
+
+    zval obj;
+    object_init_ex(&obj, wasm_vec_frame_ce);
+    wasm_frame_vec_c *ce = WASMER_FRAME_VEC_P(&obj);
+    ce->vec.inner.frame = frames;
+    ce->vec.owned = true;
+
+    RETURN_OBJ(Z_OBJ(obj));
 }

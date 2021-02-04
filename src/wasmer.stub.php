@@ -490,6 +490,8 @@ namespace {
      * @return resource
      */
     function wasm_trap_new($store, string $message) {}
+    /** @param resource $trap */
+    function wasm_trap_delete($trap): bool {}
     /**
      * @param resource $trap
      *
@@ -501,7 +503,7 @@ namespace {
     /**
      * @param resource $trap
      *
-     * @return resource
+     * @return ?resource
      */
     function wasm_trap_origin($trap) {}
     /** @param resource $trap */

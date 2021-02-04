@@ -3,8 +3,10 @@ MemoryType API: wasm_memorytype_copy
 
 --SKIPIF--
 <?php
+
 if (true) print 'skip wasm_memorytype_copy not available';
 
+?>
 --FILE--
 <?php
 

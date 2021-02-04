@@ -163,7 +163,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\wasm_limits_new\u0028\u0029",
             "name": "wasm_limits_new",
-            "summary": "",
+            "summary": "Create\u0020a\u0020new\u0020limits.",
             "url": "namespaces/default.html#function_wasm_limits_new"
         },                {
             "fqsen": "\\wasm_limits_min\u0028\u0029",
@@ -208,7 +208,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\wasm_memorytype_new\u0028\u0029",
             "name": "wasm_memorytype_new",
-            "summary": "",
+            "summary": "Create\u0020a\u0020new\u0020memorytype.",
             "url": "namespaces/default.html#function_wasm_memorytype_new"
         },                {
             "fqsen": "\\wasm_memorytype_delete\u0028\u0029",
@@ -380,6 +380,11 @@ Search.appendIndex(
             "name": "wasm_trap_new",
             "summary": "",
             "url": "namespaces/default.html#function_wasm_trap_new"
+        },                {
+            "fqsen": "\\wasm_trap_delete\u0028\u0029",
+            "name": "wasm_trap_delete",
+            "summary": "",
+            "url": "namespaces/default.html#function_wasm_trap_delete"
         },                {
             "fqsen": "\\wasm_trap_copy\u0028\u0029",
             "name": "wasm_trap_copy",
@@ -598,7 +603,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\wat2wasm\u0028\u0029",
             "name": "wat2wasm",
-            "summary": "",
+            "summary": "\u26A0\uFE0F\u0020This\u0020is\u0020a\u0020Wasmer\u002Dspecific\u0020function.",
             "url": "namespaces/default.html#function_wat2wasm"
         },                {
             "fqsen": "\\Wasm\\Vec\\ExportType",

@@ -302,7 +302,7 @@
     <span>
                         &nbsp;: resource    </span>
 </dt>
-<dd></dd>
+<dd>Create a new limits.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a href="namespaces/default.html#function_wasm_limits_min">wasm_limits_min()</a>
@@ -365,7 +365,7 @@
     <span>
                         &nbsp;: resource    </span>
 </dt>
-<dd></dd>
+<dd>Create a new memorytype.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a href="namespaces/default.html#function_wasm_memorytype_delete">wasm_memorytype_delete()</a>
@@ -398,7 +398,7 @@
             <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a href="namespaces/default.html#function_wasm_externtype_kind">wasm_externtype_kind()</a>
     <span>
-                        &nbsp;: resource    </span>
+                        &nbsp;: int    </span>
 </dt>
 <dd></dd>
 
@@ -602,6 +602,13 @@
     <a href="namespaces/default.html#function_wasm_trap_new">wasm_trap_new()</a>
     <span>
                         &nbsp;: resource    </span>
+</dt>
+<dd></dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -function -">
+    <a href="namespaces/default.html#function_wasm_trap_delete">wasm_trap_delete()</a>
+    <span>
+                        &nbsp;: bool    </span>
 </dt>
 <dd></dd>
 
@@ -860,7 +867,7 @@
             <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a href="namespaces/default.html#function_wasm_instance_exports">wasm_instance_exports()</a>
     <span>
-                        &nbsp;: resource    </span>
+                        &nbsp;: <a href="classes/Wasm-Vec-Extern.html"><abbr title="\Wasm\Vec\Extern">Extern</abbr></a>    </span>
 </dt>
 <dd></dd>
 
@@ -911,7 +918,7 @@
     <span>
                         &nbsp;: resource    </span>
 </dt>
-<dd></dd>
+<dd>⚠️ This is a Wasmer-specific function.</dd>
 
     </dl>
 
@@ -997,8 +1004,8 @@ $config = wasm_config_new();
 // Delete the configuration
 wasm_config_delete($config);
 </code></pre>
-<p>ℹ️ This function does not need to be called if wasm_engine_new_with_config or another function that takes ownership of
-the wasm_config_t is called.</p>
+<p>ℹ️ This function does not need to be called if the configuration was used as an argument of
+<code class="prettyprint">wasm_engine_new_with_config</code>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1420,7 +1427,7 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">229</span>
+    <span class="phpdocumentor-element-found-in__line">232</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a valtype.</p>
@@ -1439,6 +1446,8 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                     <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_valtype_t</code> resource</p>
+<p>ℹ️ This function does not need to be called if the configuration was used as an argument of
+<code class="prettyprint">wasm_functype_new</code>, <code class="prettyprint">wasm_globaltype_new</code>, <code class="prettyprint">wasm_tabletype_new</code> or was added to a <code class="prettyprint">\Wasm\Vec\Val</code>.</p>
 </section>
 
             </dd>
@@ -1471,7 +1480,7 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">250</span>
+    <span class="phpdocumentor-element-found-in__line">253</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the valtype kind.</p>
@@ -1517,7 +1526,7 @@ wasm_valtype_delete($valtype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">274</span>
+    <span class="phpdocumentor-element-found-in__line">277</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return `true` if the given valtype has a numeric kind.</p>
@@ -1566,7 +1575,7 @@ wasm_valtype_delete($ref);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">298</span>
+    <span class="phpdocumentor-element-found-in__line">301</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return `true` if the given valtype has a reference kind.</p>
@@ -1615,7 +1624,7 @@ wasm_valtype_delete($ref);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">321</span>
+    <span class="phpdocumentor-element-found-in__line">324</span>
 </aside>
 
         <p class="phpdocumentor-summary">Create a copy of the given valtype.</p>
@@ -1661,7 +1670,7 @@ wasm_valtype_delete($valtype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">340</span>
+    <span class="phpdocumentor-element-found-in__line">343</span>
 </aside>
 
         <p class="phpdocumentor-summary">Verify whether the given kind is numeric.</p>
@@ -1703,7 +1712,7 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">360</span>
+    <span class="phpdocumentor-element-found-in__line">363</span>
 </aside>
 
         <p class="phpdocumentor-summary">Verify whether the given kind is a reference.</p>
@@ -1745,7 +1754,7 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">384</span>
+    <span class="phpdocumentor-element-found-in__line">387</span>
 </aside>
 
         <p class="phpdocumentor-summary">Create a new valtype.</p>
@@ -1796,7 +1805,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">395</span>
+    <span class="phpdocumentor-element-found-in__line">398</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a functype.</p>
@@ -1847,7 +1856,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">399</span>
+    <span class="phpdocumentor-element-found-in__line">404</span>
 </aside>
 
     
@@ -1864,7 +1873,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_functype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -1881,7 +1891,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">403</span>
+    <span class="phpdocumentor-element-found-in__line">410</span>
 </aside>
 
     
@@ -1898,7 +1908,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_functype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -1915,7 +1926,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">411</span>
+    <span class="phpdocumentor-element-found-in__line">418</span>
 </aside>
 
     
@@ -1932,7 +1943,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_functype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -1949,7 +1961,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">419</span>
+    <span class="phpdocumentor-element-found-in__line">426</span>
 </aside>
 
     
@@ -1966,7 +1978,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_functype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -1983,7 +1996,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">431</span>
+    <span class="phpdocumentor-element-found-in__line">438</span>
 </aside>
 
     
@@ -2000,7 +2013,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_valtype_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -2024,7 +2038,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">442</span>
+    <span class="phpdocumentor-element-found-in__line">449</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a globaltype.</p>
@@ -2075,7 +2089,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">451</span>
+    <span class="phpdocumentor-element-found-in__line">458</span>
 </aside>
 
     
@@ -2109,7 +2123,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">456</span>
+    <span class="phpdocumentor-element-found-in__line">465</span>
 </aside>
 
     
@@ -2126,7 +2140,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_globaltype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2143,7 +2158,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">465</span>
+    <span class="phpdocumentor-element-found-in__line">474</span>
 </aside>
 
     
@@ -2160,7 +2175,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_globaltype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2177,7 +2193,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">473</span>
+    <span class="phpdocumentor-element-found-in__line">482</span>
 </aside>
 
     
@@ -2194,7 +2210,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_globaltype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2211,10 +2228,11 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">481</span>
+    <span class="phpdocumentor-element-found-in__line">497</span>
 </aside>
 
-    
+        <p class="phpdocumentor-summary">Create a new limits.</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
                 <span class="phpdocumentor-signature__name">wasm_limits_new</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$min</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$max</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
@@ -2240,6 +2258,30 @@ wasm_functype_delete($functype);
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">see</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                    <span class="phpdocumentor-tag-link"><a href="namespaces/default.html#function_wasm_memorytype_new"><abbr title="\wasm_memorytype_new()">wasm_memorytype_new()</abbr></a></span>
+                                        
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                            <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">see</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                    <span class="phpdocumentor-tag-link"><a href="namespaces/default.html#function_wasm_tabletype_new"><abbr title="\wasm_tabletype_new()">wasm_tabletype_new()</abbr></a></span>
+                                        
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -2251,7 +2293,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">485</span>
+    <span class="phpdocumentor-element-found-in__line">504</span>
 </aside>
 
     
@@ -2268,7 +2310,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_limits_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2285,7 +2328,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">489</span>
+    <span class="phpdocumentor-element-found-in__line">511</span>
 </aside>
 
     
@@ -2302,7 +2345,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_limits_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2319,7 +2363,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">502</span>
+    <span class="phpdocumentor-element-found-in__line">524</span>
 </aside>
 
     
@@ -2336,7 +2380,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_valtype_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -2344,7 +2389,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_limits_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2361,7 +2407,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">513</span>
+    <span class="phpdocumentor-element-found-in__line">535</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a tabletype.</p>
@@ -2412,7 +2458,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">522</span>
+    <span class="phpdocumentor-element-found-in__line">544</span>
 </aside>
 
     
@@ -2429,7 +2475,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_tabletype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2446,7 +2493,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">531</span>
+    <span class="phpdocumentor-element-found-in__line">553</span>
 </aside>
 
     
@@ -2463,7 +2510,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_tabletype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2480,7 +2528,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">540</span>
+    <span class="phpdocumentor-element-found-in__line">562</span>
 </aside>
 
     
@@ -2497,7 +2545,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_tabletype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2514,7 +2563,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">549</span>
+    <span class="phpdocumentor-element-found-in__line">571</span>
 </aside>
 
     
@@ -2531,7 +2580,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_tabletype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2548,15 +2598,24 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">561</span>
+    <span class="phpdocumentor-element-found-in__line">595</span>
 </aside>
 
-    
+        <p class="phpdocumentor-summary">Create a new memorytype.</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
                 <span class="phpdocumentor-signature__name">wasm_memorytype_new</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$limits</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
 
-        <section class="phpdocumentor-description"></section>
+        <section class="phpdocumentor-description"><pre class="prettyprint"><code class="language-php">&lt;?php
+
+$limits = wasm_limits_new(1, 2);
+$memorytype = wasm_memorytype_new($limits);
+
+// Free everything
+wasm_memorytype_delete($memorytype);
+</code></pre>
+</section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
@@ -2565,7 +2624,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_limits_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2582,7 +2642,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">572</span>
+    <span class="phpdocumentor-element-found-in__line">606</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a memorytype.</p>
@@ -2633,7 +2693,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">581</span>
+    <span class="phpdocumentor-element-found-in__line">615</span>
 </aside>
 
     
@@ -2650,7 +2710,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_memorytype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2667,7 +2728,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">590</span>
+    <span class="phpdocumentor-element-found-in__line">624</span>
 </aside>
 
     
@@ -2684,7 +2745,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_memorytype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2701,7 +2763,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">599</span>
+    <span class="phpdocumentor-element-found-in__line">633</span>
 </aside>
 
     
@@ -2718,7 +2780,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_memorytype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2735,13 +2798,13 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">611</span>
+    <span class="phpdocumentor-element-found-in__line">643</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_externtype_kind</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$externtype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
+                <span class="phpdocumentor-signature__name">wasm_externtype_kind</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$externtype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
 
         <section class="phpdocumentor-description"></section>
 
@@ -2752,7 +2815,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_externtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2769,7 +2833,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">619</span>
+    <span class="phpdocumentor-element-found-in__line">654</span>
 </aside>
 
     
@@ -2786,12 +2850,28 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_externtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Wasm-Exception-RuntimeException.html"><abbr title="\Wasm\Exception\RuntimeException">RuntimeException</abbr></a></span>
+                                                            
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -2803,7 +2883,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">627</span>
+    <span class="phpdocumentor-element-found-in__line">665</span>
 </aside>
 
     
@@ -2820,12 +2900,28 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_externtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Wasm-Exception-RuntimeException.html"><abbr title="\Wasm\Exception\RuntimeException">RuntimeException</abbr></a></span>
+                                                            
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -2837,7 +2933,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">635</span>
+    <span class="phpdocumentor-element-found-in__line">676</span>
 </aside>
 
     
@@ -2854,12 +2950,28 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_externtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Wasm-Exception-RuntimeException.html"><abbr title="\Wasm\Exception\RuntimeException">RuntimeException</abbr></a></span>
+                                                            
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -2871,7 +2983,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">643</span>
+    <span class="phpdocumentor-element-found-in__line">687</span>
 </aside>
 
     
@@ -2888,12 +3000,28 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_externtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Wasm-Exception-RuntimeException.html"><abbr title="\Wasm\Exception\RuntimeException">RuntimeException</abbr></a></span>
+                                                            
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -2905,7 +3033,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">655</span>
+    <span class="phpdocumentor-element-found-in__line">699</span>
 </aside>
 
     
@@ -2936,7 +3064,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_externtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -2953,25 +3082,27 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">666</span>
+    <span class="phpdocumentor-element-found-in__line">710</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a importtype.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_importtype_delete</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                <span class="phpdocumentor-signature__name">wasm_importtype_delete</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importtype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$importype</span>
-                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$importtype</span>
+                : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_importtype_t</code> resource</p>
+</section>
+
             </dd>
             </dl>
 
@@ -3002,24 +3133,25 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">671</span>
+    <span class="phpdocumentor-element-found-in__line">717</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_importtype_module</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+                <span class="phpdocumentor-signature__name">wasm_importtype_module</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importtype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$importype</span>
+                <span class="phpdocumentor-signature__argument__name">$importtype</span>
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_importtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3036,24 +3168,25 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">676</span>
+    <span class="phpdocumentor-element-found-in__line">724</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_importtype_name</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+                <span class="phpdocumentor-signature__name">wasm_importtype_name</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importtype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$importype</span>
+                <span class="phpdocumentor-signature__argument__name">$importtype</span>
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_importtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3070,24 +3203,25 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">685</span>
+    <span class="phpdocumentor-element-found-in__line">733</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_importtype_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
+                <span class="phpdocumentor-signature__name">wasm_importtype_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importtype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$importype</span>
+                <span class="phpdocumentor-signature__argument__name">$importtype</span>
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_importtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3104,24 +3238,25 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">694</span>
+    <span class="phpdocumentor-element-found-in__line">742</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_importtype_copy</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
+                <span class="phpdocumentor-signature__name">wasm_importtype_copy</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$importtype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$importype</span>
+                <span class="phpdocumentor-signature__argument__name">$importtype</span>
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_importtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3138,7 +3273,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">706</span>
+    <span class="phpdocumentor-element-found-in__line">754</span>
 </aside>
 
     
@@ -3162,7 +3297,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_externtype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3179,25 +3315,27 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">717</span>
+    <span class="phpdocumentor-element-found-in__line">765</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a exporttype.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_exporttype_delete</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exportype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                <span class="phpdocumentor-signature__name">wasm_exporttype_delete</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exporttype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$exportype</span>
-                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$exporttype</span>
+                : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_exporttype_t</code> resource</p>
+</section>
+
             </dd>
             </dl>
 
@@ -3228,24 +3366,25 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">722</span>
+    <span class="phpdocumentor-element-found-in__line">772</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_exporttype_name</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exportype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+                <span class="phpdocumentor-signature__name">wasm_exporttype_name</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exporttype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$exportype</span>
+                <span class="phpdocumentor-signature__argument__name">$exporttype</span>
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_exporttype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3262,24 +3401,25 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">731</span>
+    <span class="phpdocumentor-element-found-in__line">781</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_exporttype_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exportype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
+                <span class="phpdocumentor-signature__name">wasm_exporttype_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exporttype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$exportype</span>
+                <span class="phpdocumentor-signature__argument__name">$exporttype</span>
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_exporttype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3296,24 +3436,25 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">740</span>
+    <span class="phpdocumentor-element-found-in__line">790</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_exporttype_copy</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exportype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
+                <span class="phpdocumentor-signature__name">wasm_exporttype_copy</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exporttype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
 
         <section class="phpdocumentor-description"></section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$exportype</span>
+                <span class="phpdocumentor-signature__argument__name">$exporttype</span>
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_exporttype_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3330,7 +3471,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">755</span>
+    <span class="phpdocumentor-element-found-in__line">805</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a val.</p>
@@ -3366,7 +3507,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">760</span>
+    <span class="phpdocumentor-element-found-in__line">812</span>
 </aside>
 
     
@@ -3383,7 +3524,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_eval_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3400,7 +3542,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">765</span>
+    <span class="phpdocumentor-element-found-in__line">819</span>
 </aside>
 
     
@@ -3417,7 +3559,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_eval_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3434,7 +3577,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">774</span>
+    <span class="phpdocumentor-element-found-in__line">828</span>
 </aside>
 
     
@@ -3451,7 +3594,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_eval_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3468,7 +3612,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">779</span>
+    <span class="phpdocumentor-element-found-in__line">835</span>
 </aside>
 
     
@@ -3501,7 +3645,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">784</span>
+    <span class="phpdocumentor-element-found-in__line">842</span>
 </aside>
 
     
@@ -3534,7 +3678,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">789</span>
+    <span class="phpdocumentor-element-found-in__line">849</span>
 </aside>
 
     
@@ -3567,7 +3711,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">794</span>
+    <span class="phpdocumentor-element-found-in__line">856</span>
 </aside>
 
     
@@ -3600,7 +3744,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">809</span>
+    <span class="phpdocumentor-element-found-in__line">872</span>
 </aside>
 
     
@@ -3617,7 +3761,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_frame_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3634,7 +3779,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">817</span>
+    <span class="phpdocumentor-element-found-in__line">881</span>
 </aside>
 
     
@@ -3651,7 +3796,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_frame_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3668,7 +3814,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">821</span>
+    <span class="phpdocumentor-element-found-in__line">888</span>
 </aside>
 
     
@@ -3685,7 +3831,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_frame_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3702,7 +3849,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">825</span>
+    <span class="phpdocumentor-element-found-in__line">895</span>
 </aside>
 
     
@@ -3719,7 +3866,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_frame_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3736,7 +3884,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">829</span>
+    <span class="phpdocumentor-element-found-in__line">902</span>
 </aside>
 
     
@@ -3753,7 +3901,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_frame_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3770,7 +3919,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">842</span>
+    <span class="phpdocumentor-element-found-in__line">916</span>
 </aside>
 
     
@@ -3787,7 +3936,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_store_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -3819,6 +3969,41 @@ wasm_functype_delete($functype);
     
 </article>
                     <article class="phpdocumentor-element -function - ">
+    <h4 class="phpdocumentor-element__name" id="function_wasm_trap_delete">
+        wasm_trap_delete()
+        <a href="namespaces/default.html#function_wasm_trap_delete" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">923</span>
+</aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility"></span>
+                <span class="phpdocumentor-signature__name">wasm_trap_delete</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$trap</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$trap</span>
+                : <span class="phpdocumentor-signature__argument__return-type">resource</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_trap_t</code> resource</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+    
+</article>
+                    <article class="phpdocumentor-element -function - ">
     <h4 class="phpdocumentor-element__name" id="function_wasm_trap_copy">
         wasm_trap_copy()
         <a href="namespaces/default.html#function_wasm_trap_copy" class="headerlink"><i class="fas fa-link"></i></a>
@@ -3826,7 +4011,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">850</span>
+    <span class="phpdocumentor-element-found-in__line">932</span>
 </aside>
 
     
@@ -3843,7 +4028,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_trap_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3860,7 +4046,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">854</span>
+    <span class="phpdocumentor-element-found-in__line">939</span>
 </aside>
 
     
@@ -3877,7 +4063,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_trap_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3894,7 +4081,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">862</span>
+    <span class="phpdocumentor-element-found-in__line">948</span>
 </aside>
 
     
@@ -3911,7 +4098,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_trap_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3928,7 +4116,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">866</span>
+    <span class="phpdocumentor-element-found-in__line">955</span>
 </aside>
 
     
@@ -3945,7 +4133,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_trap_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -3962,7 +4151,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">885</span>
+    <span class="phpdocumentor-element-found-in__line">974</span>
 </aside>
 
     
@@ -3979,7 +4168,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_store_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4018,7 +4208,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">896</span>
+    <span class="phpdocumentor-element-found-in__line">985</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a module.</p>
@@ -4069,7 +4259,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">906</span>
+    <span class="phpdocumentor-element-found-in__line">995</span>
 </aside>
 
     
@@ -4086,7 +4276,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_store_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4094,7 +4285,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4126,7 +4318,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">911</span>
+    <span class="phpdocumentor-element-found-in__line">1002</span>
 </aside>
 
     
@@ -4143,7 +4335,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4160,7 +4353,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">916</span>
+    <span class="phpdocumentor-element-found-in__line">1009</span>
 </aside>
 
     
@@ -4177,7 +4370,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4194,7 +4388,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">921</span>
+    <span class="phpdocumentor-element-found-in__line">1016</span>
 </aside>
 
     
@@ -4211,7 +4405,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4228,7 +4423,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">932</span>
+    <span class="phpdocumentor-element-found-in__line">1027</span>
 </aside>
 
     
@@ -4245,7 +4440,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_store_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4284,7 +4480,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">939</span>
+    <span class="phpdocumentor-element-found-in__line">1034</span>
 </aside>
 
     
@@ -4301,7 +4497,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4318,7 +4515,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">946</span>
+    <span class="phpdocumentor-element-found-in__line">1041</span>
 </aside>
 
     
@@ -4335,7 +4532,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4359,7 +4557,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">955</span>
+    <span class="phpdocumentor-element-found-in__line">1050</span>
 </aside>
 
     
@@ -4376,7 +4574,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4393,7 +4592,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">967</span>
+    <span class="phpdocumentor-element-found-in__line">1062</span>
 </aside>
 
     
@@ -4410,7 +4609,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_store_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4418,7 +4618,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_functype_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4442,7 +4643,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">978</span>
+    <span class="phpdocumentor-element-found-in__line">1073</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a func.</p>
@@ -4493,7 +4694,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">987</span>
+    <span class="phpdocumentor-element-found-in__line">1082</span>
 </aside>
 
     
@@ -4510,7 +4711,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_func_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4527,7 +4729,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">992</span>
+    <span class="phpdocumentor-element-found-in__line">1089</span>
 </aside>
 
     
@@ -4544,7 +4746,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_func_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4568,7 +4771,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1001</span>
+    <span class="phpdocumentor-element-found-in__line">1098</span>
 </aside>
 
     
@@ -4585,7 +4788,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_func_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4602,7 +4806,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1015</span>
+    <span class="phpdocumentor-element-found-in__line">1112</span>
 </aside>
 
     
@@ -4619,7 +4823,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_store_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4627,7 +4832,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_globaltype_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4635,7 +4841,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_val_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4652,7 +4859,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1026</span>
+    <span class="phpdocumentor-element-found-in__line">1123</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a global.</p>
@@ -4703,7 +4910,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1035</span>
+    <span class="phpdocumentor-element-found-in__line">1132</span>
 </aside>
 
     
@@ -4720,7 +4927,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_global_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4737,7 +4945,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1044</span>
+    <span class="phpdocumentor-element-found-in__line">1141</span>
 </aside>
 
     
@@ -4754,7 +4962,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_global_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4771,7 +4980,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1052</span>
+    <span class="phpdocumentor-element-found-in__line">1149</span>
 </aside>
 
     
@@ -4788,7 +4997,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_global_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4796,7 +5006,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_val_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4813,7 +5024,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1061</span>
+    <span class="phpdocumentor-element-found-in__line">1158</span>
 </aside>
 
     
@@ -4830,7 +5041,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_global_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4847,7 +5059,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1069</span>
+    <span class="phpdocumentor-element-found-in__line">1166</span>
 </aside>
 
     
@@ -4864,7 +5076,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_global_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -4872,7 +5085,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_global_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4889,7 +5103,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1078</span>
+    <span class="phpdocumentor-element-found-in__line">1175</span>
 </aside>
 
     
@@ -4906,7 +5120,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_global_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4923,7 +5138,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1099</span>
+    <span class="phpdocumentor-element-found-in__line">1196</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete an extern.</p>
@@ -4959,7 +5174,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1108</span>
+    <span class="phpdocumentor-element-found-in__line">1205</span>
 </aside>
 
     
@@ -4976,7 +5191,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_extern_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -4993,7 +5209,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1117</span>
+    <span class="phpdocumentor-element-found-in__line">1214</span>
 </aside>
 
     
@@ -5010,7 +5226,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_extern_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -5027,7 +5244,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1126</span>
+    <span class="phpdocumentor-element-found-in__line">1225</span>
 </aside>
 
     
@@ -5044,12 +5261,28 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_extern_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Wasm-Exception-RuntimeException.html"><abbr title="\Wasm\Exception\RuntimeException">RuntimeException</abbr></a></span>
+                                                            
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -5061,7 +5294,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1135</span>
+    <span class="phpdocumentor-element-found-in__line">1236</span>
 </aside>
 
     
@@ -5078,12 +5311,28 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_extern_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Wasm-Exception-RuntimeException.html"><abbr title="\Wasm\Exception\RuntimeException">RuntimeException</abbr></a></span>
+                                                            
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -5095,7 +5344,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1144</span>
+    <span class="phpdocumentor-element-found-in__line">1247</span>
 </aside>
 
     
@@ -5112,12 +5361,28 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_extern_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Wasm-Exception-RuntimeException.html"><abbr title="\Wasm\Exception\RuntimeException">RuntimeException</abbr></a></span>
+                                                            
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -5129,7 +5394,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1153</span>
+    <span class="phpdocumentor-element-found-in__line">1258</span>
 </aside>
 
     
@@ -5146,12 +5411,28 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_extern_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/Wasm-Exception-RuntimeException.html"><abbr title="\Wasm\Exception\RuntimeException">RuntimeException</abbr></a></span>
+                                                            
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
 
     
 </article>
@@ -5163,7 +5444,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1166</span>
+    <span class="phpdocumentor-element-found-in__line">1271</span>
 </aside>
 
     
@@ -5180,7 +5461,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_store_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -5188,7 +5470,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
+</section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
@@ -5212,7 +5495,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1177</span>
+    <span class="phpdocumentor-element-found-in__line">1282</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete an instance.</p>
@@ -5263,13 +5546,13 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1186</span>
+    <span class="phpdocumentor-element-found-in__line">1289</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_instance_exports</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$instance</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
+                <span class="phpdocumentor-signature__name">wasm_instance_exports</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$instance</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/Wasm-Vec-Extern.html"><abbr title="\Wasm\Vec\Extern">Extern</abbr></a></span></code>
 
         <section class="phpdocumentor-description"></section>
 
@@ -5280,7 +5563,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_instance_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -5297,7 +5581,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1195</span>
+    <span class="phpdocumentor-element-found-in__line">1298</span>
 </aside>
 
     
@@ -5314,7 +5598,8 @@ wasm_functype_delete($functype);
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"></section>
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_instance_t</code> resource</p>
+</section>
 
             </dd>
             </dl>
@@ -5331,7 +5616,7 @@ wasm_functype_delete($functype);
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1212</span>
+    <span class="phpdocumentor-element-found-in__line">1317</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the version of the Wasmer C API.</p>
@@ -5344,6 +5629,7 @@ wasm_functype_delete($functype);
 <pre class="prettyprint"><code class="language-php">&lt;?php
 $version = wasmer_version();
 </code></pre>
+<p>⚠️ This is a Wasmer-specific function.</p>
 </section>
 
     
@@ -5359,7 +5645,7 @@ $version = wasmer_version();
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1226</span>
+    <span class="phpdocumentor-element-found-in__line">1333</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the major version of the Wasmer C API.</p>
@@ -5372,6 +5658,7 @@ $version = wasmer_version();
 <pre class="prettyprint"><code class="language-php">&lt;?php
 $major = wasmer_version_major();
 </code></pre>
+<p>⚠️ This is a Wasmer-specific function.</p>
 </section>
 
     
@@ -5387,7 +5674,7 @@ $major = wasmer_version_major();
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1240</span>
+    <span class="phpdocumentor-element-found-in__line">1349</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the minor version of the Wasmer C API.</p>
@@ -5400,6 +5687,7 @@ $major = wasmer_version_major();
 <pre class="prettyprint"><code class="language-php">&lt;?php
 $minor = wasmer_version_minor();
 </code></pre>
+<p>⚠️ This is a Wasmer-specific function.</p>
 </section>
 
     
@@ -5415,7 +5703,7 @@ $minor = wasmer_version_minor();
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1254</span>
+    <span class="phpdocumentor-element-found-in__line">1365</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the patch version of the Wasmer C API.</p>
@@ -5428,6 +5716,7 @@ $minor = wasmer_version_minor();
 <pre class="prettyprint"><code class="language-php">&lt;?php
 $patch = wasmer_version_patch();
 </code></pre>
+<p>⚠️ This is a Wasmer-specific function.</p>
 </section>
 
     
@@ -5443,7 +5732,7 @@ $patch = wasmer_version_patch();
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1270</span>
+    <span class="phpdocumentor-element-found-in__line">1383</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the pre-release label of the Wasmer C API.</p>
@@ -5457,6 +5746,7 @@ $patch = wasmer_version_patch();
 <pre class="prettyprint"><code class="language-php">&lt;?php
 $pre = wasmer_version_pre();
 </code></pre>
+<p>⚠️ This is a Wasmer-specific function.</p>
 </section>
 
     
@@ -5472,10 +5762,11 @@ $pre = wasmer_version_pre();
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1279</span>
+    <span class="phpdocumentor-element-found-in__line">1394</span>
 </aside>
 
-    
+        <p class="phpdocumentor-summary">⚠️ This is a Wasmer-specific function.</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
                 <span class="phpdocumentor-signature__name">wat2wasm</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$wat</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>

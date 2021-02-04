@@ -11,6 +11,7 @@ WASMER_COPY(module)
 
 WASMER_IMPORT_RESOURCE(store)
 
+extern zend_class_entry *wasm_exception_runtime_ce;
 extern zend_class_entry *wasm_vec_importtype_ce;
 extern zend_class_entry *wasm_vec_exporttype_ce;
 
@@ -37,7 +38,7 @@ PHP_FUNCTION (wasm_module_new) {
     WASMER_HANDLE_ERROR_START
             efree(wasm_vec);
             efree(module);
-    WASMER_HANDLE_ERROR_END
+    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
 
     zend_resource *module_res = zend_register_resource(module, le_wasm_module);
 
@@ -66,7 +67,7 @@ PHP_FUNCTION (wasm_module_validate) {
 
     WASMER_HANDLE_ERROR_START
             efree(wasm_vec);
-    WASMER_HANDLE_ERROR_END
+    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
 
     RETURN_BOOL(valid);
 }
@@ -155,7 +156,7 @@ PHP_FUNCTION (wasm_module_deserialize) {
 
     WASMER_HANDLE_ERROR_START
             efree(wasm_vec);
-    WASMER_HANDLE_ERROR_END
+    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
 
     zend_resource *module_res = zend_register_resource(module, le_wasm_module);
 

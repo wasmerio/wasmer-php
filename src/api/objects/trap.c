@@ -13,6 +13,7 @@ WASMER_IMPORT_RESOURCE(store)
 WASMER_IMPORT_RESOURCE(frame)
 
 extern zend_class_entry *wasm_vec_frame_ce;
+extern zend_class_entry *wasm_exception_runtime_ce;
 
 PHP_FUNCTION (wasm_trap_new) {
     zval *store_val;
@@ -36,7 +37,7 @@ PHP_FUNCTION (wasm_trap_new) {
 
     WASMER_HANDLE_ERROR_START
         efree(trap);
-    WASMER_HANDLE_ERROR_END
+    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
 
     zend_resource *trap_res;
     trap_res = zend_register_resource(trap, le_wasm_trap);

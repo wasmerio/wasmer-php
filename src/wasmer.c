@@ -5,6 +5,8 @@
 #include "php.h"
 #include "ext/standard/info.h"
 #include "Zend/zend_interfaces.h"
+#include "Zend/zend_exceptions.h"
+#include <ext/spl/spl_exceptions.h>
 
 #include "wasmer_wasm.h"
 
@@ -12,6 +14,11 @@
 #include "wasmer_arginfo.h"
 #include "macros.h"
 #include "wasmer.h"
+
+zend_class_entry *wasm_exception_runtime_ce;
+zend_class_entry *wasm_exception_instantiation_ce;
+zend_class_entry *wasm_exception_oob_ce;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Runtime Environment
@@ -179,6 +186,15 @@ PHP_MINIT_FUNCTION(wasmer) {
 
     REGISTER_LONG_CONSTANT("WASM_LIMITS_MAX_DEFAULT", wasm_limits_max_default, CONST_CS | CONST_PERSISTENT);
     REGISTER_LONG_CONSTANT("WASM_MEMORY_PAGE_SIZE", MEMORY_PAGE_SIZE, CONST_CS | CONST_PERSISTENT);
+
+    INIT_NS_CLASS_ENTRY(ce, "Wasm\\Exception", "RuntimeException", class_Wasm_Exception_RuntimeException_methods);
+    wasm_exception_runtime_ce = zend_register_internal_class_ex(&ce, spl_ce_RuntimeException);
+
+    INIT_NS_CLASS_ENTRY(ce, "Wasm\\Exception", "InstantiationException", class_Wasm_Exception_InstantiationException_methods);
+    wasm_exception_instantiation_ce = zend_register_internal_class_ex(&ce, wasm_exception_runtime_ce);
+
+    INIT_NS_CLASS_ENTRY(ce, "Wasm\\Exception", "OutOfBoundsException", class_Wasm_Exception_OutOfBoundsException_methods);
+    wasm_exception_oob_ce = zend_register_internal_class_ex(&ce, wasm_exception_runtime_ce);
 
     return SUCCESS;
 }

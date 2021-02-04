@@ -10,6 +10,8 @@ WASMER_DECLARE_OWN(engine)
 
 WASMER_IMPORT_RESOURCE(config)
 
+extern zend_class_entry *wasm_exception_runtime_ce;
+
 PHP_FUNCTION (wasm_engine_new) {
     ZEND_PARSE_PARAMETERS_NONE();
 
@@ -37,7 +39,7 @@ PHP_FUNCTION (wasm_engine_new_with_config) {
 
     WASMER_HANDLE_ERROR_START
         efree(engine);
-    WASMER_HANDLE_ERROR_END
+    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
 
     zend_resource *engine_res;
     engine_res = zend_register_resource(engine, le_wasm_engine);

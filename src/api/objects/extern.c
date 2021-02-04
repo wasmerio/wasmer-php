@@ -14,6 +14,8 @@ WASMER_IMPORT_RESOURCE(table)
 WASMER_IMPORT_RESOURCE(memory)
 WASMER_IMPORT_RESOURCE(externtype)
 
+extern zend_class_entry *wasm_exception_oob_ce;
+
 PHP_FUNCTION (wasm_extern_kind) {
     zval *extern_val;
 
@@ -213,7 +215,7 @@ PHP_METHOD (Wasm_Vec_Extern, offsetGet) {
     wasm_extern_vec_c *wasm_extern_vec = WASMER_EXTERN_VEC_P(ZEND_THIS);
 
     if(offset >= wasm_extern_vec->vec.inner.xtern->size) {
-        zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\Extern::offsetGet($offset) index out of bounds");
+        zend_throw_exception_ex(wasm_exception_oob_ce, 0, "Wasm\\Vec\\Extern::offsetGet($offset) index out of bounds");
 
         return;
     }
@@ -243,7 +245,7 @@ PHP_METHOD (Wasm_Vec_Extern, offsetSet) {
     wasm_extern_vec_c *wasm_extern_vec = WASMER_EXTERN_VEC_P(ZEND_THIS);
 
     if(offset >= wasm_extern_vec->vec.inner.xtern->size) {
-        zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\Extern::offsetSet($offset) index out of bounds");
+        zend_throw_exception_ex(wasm_exception_oob_ce, 0, "Wasm\\Vec\\Extern::offsetSet($offset) index out of bounds");
 
         return;
     }
@@ -255,5 +257,5 @@ PHP_METHOD (Wasm_Vec_Extern, offsetSet) {
 }
 
 PHP_METHOD (Wasm_Vec_Extern, offsetUnset) {\
-    zend_throw_exception_ex(zend_ce_exception, 0, "Wasm\\Vec\\Extern::offsetUnset($offset) not available");\
+    zend_throw_exception_ex(wasm_exception_oob_ce, 0, "Wasm\\Vec\\Extern::offsetUnset($offset) not available");\
 }

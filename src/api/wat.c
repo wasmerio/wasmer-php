@@ -5,6 +5,8 @@
 
 #include "macros.h"
 
+extern zend_class_entry *wasm_exception_runtime_ce;
+
 PHP_FUNCTION (wat2wasm) {
     char *wat;
     size_t wat_len;
@@ -23,7 +25,7 @@ PHP_FUNCTION (wat2wasm) {
     WASMER_HANDLE_ERROR_START
             efree(wat_vec);
             efree(wasm_vec);
-    WASMER_HANDLE_ERROR_END
+    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
 
     char *wasm = wasm_vec->data;
     int length = wasm_vec->size;

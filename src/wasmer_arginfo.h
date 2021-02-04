@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: fe28a55ecc695c17d33d53d1a06725afef8a8fb1 */
+ * Stub hash: 049b37904d0001c8f2e67558470b53549a990524 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -879,6 +879,21 @@ static const zend_function_entry ext_functions[] = {
 	ZEND_FE(wasmer_version_patch, arginfo_wasmer_version_patch)
 	ZEND_FE(wasmer_version_pre, arginfo_wasmer_version_pre)
 	ZEND_FE(wat2wasm, arginfo_wat2wasm)
+	ZEND_FE_END
+};
+
+
+static const zend_function_entry class_Wasm_Exception_RuntimeException_methods[] = {
+	ZEND_FE_END
+};
+
+
+static const zend_function_entry class_Wasm_Exception_InstantiationException_methods[] = {
+	ZEND_FE_END
+};
+
+
+static const zend_function_entry class_Wasm_Exception_OutOfBoundsException_methods[] = {
 	ZEND_FE_END
 };
 

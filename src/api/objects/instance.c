@@ -13,6 +13,7 @@ WASMER_IMPORT_RESOURCE(store)
 WASMER_IMPORT_RESOURCE(module)
 
 extern zend_class_entry *wasm_vec_extern_ce;
+extern zend_class_entry *wasm_exception_instantiation_ce;
 
 PHP_FUNCTION (wasm_instance_new) {
     zval *store_val;
@@ -36,7 +37,7 @@ PHP_FUNCTION (wasm_instance_new) {
     memset(&trap, 0, sizeof(wasm_trap_t*));
     wasm_instance_t *wasm_instance = wasm_instance_new(store, module, externs->vec.inner.xtern, &trap);
 
-    WASMER_HANDLE_ERROR
+    WASMER_HANDLE_ERROR(wasm_exception_instantiation_ce)
 
     if (trap != NULL) {
         wasm_byte_vec_t *message_vec = emalloc(sizeof(wasm_byte_vec_t));

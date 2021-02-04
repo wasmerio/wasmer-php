@@ -2,6 +2,17 @@
 
 /** @generate-function-entries */
 
+namespace Wasm\Exception {
+    class RuntimeException extends \Exception {
+    }
+
+    class InstantiationException extends RuntimeException {
+    }
+
+    class OutOfBoundsException extends RuntimeException {
+    }
+}
+
 namespace Wasm\Vec {
     ///////////////////////////////////////////////////////////////////////////////
     // Type Representations
@@ -26,7 +37,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -38,7 +49,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -50,7 +61,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -62,7 +73,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -74,7 +85,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -86,7 +97,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -98,7 +109,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -113,7 +124,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -125,7 +136,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 
@@ -137,7 +148,7 @@ namespace Wasm\Vec {
         public function offsetGet(mixed $offset): mixed {}
         /** @param resource $value */
         public function offsetSet(mixed $offset, mixed $value): void {}
-        /** @throw \Exception */
+        /** @throw \Wasm\Exception\OutOfBoundsException */
         public function offsetUnset(mixed $offset): void {}
     }
 }
@@ -164,6 +175,8 @@ namespace {
     function wasm_engine_new() {}
     /**
      * @param resource $config
+     *
+     * @throws Wasm\Exception\RuntimeException
      *
      * @return resource
      */
@@ -487,6 +500,8 @@ namespace {
     /**
      * @param resource $store
      *
+     * @throws \Wasm\Exception\RuntimeException
+     *
      * @return resource
      */
     function wasm_trap_new($store, string $message) {}
@@ -520,6 +535,8 @@ namespace {
     /**
      * @param resource $store
      *
+     * @throws \Wasm\Exception\RuntimeException
+     *
      * @return resource
      */
     function wasm_module_new($store, string $wasm) {}
@@ -528,6 +545,8 @@ namespace {
     /**
      * @param resource $store
      * @param resource $module
+     *
+     * @throws \Wasm\Exception\RuntimeException
      */
     function wasm_module_validate($store, $module): bool {}
     /** @param resource $module */
@@ -538,6 +557,8 @@ namespace {
     function wasm_module_serialize($module): string {}
     /**
      * @param resource $store
+     *
+     * @throws \Wasm\Exception\RuntimeException
      *
      * @return resource
      */
@@ -771,6 +792,10 @@ namespace {
      */
     function wasmer_version_pre(): string {}
 
-    /** @return resource */
+    /**
+     * @throws Wasm\Exception\RuntimeException
+     *
+     * @return resource
+     */
     function wat2wasm(string $wat): string {}
 }

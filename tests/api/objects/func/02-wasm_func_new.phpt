@@ -1,6 +1,8 @@
 --TEST--
 Func API: wasm_func_new
 
+--INI--
+report_memleaks=Off
 --FILE--
 <?php
 

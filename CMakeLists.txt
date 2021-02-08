@@ -15,12 +15,20 @@ execute_process (
 )
 string(REGEX REPLACE "\n$" "" PHP_SOURCE "${PHP_SOURCE}")
 
-message("Using source directory: ${PHP_SOURCE}")
+execute_process (
+        COMMAND wasmer config --includedir
+        OUTPUT_VARIABLE WASMER_SOURCE
+)
+string(REGEX REPLACE "\n$" "" WASMER_SOURCE "${WASMER_SOURCE}")
+
+message("Using PHP include directory: ${PHP_SOURCE}")
+message("Using Wasmer include directory: ${WASMER_SOURCE}")
 
 include_directories(${PHP_SOURCE})
 include_directories(${PHP_SOURCE}/main)
 include_directories(${PHP_SOURCE}/Zend)
 include_directories(${PHP_SOURCE}/TSRM)
+include_directories(${WASMER_SOURCE})
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 

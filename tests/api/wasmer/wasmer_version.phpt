@@ -8,4 +8,4 @@ var_dump(wasmer_version());
 
 ?>
 --EXPECTF--
-string(5) "1.0.1"
+string(5) "%d.%d.%d"

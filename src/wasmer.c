@@ -11,7 +11,9 @@
 #include "wasmer_wasm.h"
 
 #include "php_wasmer.h"
-#include "wasmer_arginfo.h"
+#include "wasmer_exception_arginfo.h"
+#include "wasmer_root_arginfo.h"
+#include "wasmer_vec_arginfo.h"
 #include "macros.h"
 #include "wasmer.h"
 

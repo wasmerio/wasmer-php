@@ -9,6 +9,7 @@ on:
       # TODO(jubianchi): Uncomment this once bors is available
       # - 'staging'
       # - 'trying'
+    tags:
 
 jobs:
   test:

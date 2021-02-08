@@ -37,3 +37,6 @@ tests/**/*.php
 tests/**/*.exp
 tests/**/*.log
 tests/**/*.sh
+/vendor
+/.phpdoc
+/.php_cs.cache

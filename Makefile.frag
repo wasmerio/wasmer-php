@@ -27,3 +27,21 @@ examples: all
 		echo; \
 		exit $${#FAILURES[@]}; \
 	fi;
+
+all: src/wasmer_root_arginfo.h src/wasmer_vec_arginfo.h  src/wasmer_exception_arginfo.h
+
+documentation: .phpdoc/build/index.html
+
+.PHONY: lint
+lint: vendor/friendsofphp/php-cs-fixer/php-cs-fixer
+	$< fix --dry-run --allow-risky=yes
+
+.phpdoc/build/index.html: vendor/phpdocumentor/phpdocumentor/bin/phpdoc src/wasmer_*.stub.php
+	$<
+
+vendor/phpdocumentor/phpdocumentor/bin/phpdoc vendor/friendsofphp/php-cs-fixer/php-cs-fixer: composer.lock
+	composer install
+
+composer.lock: composer.json
+	composer update
+

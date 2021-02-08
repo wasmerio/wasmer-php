@@ -6,11 +6,14 @@
   <h1>Wasmer PHP</h1>
   
   <p>
-    <a href="https://github.com/wasmerio/llvm-custom-builds/actions?query=workflow%3A%22Build%22">
-      <img src="https://github.com/wasmerio/llvm-custom-builds/workflows/Build/badge.svg" alt="Build Status">
+    <a href="https://github.com/wasmerio/wasmer-php/actions?query=workflow%3A%22Tests%22">
+      <img src="https://github.com/wasmerio/wasmer-php/workflows/Tests/badge.svg" alt="Tests Status">
     </a>
-    <a href="https://github.com/wasmerio/llvm-custom-builds/blob/master/LICENSE">
-      <img src="https://img.shields.io/github/license/wasmerio/llvm-custom-builds.svg" alt="License">
+    <a href="https://github.com/wasmerio/wasmer-php/actions?query=workflow%3A%22Nightly%22">
+      <img src="https://github.com/wasmerio/wasmer-php/workflows/Nightly/badge.svg" alt="Nightly Status">
+    </a>
+    <a href="https://github.com/wasmerio/wasmer-php/blob/master/LICENSE">
+      <img src="https://img.shields.io/github/license/wasmerio/wasmer-php.svg" alt="License">
     </a>
   </p>
 

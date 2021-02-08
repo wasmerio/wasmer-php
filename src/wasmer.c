@@ -25,11 +25,7 @@ zend_class_entry *wasm_exception_oob_ce;
 ///////////////////////////////////////////////////////////////////////////////
 // Runtime Environment
 
-WASMER_RESOURCE_DECLARE_WITHOUT_DTOR(config)
-static ZEND_RSRC_DTOR_FUNC(wasm_config_dtor) {
-    // TODO(jubianchi): Add call to wasm_config_delete (see https://github.com/wasmerio/wasmer/pull/2054)
-    efree(res->ptr);
-}
+WASMER_RESOURCE_DECLARE(config)
 WASMER_RESOURCE_DECLARE(engine)
 WASMER_RESOURCE_DECLARE(store)
 

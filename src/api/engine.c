@@ -37,6 +37,8 @@ PHP_FUNCTION (wasm_engine_new_with_config) {
     engine->inner.engine = wasm_engine_new_with_config(WASMER_RES_P_INNER(config_val, config));
     engine->owned = true;
 
+    WASMER_RES_P(config_val)->owned = false;
+
     WASMER_HANDLE_ERROR_START
         efree(engine);
     WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)

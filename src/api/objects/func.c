@@ -88,6 +88,8 @@ void func_env_finalizer(void *env) {
     if (fenv->fcc.function_handler->common.fn_flags & ZEND_ACC_CLOSURE) {
         OBJ_RELEASE(ZEND_CLOSURE_OBJECT(fenv->fcc.function_handler));
     }
+
+    efree(env);
 }
 
 PHP_FUNCTION (wasm_func_new) {
@@ -95,7 +97,7 @@ PHP_FUNCTION (wasm_func_new) {
     zval *functype_val;
     zend_fcall_info fci;
     // TODO: Env finalizer has some problem, we have to use malloc instead of emalloc. Fix that.
-    wasmer_func_env *env = malloc(sizeof(wasmer_func_env));
+    wasmer_func_env *env = emalloc(sizeof(wasmer_func_env));
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 3, 3)
             Z_PARAM_RESOURCE(store_val)

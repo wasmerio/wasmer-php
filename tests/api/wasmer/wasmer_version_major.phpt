@@ -8,4 +8,4 @@ var_dump(wasmer_version_major());
 
 ?>
 --EXPECTF--
-int(1)
+int(%d)

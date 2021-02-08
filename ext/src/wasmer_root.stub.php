@@ -1388,8 +1388,6 @@ function wasmer_version_pre(): string
  * ⚠️ This is a Wasmer-specific function.
  *
  * @throw Wasm\Exception\RuntimeException
- *
- * @return resource
  */
 function wat2wasm(string $wat): string
 {

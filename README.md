@@ -45,7 +45,7 @@ To install the library, follow the classical:
 
 ```bash
 git clone https://github.com/wasmerio/wasmer-php
-cd wasmer-php
+cd wasmer-php/ext
 phpize
 ./configure --enable-wasmer
 make
@@ -99,7 +99,7 @@ an instance from it, get an exported function and run it.
 
 You can go through more advanced examples in the [dedicated directory][examples].
 
-[examples]: ./examples
+[examples]: ext/examples
 
 # Supported platforms and features
 

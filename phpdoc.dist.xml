@@ -9,7 +9,7 @@
     <version number="1.0.0-beta1">
         <api>
             <source dsn=".">
-                <path>src</path>
+                <path>ext/src</path>
             </source>
         </api>
     </version>

@@ -2,7 +2,7 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->notName('wasmer_vec.stub.php')
-    ->in('src')
+    ->in('ext/src')
 ;
 
 $config = new PhpCsFixer\Config();

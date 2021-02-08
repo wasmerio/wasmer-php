@@ -3,10 +3,10 @@ project(wasmer-php C)
 
 add_compile_definitions(HAVE_WASMER)
 
-set(WASMER_API src/api/config.c src/api/engine.c src/api/store.c src/api/wasmer.c src/api/wat.c)
-set(WASMER_API_OBJECTS src/api/objects/extern.c src/api/objects/foreign.c src/api/objects/func.c src/api/objects/frame.c src/api/objects/global.c src/api/objects/instance.c src/api/objects/memory.c src/api/objects/module.c src/api/objects/table.c src/api/objects/trap.c src/api/objects/val.c)
-set(WASMER_API_TYPES src/api/types/exporttype.c src/api/types/externtype.c src/api/types/functype.c src/api/types/globaltype.c src/api/types/importtype.c src/api/types/limits.c src/api/types/memorytype.c src/api/types/tabletype.c src/api/types/valkind.c src/api/types/valtype.c)
-set(WASMER_SOURCES src/php_wasmer.h src/wasmer.c src/wasmer_root_arginfo.h)
+set(WASMER_API ext/src/api/config.c ext/src/api/engine.c ext/src/api/store.c ext/src/api/wasmer.c ext/src/api/wat.c)
+set(WASMER_API_OBJECTS ext/src/api/objects/extern.c ext/src/api/objects/foreign.c ext/src/api/objects/func.c ext/src/api/objects/frame.c ext/src/api/objects/global.c ext/src/api/objects/instance.c ext/src/api/objects/memory.c ext/src/api/objects/module.c ext/src/api/objects/table.c ext/src/api/objects/trap.c ext/src/api/objects/val.c)
+set(WASMER_API_TYPES ext/src/api/types/exporttype.c ext/src/api/types/externtype.c ext/src/api/types/functype.c ext/src/api/types/globaltype.c ext/src/api/types/importtype.c ext/src/api/types/limits.c ext/src/api/types/memorytype.c ext/src/api/types/tabletype.c ext/src/api/types/valkind.c ext/src/api/types/valtype.c)
+set(WASMER_SOURCES ext/src/php_wasmer.h ext/src/wasmer.c ext/src/wasmer_root_arginfo.h)
 set(WASMER_ALL_SOURCES ${WASMER_API} ${WASMER_API_OBJECTS} ${WASMER_API_TYPES} ${WASMER_SOURCES})
 
 execute_process (
@@ -22,7 +22,7 @@ include_directories(${PHP_SOURCE}/main)
 include_directories(${PHP_SOURCE}/Zend)
 include_directories(${PHP_SOURCE}/TSRM)
 include_directories(${PROJECT_SOURCE_DIR})
-include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(ext/include)
 
 add_custom_target(configure
         COMMAND phpize && ./configure

@@ -64,19 +64,23 @@ jobs:
         uses: actions/checkout@v2
       - name: Configure
         run: |
+          cd ext
           phpize
           ./configure
       - name: Build
         # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
         run: |
+          cd ext
           make || ${{ matrix.allow_failure }}
       - name: Run tests (phpt)
         # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
         run: |
+          cd ext
           make test || ${{ matrix.allow_failure }}
       - name: Run examples
         # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
         run: |
+          cd ext
           make examples || ${{ matrix.allow_failure }}
       - name: Archive test results
         if: ${{ failure() }}
@@ -85,6 +89,6 @@ jobs:
           name: results-${{ matrix.id }}-${{ matrix.php }}
           retention-days: 3
           path: |
-            tests/**/*.diff
-            tests/**/*.exp
-            tests/**/*.out
+            ext/tests/**/*.diff
+            ext/tests/**/*.exp
+            ext/tests/**/*.out

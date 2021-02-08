@@ -1,0 +1,104 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test on ${{ matrix.id }} with ${{ matrix.php }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: linux-x64
+            os: ubuntu-18.04
+            php: '7.3'
+            # TODO(jubianchi): Remove this once PHP 7.3 is supported
+            allow_failure: true
+            nightly: wasmer-linux-amd64.tar.gz
+          - id: linux-x64
+            os: ubuntu-18.04
+            php: '7.4'
+            # TODO(jubianchi): Remove this once PHP 7.4 is supported
+            allow_failure: true
+            nightly: wasmer-linux-amd64.tar.gz
+          - id: linux-x64
+            os: ubuntu-18.04
+            php: '8.0'
+            allow_failure: false
+            nightly: wasmer-linux-amd64.tar.gz
+          - id: linux-x64
+            os: ubuntu-18.04
+            php: '8.1'
+            allow_failure: false
+            nightly: wasmer-linux-amd64.tar.gz
+          - id: macos-x64
+            os: macos-latest
+            php: '7.3'
+            # TODO(jubianchi): Remove this once PHP 7.3 is supported
+            allow_failure: true
+            nightly: wasmer-darwin-amd64.tar.gz
+          - id: macos-x64
+            os: macos-latest
+            # TODO(jubianchi): Remove this once PHP 7.4 is supported
+            php: '7.4'
+            allow_failure: true
+            nightly: wasmer-darwin-amd64.tar.gz
+          - id: macos-x64
+            os: macos-latest
+            php: '8.0'
+            allow_failure: false
+            nightly: wasmer-darwin-amd64.tar.gz
+          - id: macos-x64
+            os: macos-latest
+            php: '8.1'
+            allow_failure: false
+            nightly: wasmer-darwin-amd64.tar.gz
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Wasmer nightly
+        run: |
+          GH_URL="https://github.com"
+          LATEST_URL="${GH_URL}/wasmerio/wasmer-nightly/releases/latest/"
+          ASSET_PATTERN="/wasmerio/wasmer-nightly/.*/${{ matrix.nightly }}"
+          ASSET_URL=$(curl -Ls ${LATEST_URL} | grep -wo ${ASSET_PATTERN})
+
+          curl -Ls ${GH_URL}${ASSET_URL} --output ${{ matrix.nightly }}
+          mkdir -p /tmp/wasmer
+          tar xzf ${{ matrix.nightly }} -C /tmp/wasmer
+          cp -f /tmp/wasmer/include/{wasm,wasmer_wasm}.h ./include
+          cp -f /tmp/wasmer/lib/libwasmer.* ./lib
+      - name: Configure
+        run: |
+          phpize
+          ./configure
+      - name: Build
+        # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
+        run: |
+          make || ${{ matrix.allow_failure }}
+      - name: Run tests (phpt)
+        # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
+        run: |
+          make test || ${{ matrix.allow_failure }}
+      - name: Run examples
+        # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
+        run: |
+          make examples || ${{ matrix.allow_failure }}
+      - name: Archive test results
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: results-${{ matrix.id }}-${{ matrix.php }}
+          retention-days: 3
+          path: |
+            tests/**/*.diff
+            tests/**/*.exp
+            tests/**/*.out

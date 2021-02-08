@@ -5,7 +5,7 @@
 #include "wasmer_wasm.h"
 
 #include "../macros.h"
-#include "../../wasmer.h"
+#include "../../wasm.h"
 
 WASMER_DECLARE_OWN(func)
 

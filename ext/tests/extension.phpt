@@ -4,7 +4,7 @@ Wasmer PHP
 --FILE--
 <?php
 
-var_dump(extension_loaded('wasmer'));
+var_dump(extension_loaded('wasm'));
 
 ?>
 --EXPECTF--

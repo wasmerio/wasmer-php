@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 2443927ce9cb4332fa829a033ed979c72ee7acfe */
+ * Stub hash: b18cb69aacdd832fbf8f206c5d9f29c4e35784ed */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()

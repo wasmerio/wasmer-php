@@ -4,7 +4,7 @@
 #include "wasm.h"
 
 #include "../macros.h"
-#include "../../wasmer.h"
+#include "../../wasm.h"
 
 WASMER_DECLARE_TYPE(Frame, FRAME, frame)
 

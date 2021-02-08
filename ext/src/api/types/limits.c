@@ -3,7 +3,7 @@
 #include "wasm.h"
 
 #include "../macros.h"
-#include "../../wasmer.h"
+#include "../../wasm.h"
 
 WASMER_IMPORT_RESOURCE(limits)
 

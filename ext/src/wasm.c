@@ -10,12 +10,12 @@
 
 #include "wasmer_wasm.h"
 
-#include "php_wasmer.h"
+#include "php_wasm.h"
 #include "wasmer_exception_arginfo.h"
 #include "wasmer_root_arginfo.h"
 #include "wasmer_vec_arginfo.h"
 #include "macros.h"
-#include "wasmer.h"
+#include "wasm.h"
 
 zend_class_entry *wasm_exception_runtime_ce;
 zend_class_entry *wasm_exception_instantiation_ce;
@@ -97,7 +97,7 @@ WASMER_VEC_CLASS_DECLARE(val)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-PHP_MINIT_FUNCTION(wasmer) {
+PHP_MINIT_FUNCTION(wasm) {
     zend_class_entry ce;
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -193,44 +193,28 @@ PHP_MINIT_FUNCTION(wasmer) {
     return SUCCESS;
 }
 
-PHP_RINIT_FUNCTION(wasmer) {
-#if defined(ZTS) && defined(COMPILE_DL_WASMER)
-  ZEND_TSRMLS_CACHE_UPDATE();
-#endif
-
-  return SUCCESS;
-}
-
-PHP_RSHUTDOWN_FUNCTION(wasmer) {
-    return SUCCESS;
-}
-
-PHP_MSHUTDOWN_FUNCTION(wasmer) {
-    return SUCCESS;
-}
-
-PHP_MINFO_FUNCTION(wasmer) {
+PHP_MINFO_FUNCTION(wasm) {
     php_info_print_table_start();
-    php_info_print_table_header(2, "Wasmer support", "enabled");
+    php_info_print_table_header(2, "Wasm support", "enabled");
     php_info_print_table_header(2, "Wasmer version", wasmer_version());
     php_info_print_table_end();
 }
 
-zend_module_entry wasmer_module_entry = {
+zend_module_entry wasm_module_entry = {
     STANDARD_MODULE_HEADER,
-    "wasmer",
+    "wasm",
     ext_functions,
-    PHP_MINIT(wasmer),
-    NULL, //PHP_MSHUTDOWN(wasmer),
-    NULL, //PHP_RINIT(wasmer),
-    NULL, //PHP_RSHUTDOWN(wasmer),
-    PHP_MINFO(wasmer),
-    PHP_WASMER_VERSION,
+    PHP_MINIT(wasm),
+    NULL,
+    NULL,
+    NULL,
+    PHP_MINFO(wasm),
+    PHP_WASM_VERSION,
     STANDARD_MODULE_PROPERTIES};
 
-#ifdef COMPILE_DL_WASMER
+#ifdef COMPILE_DL_WASM
 #ifdef ZTS
 ZEND_TSRMLS_CACHE_DEFINE()
 #endif
-ZEND_GET_MODULE(wasmer)
+ZEND_GET_MODULE(wasm)
 #endif

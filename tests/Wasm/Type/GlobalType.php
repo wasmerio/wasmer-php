@@ -8,7 +8,7 @@ use Wasm\Type;
 
 class GlobalType extends atoum\test
 {
-    public function testConstruct()
+    public function testNew()
     {
         $this
             ->given($valtype = Type\ValType::new(Type\ValType::KIND_I32))
@@ -24,6 +24,19 @@ class GlobalType extends atoum\test
             ->then
                 ->exception(fn () => Type\GlobalType::new($valtype, $mutability))
                     ->isInstanceOf(Wasm\Exception\invalidArgumentException::class)
+        ;
+    }
+
+    public function testConstruct()
+    {
+        $this
+            ->given(
+                $valtype = \wasm_valtype_new(WASM_I32),
+                $wasmGlobaltype = \wasm_globaltype_new($valtype, WASM_CONST),
+            )
+            ->then
+                ->object($globaltype = new Type\GlobalType($wasmGlobaltype))
+                ->resource($globaltype->inner())->isIdenticalTo($wasmGlobaltype)
         ;
     }
 

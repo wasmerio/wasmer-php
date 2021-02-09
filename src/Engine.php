@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Wasm;
 
+/**
+ * @api
+ */
 final class Engine
 {
     /**
@@ -11,9 +14,18 @@ final class Engine
      */
     private $inner;
 
-    public function __construct(?Config $config = null)
+    /**
+     * @param ?resource $engine
+     */
+    public function __construct($engine = null)
     {
-        $this->inner = null === $config ? \wasm_engine_new() : \wasm_engine_new_with_config($config->inner());
+        $engine = $engine ?? \wasm_engine_new();
+
+        if (false === is_resource($engine) || 'wasm_engine_t' !== get_resource_type($engine)) {
+            throw new Exception\InvalidArgumentException();
+        }
+
+        $this->inner = $engine;
     }
 
     public function __destruct()
@@ -33,5 +45,15 @@ final class Engine
     public function inner()
     {
         return $this->inner;
+    }
+
+    /**
+     * @api
+     *
+     * @throw Exception\InvalidArgumentException If the `$kind` is not a valid value kind
+     */
+    public static function new(?Config $config = null): self
+    {
+        return new self($config ? \wasm_engine_new_with_config($config->inner()) : \wasm_engine_new());
     }
 }

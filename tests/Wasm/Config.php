@@ -7,17 +7,27 @@ use Wasm;
 
 class Config extends atoum\test
 {
+    public function testNew()
+    {
+        $this
+            ->object(Wasm\Config::new())
+        ;
+    }
+
     public function testConstruct()
     {
         $this
-            ->object(new Wasm\Config())
+            ->given($wasmConfig = \wasm_config_new())
+            ->then
+                ->object($config = new Wasm\Config($wasmConfig))
+                ->resource($config->inner())->isIdenticalTo($wasmConfig)
         ;
     }
 
     public function testDestruct()
     {
         $this
-            ->given($config = new Wasm\Config())
+            ->given($config = Wasm\Config::new())
             ->then
                 ->variable($config->__destruct())->isNull()
                 ->variable($config->__destruct())->isNull()
@@ -27,7 +37,7 @@ class Config extends atoum\test
     public function testSetCompiler()
     {
         $this
-            ->given($config = new Wasm\Config())
+            ->given($config = Wasm\Config::new())
             ->then
                 ->boolean($config->setCompiler(Wasm\Config::COMPILER_CRANELIFT))->isTrue()
                 ->boolean($config->setCompiler(Wasm\Config::COMPILER_LLVM))->isTrue()
@@ -42,7 +52,7 @@ class Config extends atoum\test
     public function testSetEngine()
     {
         $this
-            ->given($config = new Wasm\Config())
+            ->given($config = Wasm\Config::new())
             ->then
                 ->boolean($config->setEngine(Wasm\Config::ENGINE_JIT))->isTrue()
                 ->boolean($config->setEngine(Wasm\Config::ENGINE_NATIVE))->isTrue()

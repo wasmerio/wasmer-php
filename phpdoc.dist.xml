@@ -3,15 +3,19 @@
         configVersion="3"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="https://www.phpdoc.org"
-        xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/latest/phpdoc.xsd"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/phpDocumentor/phpDocumentor/master/data/xsd/phpdoc.xsd"
 >
     <title>Wasmer PHP</title>
     <version number="1.0.0-beta1">
-        <api>
+        <api format="php">
             <source dsn=".">
                 <path>ext/src</path>
                 <path>src</path>
             </source>
+            <visibility>public</visibility>
+            <markers>
+                <marker>TODO</marker>
+            </markers>
         </api>
     </version>
 </phpdocumentor>

@@ -1479,12 +1479,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "c497cc646a95f09e197ce4bb4fb4f4da6c0e3920"
+                "reference": "c1971982c3b792e488726468046b1ef977934c6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/c497cc646a95f09e197ce4bb4fb4f4da6c0e3920",
-                "reference": "c497cc646a95f09e197ce4bb4fb4f4da6c0e3920",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/c1971982c3b792e488726468046b1ef977934c6a",
+                "reference": "c1971982c3b792e488726468046b1ef977934c6a",
                 "shasum": ""
             },
             "require": {
@@ -1568,7 +1568,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-27T16:04:26+00:00"
+            "time": "2021-02-09T13:27:42+00:00"
         },
         {
             "name": "nikic/php-parser",

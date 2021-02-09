@@ -10,12 +10,10 @@ class Engine extends atoum\test
     public function testConstruct()
     {
         $this
-            ->given($config = null)
+            ->object(Wasm\Engine::new())
+            ->given($config = Wasm\Config::new())
             ->then
-                ->object(new Wasm\Engine($config))
-            ->given($config = new Wasm\Config())
-            ->then
-                ->object(new Wasm\Engine($config))
+                ->object(Wasm\Engine::new($config))
         ;
 
         // TODO(jubianchi): Enable all compilers
@@ -26,12 +24,12 @@ class Engine extends atoum\test
             foreach ($engines as $engine) {
                 $this
                     ->given(
-                        $config = new Wasm\Config(),
+                        $config = Wasm\Config::new(),
                         $config->setCompiler($compiler),
                         $config->setEngine($engine),
                     )
                     ->then
-                        ->object(new Wasm\Engine($config))
+                        ->object(Wasm\Engine::new($config))
                 ;
             }
         }
@@ -40,7 +38,7 @@ class Engine extends atoum\test
     public function testDestruct()
     {
         $this
-            ->given($engine = new Wasm\Engine())
+            ->given($engine = Wasm\Engine::new())
             ->then
                 ->variable($engine->__destruct())->isNull()
                 ->variable($engine->__destruct())->isNull()

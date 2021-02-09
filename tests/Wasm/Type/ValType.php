@@ -27,9 +27,10 @@ class ValType extends atoum\test
     public function testConstruct()
     {
         $this
-            ->given($valtype = \wasm_valtype_new(WASM_I32))
+            ->given($wasmValtype = \wasm_valtype_new(WASM_I32))
             ->then
-                ->object(new Type\ValType($valtype))
+                ->object($valtype = new Type\ValType($wasmValtype))
+                ->resource($valtype->inner())->isIdenticalTo($wasmValtype)
         ;
     }
 

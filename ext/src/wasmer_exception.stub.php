@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 /** @generate-function-entries */
 
-namespace Wasm\Exception {
-    class RuntimeException extends \RuntimeException
-    {
-    }
+namespace Wasm\Exception;
 
-    class InstantiationException extends RuntimeException
-    {
-    }
+class RuntimeException extends \RuntimeException
+{
+}
 
-    class OutOfBoundsException extends RuntimeException
-    {
-    }
+class InstantiationException extends RuntimeException
+{
+}
+
+class OutOfBoundsException extends RuntimeException
+{
 }

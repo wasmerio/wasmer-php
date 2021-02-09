@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /** @generate-function-entries */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -152,7 +154,6 @@ function wasm_engine_delete($engine): bool
 {
 }
 
-
 // Store
 
 /**
@@ -191,7 +192,6 @@ function wasm_store_delete($store): bool
 {
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // Type Representations
 
@@ -222,10 +222,10 @@ function wasm_valtype_new(int $kind)
 /**
  * Delete a valtype.
  *
- * @param resource $valtype A `wasm_valtype_t` resource
+ * @param resource $valtype a `wasm_valtype_t` resource
  *
  * ℹ️ This function does not need to be called if the configuration was used as an argument of
- * `wasm_functype_new`, `wasm_globaltype_new`, `wasm_tabletype_new` or was added to a `\Wasm\Vec\Val`.
+ * `wasm_functype_new`, `wasm_globaltype_new`, `wasm_tabletype_new` or was added to a `\Wasm\Vec\Val`
  *
  * @see wasm_valtype_new()
  */
@@ -347,7 +347,6 @@ function wasm_valkind_is_num(int $kind): bool
 /**
  * Verify whether the given kind is a reference.
  *
- *
  * ```php
  * <?php
  *
@@ -363,7 +362,6 @@ function wasm_valkind_is_num(int $kind): bool
 function wasm_valkind_is_ref(int $kind): bool
 {
 }
-
 
 // Function Types
 
@@ -384,7 +382,7 @@ function wasm_valkind_is_ref(int $kind): bool
  *
  * @return resource A `wasm_functype_t` resource
  */
-function wasm_functype_new(\Wasm\Vec\ValType $params, \Wasm\Vec\ValType $results)
+function wasm_functype_new(Wasm\Vec\ValType $params, Wasm\Vec\ValType $results)
 {
 }
 
@@ -401,13 +399,13 @@ function wasm_functype_delete($functype): bool
 /**
  * @param resource $functype A `wasm_functype_t` resource
  */
-function wasm_functype_params($functype): \Wasm\Vec\ValType
+function wasm_functype_params($functype): Wasm\Vec\ValType
 {
 }
 /**
  * @param resource $functype A `wasm_functype_t` resource
  */
-function wasm_functype_results($functype): \Wasm\Vec\ValType
+function wasm_functype_results($functype): Wasm\Vec\ValType
 {
 }
 /**
@@ -426,7 +424,6 @@ function wasm_functype_copy($functype)
 function wasm_functype_as_externtype($functype)
 {
 }
-
 
 // Global Types
 
@@ -483,7 +480,6 @@ function wasm_globaltype_as_externtype($globaltype)
 {
 }
 
-
 // Limits
 
 /**
@@ -511,7 +507,6 @@ function wasm_limits_min($limits): int
 function wasm_limits_max($limits): int
 {
 }
-
 
 // Table Types
 
@@ -571,7 +566,6 @@ function wasm_tabletype_copy($tabletype)
 function wasm_tabletype_as_externtype($tabletype)
 {
 }
-
 
 // Memory Types
 
@@ -634,7 +628,6 @@ function wasm_memorytype_as_externtype($memorytype)
 {
 }
 
-
 // Extern Types
 
 /**
@@ -687,7 +680,6 @@ function wasm_externtype_as_tabletype($externtype)
 function wasm_externtype_as_memorytype($externtype)
 {
 }
-
 
 // Import Types
 
@@ -743,7 +735,6 @@ function wasm_importtype_copy($importtype)
 {
 }
 
-
 // Export Types
 
 /**
@@ -790,7 +781,6 @@ function wasm_exporttype_type($exporttype)
 function wasm_exporttype_copy($exporttype)
 {
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // Runtime Objects
@@ -861,7 +851,6 @@ function wasm_val_f64(float $val)
 
 // TODO(jubianchi): Add ref
 
-
 // Frames
 
 /**
@@ -902,7 +891,6 @@ function wasm_frame_func_offset($frame): int
 function wasm_frame_module_offset($frame): int
 {
 }
-
 
 // Traps
 
@@ -952,15 +940,13 @@ function wasm_trap_origin($trap)
 /**
  * @param resource $trap A `wasm_trap_t` resource
  */
-function wasm_trap_trace($trap): \Wasm\Vec\Frame
+function wasm_trap_trace($trap): Wasm\Vec\Frame
 {
 }
-
 
 // Foreign Objects
 
 // TODO(jubianchi): Add foreign
-
 
 // Modules
 
@@ -999,14 +985,14 @@ function wasm_module_validate($store, $module): bool
 /**
  * @param resource $module A `wasm_module_t` resource
  */
-function wasm_module_imports($module): \Wasm\Vec\ImportType
+function wasm_module_imports($module): Wasm\Vec\ImportType
 {
 }
 
 /**
  * @param resource $module A `wasm_module_t` resource
  */
-function wasm_module_exports($module): \Wasm\Vec\ExportType
+function wasm_module_exports($module): Wasm\Vec\ExportType
 {
 }
 
@@ -1086,7 +1072,7 @@ function wasm_func_type($func)
 /**
  * @param resource $func A `wasm_func_t` resource
  */
-function wasm_func_call($func, \Wasm\Vec\Val $args): \Wasm\Vec\Val
+function wasm_func_call($func, Wasm\Vec\Val $args): Wasm\Vec\Val
 {
 }
 
@@ -1098,7 +1084,6 @@ function wasm_func_call($func, \Wasm\Vec\Val $args): \Wasm\Vec\Val
 function wasm_func_as_extern($func)
 {
 }
-
 
 // Global Instances
 
@@ -1180,11 +1165,9 @@ function wasm_global_as_extern($global)
 
 // TODO(jubianchi): Add table
 
-
 // Memory Instances
 
 // TODO(jubianchi): Add memory
-
 
 // Externals
 
@@ -1259,7 +1242,6 @@ function wasm_extern_as_memory($extern)
 {
 }
 
-
 // Module Instances
 
 /**
@@ -1268,7 +1250,7 @@ function wasm_extern_as_memory($extern)
  *
  * @return resource A `wasm_instance_t` resource
  */
-function wasm_instance_new($store, $module, \Wasm\Vec\Extern $externs)
+function wasm_instance_new($store, $module, Wasm\Vec\Extern $externs)
 {
 }
 
@@ -1286,7 +1268,7 @@ function wasm_instance_delete($instance): bool
 /**
  * @param resource $instance A `wasm_instance_t` resource
  */
-function wasm_instance_exports($instance): \Wasm\Vec\Extern
+function wasm_instance_exports($instance): Wasm\Vec\Extern
 {
 }
 

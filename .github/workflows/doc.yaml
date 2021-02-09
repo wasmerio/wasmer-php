@@ -18,6 +18,11 @@ jobs:
           php-version: 7.4
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Configure
+        run: |
+          cd ext
+          phpize
+          ./configure
       - name: Build
         run: |
           make documentation

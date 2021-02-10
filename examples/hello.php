@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Wasm;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 echo 'Initializing...' . PHP_EOL;
 $engine = Wasm\Engine::new();
@@ -24,7 +24,7 @@ function hello_callback() {
     return null;
 }
 
-$functype = Wasm\Functype::new(new Wasm\Vec\ValType(), new Wasm\Vec\ValType());
+$functype = Wasm\Type\Functype::new(new Wasm\Vec\ValType(), new Wasm\Vec\ValType());
 $func = Wasm\Module\Func::new($store, $functype, 'hello_callback');
 
 echo 'Instantiating module...' . PHP_EOL;

@@ -19,7 +19,8 @@ use Wasm\Exception;
  * ```
  *
  * @api
- * @link https://webassembly.github.io/spec/core/syntax/types.html#global-types WebAssembly Specification - Global Types
+ *
+ * @see https://webassembly.github.io/spec/core/syntax/types.html#global-types WebAssembly Specification - Global Types
  */
 final class GlobalType
 {

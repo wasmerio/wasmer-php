@@ -10,13 +10,19 @@ namespace Wasm;
 final class Store
 {
     /**
-     * @var resource
+     * Create a Wasm\Store from a `wasm_store_t` resource.
+     *
+     * @param $store resource a `wasm_store_t` resource
+     *
+     * @throw Exception\InvalidArgumentException If the `$store` argument is not a valid `wasm_store_t` resource
      */
-    private $inner;
-
-    public function __construct(Engine $engine)
+    public function __construct($store)
     {
-        $this->inner = \wasm_store_new($engine->inner());
+        if (false === is_resource($store) || 'wasm_store_t' !== get_resource_type($store)) {
+            throw new Exception\InvalidArgumentException();
+        }
+
+        $this->inner = $store;
     }
 
     public function __destruct()
@@ -36,5 +42,13 @@ final class Store
     public function inner()
     {
         return $this->inner;
+    }
+
+    /**
+     * @api
+     */
+    public static function new(Engine $engine): self
+    {
+        return new self(\wasm_store_new($engine->inner()));
     }
 }

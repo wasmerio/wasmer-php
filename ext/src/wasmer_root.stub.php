@@ -973,12 +973,11 @@ function wasm_module_delete($module): bool
 }
 
 /**
- * @param resource $store  A `wasm_store_t` resource
- * @param resource $module A `wasm_module_t` resource
+ * @param resource $store A `wasm_store_t` resource
  *
  * @throw \Wasm\Exception\RuntimeException
  */
-function wasm_module_validate($store, $module): bool
+function wasm_module_validate($store, string $wasm): bool
 {
 }
 

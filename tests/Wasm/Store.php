@@ -7,19 +7,31 @@ use Wasm;
 
 class Store extends atoum\test
 {
-    public function testConstruct()
+    public function testNew()
     {
         $this
             ->given($engine = new Wasm\Engine())
             ->then
-                ->object(new Wasm\Store($engine))
+                ->object(Wasm\Store::new($engine))
+        ;
+    }
+
+    public function testConstruct()
+    {
+        $this
+            ->given(
+                $engine = \wasm_engine_new(),
+                $store = \wasm_store_new($engine),
+            )
+            ->then
+                ->object(new Wasm\Store($store))
         ;
     }
 
     public function testDestruct()
     {
         $this
-            ->given($store = new Wasm\Store(new Wasm\Engine()))
+            ->given($store = Wasm\Store::new(new Wasm\Engine()))
             ->then
                 ->variable($store->__destruct())->isNull()
                 ->variable($store->__destruct())->isNull()

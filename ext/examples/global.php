@@ -1,48 +1,55 @@
-<?php declare(strict_types=1);
+<?php
 
-echo 'Initializing...' . PHP_EOL;
+declare(strict_types=1);
+
+echo 'Initializing...'.PHP_EOL;
 $engine = wasm_engine_new();
 $store = wasm_store_new($engine);
 
-echo 'Loading WAT...' . PHP_EOL;
-$wat = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . basename(__FILE__, '.php') . '.wat');
+echo 'Loading WAT...'.PHP_EOL;
+$wat = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.basename(__FILE__, '.php').'.wat');
 
-echo 'Loading binary...' . PHP_EOL;
+echo 'Loading binary...'.PHP_EOL;
 $wasm = wat2wasm($wat);
 
-echo 'Compiling module...' . PHP_EOL;
+echo 'Compiling module...'.PHP_EOL;
 $module = wasm_module_new($store, $wasm);
 
-function check($val, int|float $expected) {
+function check($val, int|float $expected)
+{
     $actual = wasm_val_value($val);
 
-    assert($actual === $expected, sprintf("%s !== %s", var_export($actual, true), var_export($expected, true)));
+    assert($actual === $expected, sprintf('%s !== %s', var_export($actual, true), var_export($expected, true)));
 }
 
-function check_global($global, int|float $expected) {
+function check_global($global, int|float $expected)
+{
     check(wasm_global_get($global), $expected);
 }
 
-function check_call($func, $expected) {
+function check_call($func, $expected)
+{
     $args = new Wasm\Vec\Val();
     $results = wasm_func_call($func, $args);
 
     check($results[0], $expected);
 }
 
-function get_export_global(Wasm\Vec\Extern $externs, int $i) {
+function get_export_global(Wasm\Vec\Extern $externs, int $i)
+{
     assert(count($externs) > $i);
 
     return wasm_extern_as_global($externs[$i]);
 }
 
-function get_export_func(Wasm\Vec\Extern $externs, int $i) {
+function get_export_func(Wasm\Vec\Extern $externs, int $i)
+{
     assert(count($externs) > $i);
 
     return wasm_extern_as_func($externs[$i]);
 }
 
-echo 'Creating globals...' . PHP_EOL;
+echo 'Creating globals...'.PHP_EOL;
 $const_f32_type = wasm_globaltype_new(wasm_valtype_new(WASM_F32), WASM_CONST);
 $const_i64_type = wasm_globaltype_new(wasm_valtype_new(WASM_I64), WASM_CONST);
 $var_f32_type = wasm_globaltype_new(wasm_valtype_new(WASM_F32), WASM_VAR);
@@ -62,18 +69,18 @@ wasm_globaltype_delete($const_i64_type);
 wasm_globaltype_delete($var_f32_type);
 wasm_globaltype_delete($var_i64_type);
 
-echo 'Instantiating module...' . PHP_EOL;
+echo 'Instantiating module...'.PHP_EOL;
 $externs = new Wasm\Vec\Extern([
     wasm_global_as_extern($const_f32_import),
     wasm_global_as_extern($const_i64_import),
     wasm_global_as_extern($var_f32_import),
-    wasm_global_as_extern($var_i64_import)
+    wasm_global_as_extern($var_i64_import),
 ]);
 $instance = wasm_instance_new($store, $module, $externs);
 
 wasm_module_delete($module);
 
-echo 'Extracting export...' . PHP_EOL;
+echo 'Extracting export...'.PHP_EOL;
 $exports = wasm_instance_exports($instance);
 $i = 0;
 $const_f32_export = get_export_global($exports, $i++);
@@ -93,12 +100,12 @@ $set_var_i64_import = get_export_func($exports, $i++);
 $set_var_f32_export = get_export_func($exports, $i++);
 $set_var_i64_export = get_export_func($exports, $i++);
 
-echo 'Try cloning...' . PHP_EOL;
+echo 'Try cloning...'.PHP_EOL;
 $copy = wasm_global_copy($var_f32_import);
 assert(wasm_global_same($var_f32_import, $copy));
 wasm_global_delete($copy);
 
-echo 'Accessing globals...' . PHP_EOL;
+echo 'Accessing globals...'.PHP_EOL;
 check_global($const_f32_import, (float) 1);
 check_global($const_i64_import, 2);
 check_global($var_f32_import, (float) 3);
@@ -163,6 +170,6 @@ wasm_global_delete($var_f32_import);
 wasm_global_delete($var_i64_import);
 wasm_instance_delete($instance);
 
-echo 'Shutting down...' . PHP_EOL;
+echo 'Shutting down...'.PHP_EOL;
 wasm_store_delete($store);
 wasm_engine_delete($engine);

@@ -7,7 +7,7 @@ use Wasm;
 
 class Engine extends atoum\test
 {
-    public function testConstruct()
+    public function testNew()
     {
         $this
             ->object(Wasm\Engine::new())

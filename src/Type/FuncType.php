@@ -11,6 +11,8 @@ use Wasm\Vec;
  * Function types classify the signature of functions, mapping a vector of parameters to a vector of results. They are
  * also used to classify the inputs and outputs of instructions.
  *
+ * @todo Fix example
+ *
  * ```php
  * <?php declare(strict_types=1);
  *
@@ -31,7 +33,7 @@ final class FuncType
     private $inner;
 
     /**
-     * Create a Wasm\Type\ValType from a `wasm_functype_t` resource.
+     * Create a Wasm\Type\FuncType from a `wasm_functype_t` resource.
      *
      * @param $functype resource a `wasm_functype_t` resource
      *
@@ -76,6 +78,14 @@ final class FuncType
     public function inner()
     {
         return $this->inner;
+    }
+
+    /**
+     * @api
+     */
+    public function asExternType(): ExternType
+    {
+        return new ExternType(\wasm_functype_as_externtype($this->inner));
     }
 
     /**

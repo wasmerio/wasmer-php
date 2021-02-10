@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: b18cb69aacdd832fbf8f206c5d9f29c4e35784ed */
+ * Stub hash: dec6fef7c3b8e7b14a081e5dae82fbbcdb77b1b0 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -150,6 +150,10 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_wasm_memorytype_as_externtype arginfo_wasm_memorytype_limits
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_externtype_delete, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_INFO(0, externtype)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_externtype_kind, 0, 1, IS_LONG, 0)
 	ZEND_ARG_INFO(0, externtype)
 ZEND_END_ARG_INFO()
@@ -281,7 +285,7 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_module_validate, 0, 2, _IS_BOOL, 0)
 	ZEND_ARG_INFO(0, store)
-	ZEND_ARG_INFO(0, module)
+	ZEND_ARG_TYPE_INFO(0, wasm, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_wasm_module_imports, 0, 1, Wasm\\Vec\\ImportType, 0)
@@ -456,6 +460,7 @@ ZEND_FUNCTION(wasm_memorytype_delete);
 ZEND_FUNCTION(wasm_memorytype_limits);
 ZEND_FUNCTION(wasm_memorytype_copy);
 ZEND_FUNCTION(wasm_memorytype_as_externtype);
+ZEND_FUNCTION(wasm_externtype_delete);
 ZEND_FUNCTION(wasm_externtype_kind);
 ZEND_FUNCTION(wasm_externtype_as_functype);
 ZEND_FUNCTION(wasm_externtype_as_globaltype);
@@ -577,6 +582,7 @@ static const zend_function_entry ext_functions[] = {
 	ZEND_FE(wasm_memorytype_limits, arginfo_wasm_memorytype_limits)
 	ZEND_FE(wasm_memorytype_copy, arginfo_wasm_memorytype_copy)
 	ZEND_FE(wasm_memorytype_as_externtype, arginfo_wasm_memorytype_as_externtype)
+	ZEND_FE(wasm_externtype_delete, arginfo_wasm_externtype_delete)
 	ZEND_FE(wasm_externtype_kind, arginfo_wasm_externtype_kind)
 	ZEND_FE(wasm_externtype_as_functype, arginfo_wasm_externtype_as_functype)
 	ZEND_FE(wasm_externtype_as_globaltype, arginfo_wasm_externtype_as_globaltype)

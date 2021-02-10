@@ -42,7 +42,9 @@ PHP_FUNCTION (wasm_externtype_as_functype) {
     functype->inner.functype = wasm_externtype_as_functype(WASMER_RES_P_INNER(externtype_val, externtype));
     functype->owned = false;
 
-    WASMER_HANDLE_ERROR(wasm_exception_runtime_ce)
+    WASMER_HANDLE_ERROR_START
+        efree(functype);
+    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
 
     zend_resource *functype_res = zend_register_resource(functype, le_wasm_functype);
 
@@ -62,7 +64,9 @@ PHP_FUNCTION (wasm_externtype_as_globaltype) {
     globaltype->inner.globaltype = wasm_externtype_as_globaltype(WASMER_RES_P_INNER(externtype_val, externtype));
     globaltype->owned = false;
 
-    WASMER_HANDLE_ERROR(wasm_exception_runtime_ce)
+    WASMER_HANDLE_ERROR_START
+        efree(globaltype);
+    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
 
     zend_resource *globaltype_res = zend_register_resource(globaltype, le_wasm_globaltype);
 

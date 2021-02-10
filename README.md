@@ -176,9 +176,9 @@ You can go through more advanced examples in the dedicated directories:
 
 | Compiler   | Status |
 |------------|:------:|
-| Cranelift  | ❌      |
+| Cranelift  | ✅      |
 | LLVM       | ❌      |
-| Singlepass | ✅      |
+| Singlepass | ❌      |
 
 | Engine      | Status |
 |-------------|:------:|

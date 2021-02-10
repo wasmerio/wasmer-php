@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 87a3f56da10c29f12911264f103d23c862d76e95 */
+ * Stub hash: 02f9882dba039e0fa9320931511ec6a4eeb9464f */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_Wasm_Vec_ExportType___construct, 0, 0, 0)
 	ZEND_ARG_TYPE_MASK(0, sizeOrExporttypes, MAY_BE_ARRAY|MAY_BE_LONG|MAY_BE_NULL, "null")

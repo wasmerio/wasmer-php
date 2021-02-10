@@ -5,6 +5,7 @@ ExternType API functions
 <?php
 
 var_dump(
+    function_exists('wasm_externtype_delete'),
     function_exists('wasm_externtype_kind'),
     function_exists('wasm_externtype_as_functype'),
     function_exists('wasm_externtype_as_globaltype'),
@@ -14,6 +15,7 @@ var_dump(
 
 ?>
 --EXPECTF--
+bool(true)
 bool(true)
 bool(true)
 bool(true)

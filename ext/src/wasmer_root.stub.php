@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /** @generate-function-entries */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -629,6 +627,13 @@ function wasm_memorytype_as_externtype($memorytype)
 }
 
 // Extern Types
+
+/**
+ * @param resource $externtype A `wasm_externtype_t` resource
+ */
+function wasm_externtype_delete($externtype): bool
+{
+}
 
 /**
  * @param resource $externtype A `wasm_externtype_t` resource

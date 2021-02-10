@@ -15,14 +15,14 @@ $wasm = wat2wasm($wat);
 echo 'Compiling module...'.PHP_EOL;
 $module = wasm_module_new($store, $wasm);
 
-function check($val, int|float $expected)
+function check($val, int | float $expected)
 {
     $actual = wasm_val_value($val);
 
     assert($actual === $expected, sprintf('%s !== %s', var_export($actual, true), var_export($expected, true)));
 }
 
-function check_global($global, int|float $expected)
+function check_global($global, int | float $expected)
 {
     check(wasm_global_get($global), $expected);
 }

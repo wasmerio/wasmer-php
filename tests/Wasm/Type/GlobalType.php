@@ -53,6 +53,20 @@ class GlobalType extends atoum\test
         ;
     }
 
+    public function testAsExternType()
+    {
+        $this
+            ->given(
+                $valtype = Type\ValType::new(Type\ValType::KIND_I32),
+                $mutability = Type\GlobalType::MUTABILITY_VAR,
+                $globaltype = Type\GlobalType::new($valtype, $mutability),
+            )
+            ->then
+                ->object($externtype = $globaltype->asExternType())->isInstanceOf(Type\ExternType::class)
+                ->integer($externtype->kind())->isEqualTo(Type\ExternType::KIND_GLOBAL)
+        ;
+    }
+
     public function testMutability()
     {
         $this

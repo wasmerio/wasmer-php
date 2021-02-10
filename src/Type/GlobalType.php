@@ -75,6 +75,14 @@ final class GlobalType
     }
 
     /**
+     * @api
+     */
+    public function asExternType(): ExternType
+    {
+        return new ExternType(\wasm_globaltype_as_externtype($this->inner));
+    }
+
+    /**
      * Return the global type's mutability.
      *
      * @api

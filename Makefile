@@ -4,11 +4,11 @@ documentation: .phpdoc/build/index.html
 
 .PHONY: unit
 unit: vendor/atoum/atoum/bin/atoum
-	PHP_EXECUTABLE=$(PHP_EXECUTABLE) $<
+	PHP_EXECUTABLE="$(PHP_EXECUTABLE)" $(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) -dzend_extension=xdebug.so $<
 
 .PHONY: lint
 lint: vendor/friendsofphp/php-cs-fixer/php-cs-fixer
-	$(PHP_EXECUTABLE) $< fix --dry-run --allow-risky=yes
+	$< fix --dry-run --allow-risky=yes -v
 
 .phpdoc/build/index.html: vendor/phpdocumentor/phpdocumentor/bin/phpdoc phpdoc.dist.xml ext/src/wasmer_*.stub.php src/*.php src/Exception/*.php src/Type/*.php
 	$<

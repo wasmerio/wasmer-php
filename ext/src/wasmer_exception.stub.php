@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /** @generate-function-entries */
 
 namespace Wasm\Exception;

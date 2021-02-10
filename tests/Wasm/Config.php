@@ -21,6 +21,10 @@ class Config extends atoum\test
             ->then
                 ->object($config = new Wasm\Config($wasmConfig))
                 ->resource($config->inner())->isIdenticalTo($wasmConfig)
+                ->exception(fn () => new Wasm\Config(42))
+                    ->isInstanceOf(Wasm\Exception\invalidArgumentException::class)
+                ->exception(fn () => new Wasm\Config(\wasm_valtype_new(WASM_I32)))
+                    ->isInstanceOf(Wasm\Exception\invalidArgumentException::class)
         ;
     }
 

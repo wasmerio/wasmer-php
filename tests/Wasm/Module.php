@@ -32,6 +32,10 @@ class Module extends atoum\test
             )
             ->then
                 ->object(new Wasm\Module($module))
+                ->exception(fn () => new Wasm\Module(42))
+                    ->isInstanceOf(Wasm\Exception\invalidArgumentException::class)
+                ->exception(fn () => new Wasm\Module(\wasm_valtype_new(WASM_I32)))
+                    ->isInstanceOf(Wasm\Exception\invalidArgumentException::class)
         ;
     }
 

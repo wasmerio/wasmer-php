@@ -63,6 +63,20 @@ class FuncType extends atoum\test
         ;
     }
 
+    public function testAsExternType()
+    {
+        $this
+            ->given(
+                $params = new Vec\ValType(),
+                $results = new Vec\ValType(),
+                $functype = Type\FuncType::new($params, $results),
+            )
+            ->then
+                ->object($externtype = $functype->asExternType())->isInstanceOf(Type\ExternType::class)
+                ->integer($externtype->kind())->isEqualTo(Type\ExternType::KIND_FUNC)
+        ;
+    }
+
     public function testParams()
     {
         $this

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: dec6fef7c3b8e7b14a081e5dae82fbbcdb77b1b0 */
+ * Stub hash: c23219e72cb2d091528d38d4273390abb6b70d73 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -368,19 +368,21 @@ ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_extern_delete, 0, 1, _IS_BO
 	ZEND_ARG_INFO(0, extern)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_extern_kind, 0, 0, 1)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_extern_kind, 0, 1, IS_LONG, 0)
 	ZEND_ARG_INFO(0, extern)
 ZEND_END_ARG_INFO()
 
-#define arginfo_wasm_extern_type arginfo_wasm_extern_kind
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_extern_type, 0, 0, 1)
+	ZEND_ARG_INFO(0, extern)
+ZEND_END_ARG_INFO()
 
-#define arginfo_wasm_extern_as_func arginfo_wasm_extern_kind
+#define arginfo_wasm_extern_as_func arginfo_wasm_extern_type
 
-#define arginfo_wasm_extern_as_global arginfo_wasm_extern_kind
+#define arginfo_wasm_extern_as_global arginfo_wasm_extern_type
 
-#define arginfo_wasm_extern_as_table arginfo_wasm_extern_kind
+#define arginfo_wasm_extern_as_table arginfo_wasm_extern_type
 
-#define arginfo_wasm_extern_as_memory arginfo_wasm_extern_kind
+#define arginfo_wasm_extern_as_memory arginfo_wasm_extern_type
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_instance_new, 0, 0, 3)
 	ZEND_ARG_INFO(0, store)

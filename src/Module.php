@@ -33,12 +33,10 @@ final class Module
      */
     public function __destruct()
     {
-        try {
+        if (null !== $this->inner) {
             \wasm_module_delete($this->inner);
-        } catch (\TypeError $error) {
-            if (is_resource($this->inner)) {
-                throw $error;
-            }
+
+            $this->inner = null;
         }
     }
 

@@ -1186,10 +1186,8 @@ function wasm_extern_delete($extern): bool
 
 /**
  * @param resource $extern A `wasm_extern_t` resource
- *
- * @return resource
  */
-function wasm_extern_kind($extern)
+function wasm_extern_kind($extern): int
 {
 }
 

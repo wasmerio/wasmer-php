@@ -14,6 +14,8 @@ WASMER_IMPORT_RESOURCE(globaltype)
 WASMER_IMPORT_RESOURCE(val)
 WASMER_IMPORT_RESOURCE(extern)
 
+extern zend_class_entry *wasm_exception_runtime_ce;
+
 PHP_FUNCTION (wasm_global_new) {
     zval *store_val;
     zval *globaltype_val;
@@ -97,7 +99,7 @@ PHP_FUNCTION (wasm_global_set) {
 
     wasm_global_set(WASMER_RES_P_INNER(global_val, global), &WASMER_RES_P_INNER(val_val, val));
 
-    WASMER_HANDLE_ERROR(zend_ce_exception)
+    WASMER_HANDLE_ERROR(wasm_exception_runtime_ce)
 }
 
 PHP_FUNCTION (wasm_global_same) {

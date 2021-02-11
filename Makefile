@@ -3,8 +3,9 @@ include ext/Makefile
 documentation: .phpdoc/build/index.html
 
 .PHONY: unit
-unit: vendor/atoum/atoum/bin/atoum
-	PHP_EXECUTABLE="$(PHP_EXECUTABLE)" $(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) -dzend_extension=xdebug.so $<
+unit: vendor/atoum/atoum/bin/atoum vendor/phpunit/phpunit/phpunit
+	PHP_EXECUTABLE="$(PHP_EXECUTABLE)" $(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) $<
+	PHP_EXECUTABLE="$(PHP_EXECUTABLE)" $(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) -dextension=ext/modules/wasm.so $(filter-out $<, $^)
 
 .PHONY: lint
 lint: vendor/friendsofphp/php-cs-fixer/php-cs-fixer
@@ -13,7 +14,7 @@ lint: vendor/friendsofphp/php-cs-fixer/php-cs-fixer
 .phpdoc/build/index.html: vendor/phpdocumentor/phpdocumentor/bin/phpdoc phpdoc.dist.xml ext/src/wasmer_*.stub.php src/*.php src/Exception/*.php src/Type/*.php
 	$<
 
-vendor/phpdocumentor/phpdocumentor/bin/phpdoc vendor/friendsofphp/php-cs-fixer/php-cs-fixer vendor/atoum/atoum/bin/atoum: composer.lock
+vendor/phpdocumentor/phpdocumentor/bin/phpdoc vendor/friendsofphp/php-cs-fixer/php-cs-fixer vendor/atoum/atoum/bin/atoum vendor/phpunit/phpunit/phpunit: composer.lock
 	composer install
 
 composer.lock: composer.json

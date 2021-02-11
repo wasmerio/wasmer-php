@@ -40,3 +40,4 @@ ext/tests/**/*.sh
 /vendor
 /.phpdoc
 /.php_cs.cache
+/.phpunit.result.cache

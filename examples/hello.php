@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Wasm;
+use Wasm\Module;
 
 require_once __DIR__.'/../vendor/autoload.php';
 
@@ -24,7 +24,7 @@ function hello_callback() {
     return null;
 }
 
-$functype = Wasm\Type\Functype::new(new Wasm\Vec\ValType(), new Wasm\Vec\ValType());
+$functype = Wasm\Type\FuncType::new(new Wasm\Vec\ValType(), new Wasm\Vec\ValType());
 $func = Wasm\Module\Func::new($store, $functype, 'hello_callback');
 
 echo 'Instantiating module...' . PHP_EOL;
@@ -34,7 +34,7 @@ $instance = Wasm\Module\Instance::new($store, $module, $externs);
 
 echo 'Extracting export...' . PHP_EOL;
 $exports = $instance->exports();
-$run = $exports[0]->asFunc();
+$run = (new Module\Extern($exports[0]))->asFunc();
 
 echo 'Calling export...' . PHP_EOL;
 $args = new Wasm\Vec\Val();

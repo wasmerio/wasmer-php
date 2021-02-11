@@ -15,7 +15,10 @@ use Wasm\Exception;
  * use Wasm\Type\{GlobalType, ValType};
  *
  * $valtype = Type\ValType::new(Type\ValType::KIND_I32);
- * $globaltype = Type\GlobalType::new($valtype, Type\GlobalType::MUTABILITY_VAR);
+ * $const = Type\GlobalType::new($valtype);
+ *
+ * $valtype = Type\ValType::new(Type\ValType::KIND_I32);
+ * $var = Type\GlobalType::new($valtype, Type\GlobalType::MUTABILITY_VAR);
  * ```
  *
  * @api
@@ -105,12 +108,12 @@ final class GlobalType
      *
      * @throw Exception\InvalidArgumentException If the `$mutability` is not a valid mutability
      */
-    public static function new(ValType $type, int $mutability): self
+    public static function new(ValType $type, ?int $mutability = null): self
     {
-        if (false === in_array($mutability, self::$mutabilities, true)) {
+        if (null !== $mutability && false === in_array($mutability, self::$mutabilities, true)) {
             throw new Exception\InvalidArgumentException();
         }
 
-        return new self(\wasm_globaltype_new($type->inner(), $mutability));
+        return new self(\wasm_globaltype_new($type->inner(), $mutability ?? GlobalType::MUTABILITY_CONST));
     }
 }

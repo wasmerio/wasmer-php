@@ -8,7 +8,8 @@
     "require-dev": {
         "phpdocumentor/phpdocumentor": "@dev",
         "friendsofphp/php-cs-fixer": "@dev",
-        "atoum/atoum": "@stable"
+        "atoum/atoum": "@stable",
+        "phpunit/phpunit": "@stable"
     },
     "minimum-stability": "dev",
     "license": "MIT",
@@ -27,6 +28,11 @@
     "autoload": {
         "psr-4": {
             "Wasm\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wasm\\Tests\\": "tests"
         }
     }
 }

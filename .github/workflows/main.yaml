@@ -21,39 +21,39 @@ jobs:
         include:
           - id: linux-x64
             os: ubuntu-18.04
-            php: '7.3'
+            php: 7.3
             # TODO(jubianchi): Remove this once PHP 7.3 is supported
             allow_failure: true
           - id: linux-x64
             os: ubuntu-18.04
-            php: '7.4'
+            php: 7.4
             # TODO(jubianchi): Remove this once PHP 7.4 is supported
             allow_failure: true
           - id: linux-x64
             os: ubuntu-18.04
-            php: '8.0'
+            php: 8.0
             allow_failure: false
           - id: linux-x64
             os: ubuntu-18.04
-            php: '8.1'
+            php: 8.1
             allow_failure: false
           - id: macos-x64
             os: macos-latest
-            php: '7.3'
+            php: 7.3
             # TODO(jubianchi): Remove this once PHP 7.3 is supported
             allow_failure: true
           - id: macos-x64
             os: macos-latest
             # TODO(jubianchi): Remove this once PHP 7.4 is supported
-            php: '7.4'
+            php: 7.4
             allow_failure: true
           - id: macos-x64
             os: macos-latest
-            php: '8.0'
+            php: 8.0
             allow_failure: false
           - id: macos-x64
             os: macos-latest
-            php: '8.1'
+            php: 8.1
             allow_failure: false
     steps:
       - name: Setup PHP

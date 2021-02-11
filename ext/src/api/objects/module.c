@@ -59,15 +59,15 @@ PHP_FUNCTION (wasm_module_validate) {
 
     WASMER_FETCH_RESOURCE(store)
 
-    wasm_byte_vec_t *wasm_vec = malloc(sizeof(wasm_byte_vec_t));;
+    wasm_byte_vec_t *wasm_vec = emalloc(sizeof(wasm_byte_vec_t));;
     wasm_vec->size = wasm_len;
     wasm_vec->data = wasm;
 
     bool valid = wasm_module_validate(WASMER_RES_P_INNER(store_val, store), wasm_vec);
 
-    WASMER_HANDLE_ERROR_START
-            efree(wasm_vec);
-    WASMER_HANDLE_ERROR_END(wasm_exception_runtime_ce)
+    efree(wasm_vec);
+
+    WASMER_HANDLE_ERROR(wasm_exception_runtime_ce)
 
     RETURN_BOOL(valid);
 }

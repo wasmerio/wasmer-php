@@ -10,6 +10,11 @@ namespace Wasm;
 final class Store
 {
     /**
+     * @var resource The inner `wasm_store_t` resource
+     */
+    private $inner;
+
+    /**
      * Create a Wasm\Store from a `wasm_store_t` resource.
      *
      * @param $store resource a `wasm_store_t` resource

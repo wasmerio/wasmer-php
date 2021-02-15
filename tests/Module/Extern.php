@@ -15,7 +15,7 @@ use Wasm\Wat;
 /**
  * @small
  */
-final class ExternTest extends TestCase
+final class Extern extends TestCase
 {
     /**
      * @test
@@ -36,13 +36,15 @@ final class ExternTest extends TestCase
             new Module\Extern(42);
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
 
         try {
             new Module\Extern(\wasm_config_new());
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**

@@ -7,15 +7,12 @@ namespace Wasm\Tests;
 use PHPUnit\Framework\TestCase;
 use Wasm;
 use Wasm\Exception;
-use Wasm\Module;
-use Wasm\Type;
-use Wasm\Vec;
 use Wasm\Wat;
 
 /**
  * @small
  */
-final class ModuleTest extends TestCase
+final class Module extends TestCase
 {
     /**
      * @test
@@ -27,7 +24,7 @@ final class ModuleTest extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
 
-        self::assertIsObject(Module::new($store, $wasm));
+        self::assertIsObject(Wasm\Module::new($store, $wasm));
     }
 
     /**
@@ -41,19 +38,21 @@ final class ModuleTest extends TestCase
         $store = \wasm_store_new($engine);
         $module = \wasm_module_new($store, $wasm);
 
-        self::assertIsObject(new Module($module));
+        self::assertIsObject(new Wasm\Module($module));
 
         try {
-            new Module(42);
+            new Wasm\Module(42);
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
 
         try {
-            new Module(\wasm_config_new());
+            new Wasm\Module(\wasm_config_new());
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**
@@ -65,7 +64,7 @@ final class ModuleTest extends TestCase
         $wasm = Wat::wasm($wat);
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
-        $module = Module::new($store, $wasm);
+        $module = Wasm\Module::new($store, $wasm);
 
         self::assertNull($module->__destruct());
         self::assertNull($module->__destruct());
@@ -82,7 +81,7 @@ final class ModuleTest extends TestCase
         $store = \wasm_store_new($engine);
         $module = \wasm_module_new($store, $wasm);
 
-        self::assertSame((new Module($module))->inner(), $module);
+        self::assertSame((new Wasm\Module($module))->inner(), $module);
     }
 
     /**
@@ -94,7 +93,7 @@ final class ModuleTest extends TestCase
         $wasm = Wat::wasm($wat);
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
-        $module = Module::new($store, $wasm);
+        $module = Wasm\Module::new($store, $wasm);
 
         self::assertIsObject($module->exports());
     }
@@ -108,7 +107,7 @@ final class ModuleTest extends TestCase
         $wasm = Wat::wasm($wat);
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
-        $module = Module::new($store, $wasm);
+        $module = Wasm\Module::new($store, $wasm);
 
         self::assertIsObject($module->imports());
     }
@@ -122,7 +121,7 @@ final class ModuleTest extends TestCase
         $wasm = Wat::wasm($wat);
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
-        $module = Module::new($store, $wasm);
+        $module = Wasm\Module::new($store, $wasm);
 
         self::assertEquals('', $module->name());
         self::assertEquals('', $module->name('name'));
@@ -141,7 +140,7 @@ final class ModuleTest extends TestCase
         $wasm = Wat::wasm($wat);
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
-        $module = Module::new($store, $wasm);
+        $module = Wasm\Module::new($store, $wasm);
 
         self::assertNotEmpty($module->serialize());
     }
@@ -155,10 +154,10 @@ final class ModuleTest extends TestCase
         $wasm = Wat::wasm($wat);
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
-        $module = Module::new($store, $wasm);
+        $module = Wasm\Module::new($store, $wasm);
         $serialized = $module->serialize();
 
-        self::assertIsObject(Module::deserialize($store, $serialized));
+        self::assertIsObject(Wasm\Module::deserialize($store, $serialized));
     }
 
     /**
@@ -171,12 +170,13 @@ final class ModuleTest extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
 
-        self::assertTrue(Module::validate($store, $wasm));
+        self::assertTrue(Wasm\Module::validate($store, $wasm));
 
         try {
-            Module::validate($store, 'invalid');
+            Wasm\Module::validate($store, 'invalid');
 
             self::fail();
-        } catch (Exception\RuntimeException) {}
+        } catch (Exception\RuntimeException) {
+        }
     }
 }

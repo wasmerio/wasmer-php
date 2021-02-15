@@ -5,17 +5,14 @@ declare(strict_types=1);
 namespace Wasm\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Wasm;
 use Wasm\Exception;
 use Wasm\Module;
 use Wasm\Type;
-use Wasm\Vec;
-use Wasm\Wat;
 
 /**
  * @small
  */
-final class ValTest extends TestCase
+final class Val extends TestCase
 {
     /**
      * @test
@@ -71,7 +68,8 @@ final class ValTest extends TestCase
             self::assertIsObject(Module\Val::new('foo'));
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**
@@ -93,7 +91,8 @@ final class ValTest extends TestCase
             self::assertIsObject(Module\Val::newI32(PHP_INT_MAX));
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**
@@ -131,7 +130,8 @@ final class ValTest extends TestCase
             self::assertIsObject(Module\Val::newF32(3.41e+38));
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**
@@ -163,13 +163,15 @@ final class ValTest extends TestCase
             new Module\Val(42);
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
 
         try {
             new Module\Val(\wasm_config_new());
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**

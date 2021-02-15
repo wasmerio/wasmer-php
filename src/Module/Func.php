@@ -76,6 +76,22 @@ final class Func
     /**
      * @api
      */
+    public function paramArity(): int
+    {
+        return \wasm_func_param_arity($this->inner);
+    }
+
+    /**
+     * @api
+     */
+    public function resultArity(): int
+    {
+        return \wasm_func_result_arity($this->inner);
+    }
+
+    /**
+     * @api
+     */
     public function type(): FuncType
     {
         return new FuncType(\wasm_func_type($this->inner));

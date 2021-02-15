@@ -6,6 +6,10 @@
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/phpDocumentor/phpDocumentor/master/data/xsd/phpdoc.xsd"
 >
     <title>Wasmer PHP</title>
+    <paths>
+        <output>target/doc</output>
+        <cache>target/cache/phpdocumentor</cache>
+    </paths>
     <version number="1.0.0-beta1">
         <api format="php">
             <source dsn=".">

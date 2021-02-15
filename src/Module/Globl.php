@@ -99,27 +99,14 @@ final class Globl
         if (!$value instanceof Val) {
             $globaltype = $this->type();
             $valtype = $globaltype->content();
+            $kind = $valtype->kind();
 
-            switch ($valtype->kind()) {
-                case ValType::KIND_I32:
-                    $value = Val::newI32($value);
-                    break;
-
-                case ValType::KIND_I64:
-                    $value = Val::newI64($value);
-                    break;
-
-                case ValType::KIND_F32:
-                    $value = Val::newF32((float) $value);
-                    break;
-
-                case ValType::KIND_F64:
-                    $value = Val::newF64((float) $value);
-                    break;
-
-                default:
-                    throw new Exception\InvalidArgumentException();
-            }
+            $value = match ($kind) {
+                ValType::KIND_I32 => Val::newI32($value),
+                ValType::KIND_I64 => Val::newI64($value),
+                ValType::KIND_F32 => Val::newF32((float) $value),
+                ValType::KIND_F64 => Val::newF64((float) $value),
+                default => throw new Exception\InvalidArgumentException(), };
         }
 
         \wasm_global_set($this->inner, $value->inner());
@@ -142,8 +129,16 @@ final class Globl
             return new self(\wasm_global_new($store->inner(), $globaltype->inner(), $val->inner()));
         }
 
-        $val = Val::new($val);
+        $valtype = $globaltype->content();
+        $kind = $valtype->kind();
 
-        return new self(\wasm_global_new($store->inner(), $globaltype->inner(), $val->inner()));
+        $value = match ($kind) {
+            ValType::KIND_I32 => Val::newI32($val),
+            ValType::KIND_I64 => Val::newI64($val),
+            ValType::KIND_F32 => Val::newF32((float) $val),
+            ValType::KIND_F64 => Val::newF64((float) $val),
+            default => throw new Exception\InvalidArgumentException(), };
+
+        return new self(\wasm_global_new($store->inner(), $globaltype->inner(), $value->inner()));
     }
 }

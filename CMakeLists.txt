@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.17)
-project(wasmer-php C)
+project(wasmer-php
+        VERSION 1.0.0
+        DESCRIPTION "A complete and mature WebAssembly runtime for PHP based on Wasmer."
+        LANGUAGES C)
 
-add_compile_definitions(HAVE_WASMER)
+add_compile_definitions(HAVE_WASM)
 
 set(WASMER_API ext/src/api/config.c ext/src/api/engine.c ext/src/api/store.c ext/src/api/wasmer.c ext/src/api/wat.c)
 set(WASMER_API_OBJECTS ext/src/api/objects/extern.c ext/src/api/objects/foreign.c ext/src/api/objects/func.c ext/src/api/objects/frame.c ext/src/api/objects/global.c ext/src/api/objects/instance.c ext/src/api/objects/memory.c ext/src/api/objects/module.c ext/src/api/objects/table.c ext/src/api/objects/trap.c ext/src/api/objects/val.c)
@@ -15,7 +18,7 @@ execute_process (
 )
 string(REGEX REPLACE "\n$" "" PHP_SOURCE "${PHP_SOURCE}")
 
-message("Using source directory: ${PHP_SOURCE}")
+message("Using PHP include directory: ${PHP_SOURCE}")
 
 include_directories(${PHP_SOURCE})
 include_directories(${PHP_SOURCE}/main)

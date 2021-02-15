@@ -1076,6 +1076,20 @@ function wasm_func_type($func)
 /**
  * @param resource $func A `wasm_func_t` resource
  */
+function wasm_func_param_arity($func): int
+{
+}
+
+/**
+ * @param resource $func A `wasm_func_t` resource
+ */
+function wasm_func_result_arity($func): int
+{
+}
+
+/**
+ * @param resource $func A `wasm_func_t` resource
+ */
 function wasm_func_call($func, Wasm\Vec\Val $args): Wasm\Vec\Val
 {
 }

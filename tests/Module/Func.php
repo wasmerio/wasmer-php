@@ -15,7 +15,7 @@ use Wasm\Wat;
 /**
  * @small
  */
-final class FuncTest extends TestCase
+final class Func extends TestCase
 {
     /**
      * @test
@@ -45,13 +45,15 @@ final class FuncTest extends TestCase
             new Module\Func(42);
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
 
         try {
             new Module\Func(\wasm_config_new());
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**
@@ -79,6 +81,50 @@ final class FuncTest extends TestCase
         $func = \wasm_func_new($store, $functype, fn () => null);
 
         self::assertSame((new Module\Func($func))->inner(), $func);
+    }
+
+    /**
+     * @test
+     */
+    public function paramArity(): void
+    {
+        $engine = Wasm\Engine::new();
+        $store = Wasm\Store::new($engine);
+        $functype = Type\FuncType::new(new Vec\ValType(), new Vec\ValType());
+        $func = Module\Func::new($store, $functype, fn () => null);
+
+        self::assertEquals(0, $func->paramArity());
+
+        $type = Type\ValType::new(Type\ValType::KIND_I32);
+        $inner = $type->inner();
+        $params = new Vec\ValType([$inner]);
+        $results = new Vec\ValType();
+        $functype = Type\FuncType::new($params, $results);
+        $func = Module\Func::new($store, $functype, fn () => null);
+
+        self::assertEquals(1, $func->paramArity());
+    }
+
+    /**
+     * @test
+     */
+    public function resultarity(): void
+    {
+        $engine = Wasm\Engine::new();
+        $store = Wasm\Store::new($engine);
+        $functype = Type\FuncType::new(new Vec\ValType(), new Vec\ValType());
+        $func = Module\Func::new($store, $functype, fn () => null);
+
+        self::assertEquals(0, $func->resultArity());
+
+        $type = Type\ValType::new(Type\ValType::KIND_I32);
+        $inner = $type->inner();
+        $params = new Vec\ValType();
+        $results = new Vec\ValType([$inner]);
+        $functype = Type\FuncType::new($params, $results);
+        $func = Module\Func::new($store, $functype, fn () => null);
+
+        self::assertEquals(1, $func->resultArity());
     }
 
     /**

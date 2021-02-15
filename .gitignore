@@ -38,6 +38,7 @@ ext/tests/**/*.exp
 ext/tests/**/*.log
 ext/tests/**/*.sh
 /vendor
-/.phpdoc
+/target
 /.php_cs.cache
 /.phpunit.result.cache
+composer.lock

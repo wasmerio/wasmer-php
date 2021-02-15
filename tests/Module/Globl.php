@@ -9,13 +9,11 @@ use Wasm;
 use Wasm\Exception;
 use Wasm\Module;
 use Wasm\Type;
-use Wasm\Vec;
-use Wasm\Wat;
 
 /**
  * @small
  */
-final class GloblTest extends TestCase
+final class Globl extends TestCase
 {
     /**
      * @test
@@ -24,11 +22,35 @@ final class GloblTest extends TestCase
     {
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
+
         $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_I32));
 
         self::assertIsObject(Module\Globl::new($store, $globaltype, 42));
+        self::assertIsObject(Module\Globl::new($store, $globaltype, Module\Val::new(-42)));
+
+        $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_I64));
+
+        self::assertIsObject(Module\Globl::new($store, $globaltype, 42));
+        self::assertIsObject(Module\Globl::new($store, $globaltype, Module\Val::new(-42)));
+
+        $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_F32));
+
         self::assertIsObject(Module\Globl::new($store, $globaltype, 42.3));
-        self::assertIsObject(Module\Globl::new($store, $globaltype, Module\Val::new(-1)));
+        self::assertIsObject(Module\Globl::new($store, $globaltype, Module\Val::new(-42.3)));
+
+        $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_F64));
+
+        self::assertIsObject(Module\Globl::new($store, $globaltype, 42.3));
+        self::assertIsObject(Module\Globl::new($store, $globaltype, Module\Val::new(-42.3)));
+
+        $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_ANYREF));
+
+        try {
+            self::assertIsObject(Module\Globl::new($store, $globaltype, 42));
+
+            self::fail();
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**
@@ -48,13 +70,15 @@ final class GloblTest extends TestCase
             new Module\Globl(42);
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
 
         try {
             new Module\Globl(\wasm_config_new());
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**
@@ -131,7 +155,28 @@ final class GloblTest extends TestCase
     {
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
-        $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_I32), Type\GlobalType::MUTABILITY_VAR);
+
+        $valtypeI32 = Type\ValType::new(Type\ValType::KIND_I32);
+        $globaltypeI32 = Type\GlobalType::new($valtypeI32, Type\GlobalType::MUTABILITY_VAR);
+        $globalI32 = Module\Globl::new($store, $globaltypeI32, 42);
+
+        self::assertNull($globalI32->set(1337));
+        self::assertEquals(1337, $globalI32->get()->value());
+
+        $valtypeI64 = Type\ValType::new(Type\ValType::KIND_I64);
+        $globaltypeI64 = Type\GlobalType::new($valtypeI64, Type\GlobalType::MUTABILITY_VAR);
+        $globalI64 = Module\Globl::new($store, $globaltypeI64, 42);
+
+        self::assertNull($globalI64->set(1337));
+        self::assertEquals(1337, $globalI64->get()->value());
+
+        $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_F32), Type\GlobalType::MUTABILITY_VAR);
+        $global = Module\Globl::new($store, $globaltype, 42);
+
+        self::assertNull($global->set(1337));
+        self::assertEquals(1337, $global->get()->value());
+
+        $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_F64), Type\GlobalType::MUTABILITY_VAR);
         $global = Module\Globl::new($store, $globaltype, 42);
 
         self::assertNull($global->set(1337));
@@ -144,6 +189,29 @@ final class GloblTest extends TestCase
             $global->set(1337);
 
             self::fail();
-        } catch (Exception\RuntimeException) {}
+        } catch (Exception\RuntimeException) {
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function same(): void
+    {
+        $engine = Wasm\Engine::new();
+        $store = Wasm\Store::new($engine);
+        $globaltype = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_I32));
+        $global = Module\Globl::new($store, $globaltype, 42);
+        $copy = clone $global;
+        $otherCopy = clone $copy;
+
+        self::assertTrue($global->same($copy));
+        self::assertTrue($copy->same($copy));
+        self::assertTrue($global->same($otherCopy));
+
+        $other = Module\Globl::new($store, $globaltype, 42);
+
+        self::assertFalse($global->same($other));
+        self::assertFalse($copy->same($other));
     }
 }

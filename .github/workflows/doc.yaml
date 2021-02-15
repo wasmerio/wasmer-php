@@ -39,4 +39,4 @@ jobs:
           name: documentation
           retention-days: 3
           path: |
-            ./.phpdoc/build
+            ./target/doc

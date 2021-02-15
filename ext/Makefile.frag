@@ -1,5 +1,8 @@
+## Targets from this Makefile are available from the top-level Makefile using the `ext/` prefix.
+
 .PHONY: examples
 .SILENT: examples
+examples: ## Run PHP module examples
 examples: all
 	FAILURES=(); \
 	for EXAMPLE in examples/*.php; \
@@ -26,4 +29,9 @@ examples: all
 		exit $${#FAILURES[@]}; \
 	fi;
 
+all: ## Build PHP module
 all: src/wasmer_root_arginfo.h src/wasmer_vec_arginfo.h  src/wasmer_exception_arginfo.h
+
+test: ## Run PHP module tests
+
+configure: ## Configure PHP module build system (use PHP_HOME to change the PHP binaries to use)

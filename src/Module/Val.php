@@ -37,10 +37,12 @@ final class Val
      */
     public function __destruct()
     {
-        if (null !== $this->inner) {
+        try {
             \wasm_val_delete($this->inner);
-
-            $this->inner = null;
+        } catch (\TypeError $error) {
+            if (is_resource($this->inner)) {
+                throw $error;
+            }
         }
     }
 

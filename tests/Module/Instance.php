@@ -8,14 +8,13 @@ use PHPUnit\Framework\TestCase;
 use Wasm;
 use Wasm\Exception;
 use Wasm\Module;
-use Wasm\Type;
 use Wasm\Vec;
 use Wasm\Wat;
 
 /**
  * @small
  */
-final class InstanceTest extends TestCase
+final class Instance extends TestCase
 {
     public function new(): void
     {
@@ -46,13 +45,15 @@ final class InstanceTest extends TestCase
             new Module\Instance(42);
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
 
         try {
             new Module\Instance(\wasm_config_new());
 
             self::fail();
-        } catch (Exception\InvalidArgumentException) {}
+        } catch (Exception\InvalidArgumentException) {
+        }
     }
 
     /**

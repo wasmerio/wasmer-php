@@ -39,9 +39,9 @@ PHP_FUNCTION (wasm_global_new) {
     );
     wasm_global->owned = true;
 
-    zend_resource *val_res = zend_register_resource(wasm_global, le_wasm_global);
+    zend_resource *global_res = zend_register_resource(wasm_global, le_wasm_global);
 
-    RETURN_RES(val_res);
+    RETURN_RES(global_res);
 }
 
 PHP_FUNCTION (wasm_global_type) {

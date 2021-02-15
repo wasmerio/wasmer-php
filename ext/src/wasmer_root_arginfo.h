@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: c23219e72cb2d091528d38d4273390abb6b70d73 */
+ * Stub hash: 7f167fdc4253fe8ac4a53d5e15d34c8d2421a2e6 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -327,6 +327,12 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_func_type, 0, 0, 1)
 	ZEND_ARG_INFO(0, func)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_func_param_arity, 0, 1, IS_LONG, 0)
+	ZEND_ARG_INFO(0, func)
+ZEND_END_ARG_INFO()
+
+#define arginfo_wasm_func_result_arity arginfo_wasm_func_param_arity
+
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_wasm_func_call, 0, 2, Wasm\\Vec\\Val, 0)
 	ZEND_ARG_INFO(0, func)
 	ZEND_ARG_OBJ_INFO(0, args, Wasm\\Vec\\Val, 0)
@@ -511,6 +517,8 @@ ZEND_FUNCTION(wasm_module_copy);
 ZEND_FUNCTION(wasm_func_new);
 ZEND_FUNCTION(wasm_func_delete);
 ZEND_FUNCTION(wasm_func_type);
+ZEND_FUNCTION(wasm_func_param_arity);
+ZEND_FUNCTION(wasm_func_result_arity);
 ZEND_FUNCTION(wasm_func_call);
 ZEND_FUNCTION(wasm_func_as_extern);
 ZEND_FUNCTION(wasm_global_new);
@@ -633,6 +641,8 @@ static const zend_function_entry ext_functions[] = {
 	ZEND_FE(wasm_func_new, arginfo_wasm_func_new)
 	ZEND_FE(wasm_func_delete, arginfo_wasm_func_delete)
 	ZEND_FE(wasm_func_type, arginfo_wasm_func_type)
+	ZEND_FE(wasm_func_param_arity, arginfo_wasm_func_param_arity)
+	ZEND_FE(wasm_func_result_arity, arginfo_wasm_func_result_arity)
 	ZEND_FE(wasm_func_call, arginfo_wasm_func_call)
 	ZEND_FE(wasm_func_as_extern, arginfo_wasm_func_as_extern)
 	ZEND_FE(wasm_global_new, arginfo_wasm_global_new)

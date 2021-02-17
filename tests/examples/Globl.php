@@ -8,8 +8,6 @@ use Wasm;
 use Wasm\Module;
 use Wasm\Type;
 
-require_once __DIR__.'/../vendor/autoload.php';
-
 /**
  * @medium
  */

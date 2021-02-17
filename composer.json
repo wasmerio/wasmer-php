@@ -32,8 +32,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Wasm\\Examples\\": "examples",
-            "Wasm\\Tests\\": "tests"
+            "Wasm\\Tests\\": "tests/unit",
+            "Wasm\\Examples\\": "tests/examples"
         }
     }
 }

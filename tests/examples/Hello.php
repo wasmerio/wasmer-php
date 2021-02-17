@@ -7,8 +7,6 @@ namespace Wasm\Examples;
 use Wasm;
 use Wasm\Module;
 
-require_once __DIR__.'/../vendor/autoload.php';
-
 /**
  * @medium
  */

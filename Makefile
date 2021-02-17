@@ -7,8 +7,44 @@ documentation: .phpdoc/build/index.html
 
 .PHONY: unit
 test-unit: ## Run OO interface tests
-test-unit: vendor/phpunit/phpunit/phpunit target/cache/phpunit
-	$(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) -dextension=ext/modules/wasm.so $< --testdox --testsuite tests
+test-unit: ext/all vendor/phpunit/phpunit/phpunit target/cache/phpunit
+	$(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) -dextension=ext/modules/wasm.so vendor/phpunit/phpunit/phpunit --testdox --testsuite tests
+
+.PHONY: test-examples
+.SILENT: test-examples
+test-examples: ## Run OO interface examples
+test-examples: ext/all vendor/phpunit/phpunit/phpunit target/cache/phpunit
+	$(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) -dextension=ext/modules/wasm.so vendor/phpunit/phpunit/phpunit --testdox --testsuite examples
+
+.PHONY: test-doc-examples
+.SILENT: test-doc-examples
+test-doc-examples: ## Run PHP module documentation's examples
+test-doc-examples: EXAMPLE ?= *
+test-doc-examples: ext/all
+	FAILURES=(); \
+	for EXAMPLE in examples/$(EXAMPLE).php; \
+	do \
+		echo "====================================================================="; \
+		echo "> Running $$EXAMPLE"; \
+		echo "---------------------------------------------------------------------"; \
+		if ! $(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) -d extension_dir=$(top_builddir)/modules/ $(PHP_TEST_SHARED_EXTENSIONS) $$EXAMPLE; \
+		then \
+			FAILURES+=($$EXAMPLE); \
+		fi; \
+		echo; \
+	done; \
+	if [ $${#FAILURES[@]} -gt 0 ]; \
+	then \
+		echo "====================================================================="; \
+		echo "> Failed examples summary"; \
+		echo "---------------------------------------------------------------------"; \
+		for FAILURE in $${FAILURES[@]}; \
+		do \
+			echo "* $$FAILURE"; \
+		done; \
+		echo; \
+		exit $${#FAILURES[@]}; \
+	fi;
 
 .PHONY: lint
 lint: ## Run CS lint on all PHP files
@@ -16,7 +52,7 @@ lint: vendor/friendsofphp/php-cs-fixer/php-cs-fixer target/cache/php-cs-fixer
 	$(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) $< fix --dry-run --allow-risky=yes -v
 
 .phpdoc/build/index.html: vendor/phpdocumentor/phpdocumentor/bin/phpdoc phpdoc.dist.xml target/cache/phpdocumentorr ext/src/wasmer_*.stub.php src/*.php src/Exception/*.php src/Type/*.php
-	$<
+	$(PHP_EXECUTABLE) $<
 
 vendor/phpdocumentor/phpdocumentor/bin/phpdoc vendor/friendsofphp/php-cs-fixer/php-cs-fixer vendor/phpunit/phpunit/phpunit: vendor/composer/installed.json
 
@@ -24,19 +60,10 @@ vendor/phpdocumentor/phpdocumentor/bin/phpdoc vendor/friendsofphp/php-cs-fixer/p
 vendor/composer/installed.json: target/cache/composer composer.json
 	composer install
 
-.PHONY: test-examples
-.SILENT: test-examples
-test-examples: ## Run OO interface examples
-test-examples: vendor/phpunit/phpunit/phpunit target/cache/phpunit
-	$(PHP_EXECUTABLE) $(PHP_TEST_SETTINGS) -dextension=ext/modules/wasm.so $< --testdox --testsuite examples
-
 .PHONY: test-all
 .SILENT: test-all
 test-all: ## Run all tests & examples (PHP module & OO interface)
-	cd ext && NO_INTERACTION=1 make test
-	cd ext && make examples
-	make test-unit
-	make test-examples
+test-all: ext/test ext/examples test-unit test-examples test-doc-examples
 
 .PHONY: info
 .SILENT: info
@@ -117,7 +144,7 @@ help:
 ext/Makefile: PHP_HOME ?=
 ext/Makefile: ext/config.m4 ext/Makefile.frag
 ifneq (,$(PHP_HOME))
-	cd ext; $(PHP_HOME)/phpize && ./configure --with-php-config=$(PHP_HOME)/php-config
+	cd ext; $(PHP_HOME)/bin/phpize && ./configure --with-php-config=$(PHP_HOME)/bin/php-config
 else
 	cd ext; phpize && ./configure
 endif
@@ -125,5 +152,5 @@ endif
 ext/configure: ext/Makefile
 
 ext/test: export NO_INTERACTION = 1
-ext/all ext/examples ext/test: ext/Makefile
+ext/all ext/examples ext/test: ext/configure
 	@cd ext; make $(subst ext/,,$@)

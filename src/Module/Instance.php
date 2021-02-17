@@ -68,8 +68,8 @@ final class Instance
     /**
      * @api
      */
-    public static function new(Store $store, Module $module, Vec\Extern $externs): self
+    public static function new(Store $store, Module $module, ?Vec\Extern $externs = null): self
     {
-        return new self(\wasm_instance_new($store->inner(), $module->inner(), $externs));
+        return new self(\wasm_instance_new($store->inner(), $module->inner(), $externs ?? new Vec\Extern()));
     }
 }

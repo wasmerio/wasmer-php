@@ -93,6 +93,10 @@ jobs:
         # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
         run: |
           make test-examples || ${{ matrix.allow_failure }}
+      - name: Run documentation examples (OO interface)
+        # TODO(jubianchi): Remove allow_failure once PHP 7.3 & 7.4 are supported
+        run: |
+          make test-doc-examples || ${{ matrix.allow_failure }}
       - name: Archive test results
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2

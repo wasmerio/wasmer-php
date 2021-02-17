@@ -9,8 +9,6 @@ use Wasm\Module\Extern;
 use Wasm\Module\Val;
 use Wasm\Wat;
 
-require_once __DIR__.'/../vendor/autoload.php';
-
 /**
  * @medium
  */

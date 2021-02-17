@@ -12,12 +12,12 @@
     </coverage>
     <testsuites>
         <testsuite name="tests">
-            <directory suffix="">tests</directory>
+            <directory suffix="">tests/unit</directory>
         </testsuite>
         <testsuite name="examples">
-            <file>examples/Callback.php</file>
-            <file>examples/Globl.php</file>
-            <file>examples/Hello.php</file>
+            <file>tests/examples/Callback.php</file>
+            <file>tests/examples/Globl.php</file>
+            <file>tests/examples/Hello.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

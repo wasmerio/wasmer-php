@@ -55,6 +55,8 @@
                 <ul class="phpdocumentor-list">
                                             <li><a href="namespaces/wasm-exception.html"><abbr title="\Wasm\Exception">Exception</abbr></a></li>
                                             <li><a href="namespaces/wasm-vec.html"><abbr title="\Wasm\Vec">Vec</abbr></a></li>
+                                            <li><a href="namespaces/wasm-module.html"><abbr title="\Wasm\Module">Module</abbr></a></li>
+                                            <li><a href="namespaces/wasm-type.html"><abbr title="\Wasm\Type">Type</abbr></a></li>
                                     </ul>
                         </section>
 
@@ -411,6 +413,13 @@
 <dd></dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -function -">
+    <a href="namespaces/default.html#function_wasm_externtype_delete">wasm_externtype_delete()</a>
+    <span>
+                        &nbsp;: bool    </span>
+</dt>
+<dd></dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a href="namespaces/default.html#function_wasm_externtype_kind">wasm_externtype_kind()</a>
     <span>
                         &nbsp;: int    </span>
@@ -747,6 +756,20 @@
 <dd></dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -function -">
+    <a href="namespaces/default.html#function_wasm_func_param_arity">wasm_func_param_arity()</a>
+    <span>
+                        &nbsp;: int    </span>
+</dt>
+<dd></dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -function -">
+    <a href="namespaces/default.html#function_wasm_func_result_arity">wasm_func_result_arity()</a>
+    <span>
+                        &nbsp;: int    </span>
+</dt>
+<dd></dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a href="namespaces/default.html#function_wasm_func_call">wasm_func_call()</a>
     <span>
                         &nbsp;: <a href="classes/Wasm-Vec-Val.html"><abbr title="\Wasm\Vec\Val">Val</abbr></a>    </span>
@@ -826,7 +849,7 @@
             <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a href="namespaces/default.html#function_wasm_extern_kind">wasm_extern_kind()</a>
     <span>
-                        &nbsp;: resource    </span>
+                        &nbsp;: int    </span>
 </dt>
 <dd></dd>
 
@@ -931,7 +954,7 @@
             <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a href="namespaces/default.html#function_wat2wasm">wat2wasm()</a>
     <span>
-                        &nbsp;: resource    </span>
+                        &nbsp;: string    </span>
 </dt>
 <dd>⚠️ This is a Wasmer-specific function.</dd>
 
@@ -944,7 +967,7 @@
             <section class="phpdocumentor-functions">
         <h3 class="phpdocumentor-elements__header" id="functions">
             Functions
-            <a href="files/src-wasmer-root-stub.html#functions" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="files/ext-src-wasmer-root-stub.html#functions" class="headerlink"><i class="fas fa-link"></i></a>
         </h3>
                     <article class="phpdocumentor-element -function - ">
     <h4 class="phpdocumentor-element__name" id="function_wasm_config_new">
@@ -952,7 +975,7 @@
         <a href="namespaces/default.html#function_wasm_config_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">30</span>
 </aside>
@@ -1002,7 +1025,7 @@ wasm_engine_delete($engine);
         <a href="namespaces/default.html#function_wasm_config_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">52</span>
 </aside>
@@ -1048,7 +1071,7 @@ wasm_config_delete($config);
         <a href="namespaces/default.html#function_wasm_config_set_compiler" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">79</span>
 </aside>
@@ -1106,7 +1129,7 @@ wasm_engine_delete($engine);
         <a href="namespaces/default.html#function_wasm_config_set_engine" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">106</span>
 </aside>
@@ -1164,7 +1187,7 @@ wasm_engine_delete($engine);
         <a href="namespaces/default.html#function_wasm_engine_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">119</span>
 </aside>
@@ -1203,7 +1226,7 @@ wasm_engine_delete($engine);
         <a href="namespaces/default.html#function_wasm_engine_new_with_config" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">132</span>
 </aside>
@@ -1254,7 +1277,7 @@ wasm_engine_delete($engine);
         <a href="namespaces/default.html#function_wasm_engine_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">151</span>
 </aside>
@@ -1298,9 +1321,9 @@ wasm_engine_delete($engine);
         <a href="namespaces/default.html#function_wasm_store_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">179</span>
+    <span class="phpdocumentor-element-found-in__line">178</span>
 </aside>
 
         <p class="phpdocumentor-summary">Create a new WebAssembly store given a specific engine.</p>
@@ -1346,9 +1369,9 @@ wasm_engine_delete($engine);
         <a href="namespaces/default.html#function_wasm_store_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">190</span>
+    <span class="phpdocumentor-element-found-in__line">189</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a store.</p>
@@ -1397,9 +1420,9 @@ wasm_engine_delete($engine);
         <a href="namespaces/default.html#function_wasm_valtype_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">218</span>
+    <span class="phpdocumentor-element-found-in__line">216</span>
 </aside>
 
         <p class="phpdocumentor-summary">Create a new valtype.</p>
@@ -1442,9 +1465,9 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
         <a href="namespaces/default.html#function_wasm_valtype_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">232</span>
+    <span class="phpdocumentor-element-found-in__line">230</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a valtype.</p>
@@ -1462,9 +1485,9 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
                 : <span class="phpdocumentor-signature__argument__return-type">resource</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_valtype_t</code> resource</p>
+                    <section class="phpdocumentor-description"><p>a <code class="prettyprint">wasm_valtype_t</code> resource</p>
 <p>ℹ️ This function does not need to be called if the configuration was used as an argument of
-<code class="prettyprint">wasm_functype_new</code>, <code class="prettyprint">wasm_globaltype_new</code>, <code class="prettyprint">wasm_tabletype_new</code> or was added to a <code class="prettyprint">\Wasm\Vec\Val</code>.</p>
+<code class="prettyprint">wasm_functype_new</code>, <code class="prettyprint">wasm_globaltype_new</code>, <code class="prettyprint">wasm_tabletype_new</code> or was added to a <code class="prettyprint">\Wasm\Vec\Val</code></p>
 </section>
 
             </dd>
@@ -1495,9 +1518,9 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
         <a href="namespaces/default.html#function_wasm_valtype_kind" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">253</span>
+    <span class="phpdocumentor-element-found-in__line">251</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the valtype kind.</p>
@@ -1541,9 +1564,9 @@ wasm_valtype_delete($valtype);
         <a href="namespaces/default.html#function_wasm_valtype_is_num" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">277</span>
+    <span class="phpdocumentor-element-found-in__line">275</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return `true` if the given valtype has a numeric kind.</p>
@@ -1590,9 +1613,9 @@ wasm_valtype_delete($ref);
         <a href="namespaces/default.html#function_wasm_valtype_is_ref" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">301</span>
+    <span class="phpdocumentor-element-found-in__line">299</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return `true` if the given valtype has a reference kind.</p>
@@ -1639,9 +1662,9 @@ wasm_valtype_delete($ref);
         <a href="namespaces/default.html#function_wasm_valtype_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">324</span>
+    <span class="phpdocumentor-element-found-in__line">322</span>
 </aside>
 
         <p class="phpdocumentor-summary">Create a copy of the given valtype.</p>
@@ -1685,9 +1708,9 @@ wasm_valtype_delete($valtype);
         <a href="namespaces/default.html#function_wasm_valkind_is_num" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">343</span>
+    <span class="phpdocumentor-element-found-in__line">341</span>
 </aside>
 
         <p class="phpdocumentor-summary">Verify whether the given kind is numeric.</p>
@@ -1727,9 +1750,9 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
         <a href="namespaces/default.html#function_wasm_valkind_is_ref" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">363</span>
+    <span class="phpdocumentor-element-found-in__line">360</span>
 </aside>
 
         <p class="phpdocumentor-summary">Verify whether the given kind is a reference.</p>
@@ -1769,9 +1792,9 @@ This must be one of <code class="prettyprint">WASM_I32</code>, <code class="pret
         <a href="namespaces/default.html#function_wasm_functype_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">387</span>
+    <span class="phpdocumentor-element-found-in__line">383</span>
 </aside>
 
         <p class="phpdocumentor-summary">Create a new valtype.</p>
@@ -1820,9 +1843,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_functype_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">398</span>
+    <span class="phpdocumentor-element-found-in__line">394</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a functype.</p>
@@ -1871,9 +1894,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_functype_params" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">404</span>
+    <span class="phpdocumentor-element-found-in__line">400</span>
 </aside>
 
     
@@ -1906,9 +1929,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_functype_results" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">410</span>
+    <span class="phpdocumentor-element-found-in__line">406</span>
 </aside>
 
     
@@ -1941,9 +1964,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_functype_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">418</span>
+    <span class="phpdocumentor-element-found-in__line">414</span>
 </aside>
 
     
@@ -1976,9 +1999,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_functype_as_externtype" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">426</span>
+    <span class="phpdocumentor-element-found-in__line">422</span>
 </aside>
 
     
@@ -2011,9 +2034,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_globaltype_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">438</span>
+    <span class="phpdocumentor-element-found-in__line">433</span>
 </aside>
 
     
@@ -2053,9 +2076,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_globaltype_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">449</span>
+    <span class="phpdocumentor-element-found-in__line">444</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a globaltype.</p>
@@ -2104,9 +2127,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_globaltype_content" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">458</span>
+    <span class="phpdocumentor-element-found-in__line">453</span>
 </aside>
 
     
@@ -2138,9 +2161,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_globaltype_mutability" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">465</span>
+    <span class="phpdocumentor-element-found-in__line">460</span>
 </aside>
 
     
@@ -2173,9 +2196,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_globaltype_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">474</span>
+    <span class="phpdocumentor-element-found-in__line">469</span>
 </aside>
 
     
@@ -2208,9 +2231,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_globaltype_as_externtype" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">482</span>
+    <span class="phpdocumentor-element-found-in__line">477</span>
 </aside>
 
     
@@ -2243,9 +2266,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_limits_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">497</span>
+    <span class="phpdocumentor-element-found-in__line">491</span>
 </aside>
 
         <p class="phpdocumentor-summary">Create a new limits.</p>
@@ -2308,9 +2331,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_limits_min" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">504</span>
+    <span class="phpdocumentor-element-found-in__line">498</span>
 </aside>
 
     
@@ -2343,9 +2366,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_limits_max" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">511</span>
+    <span class="phpdocumentor-element-found-in__line">505</span>
 </aside>
 
     
@@ -2378,9 +2401,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_tabletype_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">524</span>
+    <span class="phpdocumentor-element-found-in__line">517</span>
 </aside>
 
     
@@ -2422,9 +2445,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_tabletype_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">535</span>
+    <span class="phpdocumentor-element-found-in__line">528</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a tabletype.</p>
@@ -2473,9 +2496,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_tabletype_element" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">544</span>
+    <span class="phpdocumentor-element-found-in__line">537</span>
 </aside>
 
     
@@ -2508,9 +2531,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_tabletype_limits" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">553</span>
+    <span class="phpdocumentor-element-found-in__line">546</span>
 </aside>
 
     
@@ -2543,9 +2566,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_tabletype_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">562</span>
+    <span class="phpdocumentor-element-found-in__line">555</span>
 </aside>
 
     
@@ -2578,9 +2601,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_tabletype_as_externtype" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">571</span>
+    <span class="phpdocumentor-element-found-in__line">564</span>
 </aside>
 
     
@@ -2613,9 +2636,9 @@ wasm_functype_delete($functype);
         <a href="namespaces/default.html#function_wasm_memorytype_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">595</span>
+    <span class="phpdocumentor-element-found-in__line">587</span>
 </aside>
 
         <p class="phpdocumentor-summary">Create a new memorytype.</p>
@@ -2657,9 +2680,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_memorytype_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">606</span>
+    <span class="phpdocumentor-element-found-in__line">598</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a memorytype.</p>
@@ -2708,9 +2731,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_memorytype_limits" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">615</span>
+    <span class="phpdocumentor-element-found-in__line">607</span>
 </aside>
 
     
@@ -2743,9 +2766,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_memorytype_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">624</span>
+    <span class="phpdocumentor-element-found-in__line">616</span>
 </aside>
 
     
@@ -2778,9 +2801,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_memorytype_as_externtype" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">633</span>
+    <span class="phpdocumentor-element-found-in__line">625</span>
 </aside>
 
     
@@ -2808,14 +2831,49 @@ wasm_memorytype_delete($memorytype);
     
 </article>
                     <article class="phpdocumentor-element -function - ">
+    <h4 class="phpdocumentor-element__name" id="function_wasm_externtype_delete">
+        wasm_externtype_delete()
+        <a href="namespaces/default.html#function_wasm_externtype_delete" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">634</span>
+</aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility"></span>
+                <span class="phpdocumentor-signature__name">wasm_externtype_delete</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$externtype</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$externtype</span>
+                : <span class="phpdocumentor-signature__argument__return-type">resource</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_externtype_t</code> resource</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+    
+</article>
+                    <article class="phpdocumentor-element -function - ">
     <h4 class="phpdocumentor-element__name" id="function_wasm_externtype_kind">
         wasm_externtype_kind()
         <a href="namespaces/default.html#function_wasm_externtype_kind" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">643</span>
+    <span class="phpdocumentor-element-found-in__line">641</span>
 </aside>
 
     
@@ -2848,9 +2906,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_externtype_as_functype" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">654</span>
+    <span class="phpdocumentor-element-found-in__line">652</span>
 </aside>
 
     
@@ -2898,9 +2956,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_externtype_as_globaltype" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">665</span>
+    <span class="phpdocumentor-element-found-in__line">663</span>
 </aside>
 
     
@@ -2948,9 +3006,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_externtype_as_tabletype" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">676</span>
+    <span class="phpdocumentor-element-found-in__line">674</span>
 </aside>
 
     
@@ -2998,9 +3056,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_externtype_as_memorytype" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">687</span>
+    <span class="phpdocumentor-element-found-in__line">685</span>
 </aside>
 
     
@@ -3048,9 +3106,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_importtype_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">699</span>
+    <span class="phpdocumentor-element-found-in__line">696</span>
 </aside>
 
     
@@ -3097,9 +3155,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_importtype_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">710</span>
+    <span class="phpdocumentor-element-found-in__line">707</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a importtype.</p>
@@ -3148,9 +3206,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_importtype_module" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">717</span>
+    <span class="phpdocumentor-element-found-in__line">714</span>
 </aside>
 
     
@@ -3183,9 +3241,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_importtype_name" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">724</span>
+    <span class="phpdocumentor-element-found-in__line">721</span>
 </aside>
 
     
@@ -3218,9 +3276,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_importtype_type" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">733</span>
+    <span class="phpdocumentor-element-found-in__line">730</span>
 </aside>
 
     
@@ -3253,9 +3311,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_importtype_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">742</span>
+    <span class="phpdocumentor-element-found-in__line">739</span>
 </aside>
 
     
@@ -3288,9 +3346,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_exporttype_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">754</span>
+    <span class="phpdocumentor-element-found-in__line">750</span>
 </aside>
 
     
@@ -3330,9 +3388,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_exporttype_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">765</span>
+    <span class="phpdocumentor-element-found-in__line">761</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a exporttype.</p>
@@ -3381,9 +3439,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_exporttype_name" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">772</span>
+    <span class="phpdocumentor-element-found-in__line">768</span>
 </aside>
 
     
@@ -3416,9 +3474,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_exporttype_type" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">781</span>
+    <span class="phpdocumentor-element-found-in__line">777</span>
 </aside>
 
     
@@ -3451,9 +3509,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_exporttype_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">790</span>
+    <span class="phpdocumentor-element-found-in__line">786</span>
 </aside>
 
     
@@ -3486,9 +3544,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_val_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">805</span>
+    <span class="phpdocumentor-element-found-in__line">800</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a val.</p>
@@ -3522,9 +3580,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_val_value" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">812</span>
+    <span class="phpdocumentor-element-found-in__line">807</span>
 </aside>
 
     
@@ -3557,9 +3615,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_val_kind" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">819</span>
+    <span class="phpdocumentor-element-found-in__line">814</span>
 </aside>
 
     
@@ -3592,9 +3650,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_val_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">828</span>
+    <span class="phpdocumentor-element-found-in__line">823</span>
 </aside>
 
     
@@ -3627,9 +3685,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_val_i32" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">835</span>
+    <span class="phpdocumentor-element-found-in__line">830</span>
 </aside>
 
     
@@ -3660,9 +3718,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_val_i64" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">842</span>
+    <span class="phpdocumentor-element-found-in__line">837</span>
 </aside>
 
     
@@ -3693,9 +3751,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_val_f32" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">849</span>
+    <span class="phpdocumentor-element-found-in__line">844</span>
 </aside>
 
     
@@ -3726,9 +3784,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_val_f64" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">856</span>
+    <span class="phpdocumentor-element-found-in__line">851</span>
 </aside>
 
     
@@ -3759,9 +3817,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_frame_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">872</span>
+    <span class="phpdocumentor-element-found-in__line">866</span>
 </aside>
 
     
@@ -3794,9 +3852,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_frame_instance" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">881</span>
+    <span class="phpdocumentor-element-found-in__line">875</span>
 </aside>
 
     
@@ -3829,9 +3887,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_frame_func_index" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">888</span>
+    <span class="phpdocumentor-element-found-in__line">882</span>
 </aside>
 
     
@@ -3864,9 +3922,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_frame_func_offset" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">895</span>
+    <span class="phpdocumentor-element-found-in__line">889</span>
 </aside>
 
     
@@ -3899,9 +3957,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_frame_module_offset" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">902</span>
+    <span class="phpdocumentor-element-found-in__line">896</span>
 </aside>
 
     
@@ -3934,9 +3992,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_trap_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">916</span>
+    <span class="phpdocumentor-element-found-in__line">909</span>
 </aside>
 
     
@@ -3991,9 +4049,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_trap_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">923</span>
+    <span class="phpdocumentor-element-found-in__line">916</span>
 </aside>
 
     
@@ -4026,9 +4084,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_trap_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">932</span>
+    <span class="phpdocumentor-element-found-in__line">925</span>
 </aside>
 
     
@@ -4061,9 +4119,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_trap_message" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">939</span>
+    <span class="phpdocumentor-element-found-in__line">932</span>
 </aside>
 
     
@@ -4096,9 +4154,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_trap_origin" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">948</span>
+    <span class="phpdocumentor-element-found-in__line">941</span>
 </aside>
 
     
@@ -4131,9 +4189,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_trap_trace" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">955</span>
+    <span class="phpdocumentor-element-found-in__line">948</span>
 </aside>
 
     
@@ -4166,9 +4224,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">974</span>
+    <span class="phpdocumentor-element-found-in__line">965</span>
 </aside>
 
     
@@ -4223,9 +4281,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">985</span>
+    <span class="phpdocumentor-element-found-in__line">976</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a module.</p>
@@ -4274,15 +4332,15 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_validate" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">995</span>
+    <span class="phpdocumentor-element-found-in__line">985</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_module_validate</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$store</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$module</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                <span class="phpdocumentor-signature__name">wasm_module_validate</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$store</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$wasm</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
         <section class="phpdocumentor-description"></section>
 
@@ -4298,13 +4356,11 @@ wasm_memorytype_delete($memorytype);
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$module</span>
-                : <span class="phpdocumentor-signature__argument__return-type">resource</span>
+                <span class="phpdocumentor-signature__argument__name">$wasm</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_module_t</code> resource</p>
-</section>
-
+                
             </dd>
             </dl>
 
@@ -4333,9 +4389,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_imports" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1002</span>
+    <span class="phpdocumentor-element-found-in__line">992</span>
 </aside>
 
     
@@ -4368,9 +4424,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_exports" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1009</span>
+    <span class="phpdocumentor-element-found-in__line">999</span>
 </aside>
 
     
@@ -4403,9 +4459,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_serialize" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1016</span>
+    <span class="phpdocumentor-element-found-in__line">1006</span>
 </aside>
 
     
@@ -4438,9 +4494,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_deserialize" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1027</span>
+    <span class="phpdocumentor-element-found-in__line">1017</span>
 </aside>
 
     
@@ -4495,9 +4551,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_name" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1034</span>
+    <span class="phpdocumentor-element-found-in__line">1024</span>
 </aside>
 
     
@@ -4530,9 +4586,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_set_name" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1041</span>
+    <span class="phpdocumentor-element-found-in__line">1031</span>
 </aside>
 
     
@@ -4572,9 +4628,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_module_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1050</span>
+    <span class="phpdocumentor-element-found-in__line">1040</span>
 </aside>
 
     
@@ -4607,9 +4663,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_func_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1062</span>
+    <span class="phpdocumentor-element-found-in__line">1052</span>
 </aside>
 
     
@@ -4658,9 +4714,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_func_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1073</span>
+    <span class="phpdocumentor-element-found-in__line">1063</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a func.</p>
@@ -4709,9 +4765,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_func_type" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1082</span>
+    <span class="phpdocumentor-element-found-in__line">1072</span>
 </aside>
 
     
@@ -4739,14 +4795,84 @@ wasm_memorytype_delete($memorytype);
     
 </article>
                     <article class="phpdocumentor-element -function - ">
+    <h4 class="phpdocumentor-element__name" id="function_wasm_func_param_arity">
+        wasm_func_param_arity()
+        <a href="namespaces/default.html#function_wasm_func_param_arity" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1079</span>
+</aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility"></span>
+                <span class="phpdocumentor-signature__name">wasm_func_param_arity</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$func</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$func</span>
+                : <span class="phpdocumentor-signature__argument__return-type">resource</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_func_t</code> resource</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+    
+</article>
+                    <article class="phpdocumentor-element -function - ">
+    <h4 class="phpdocumentor-element__name" id="function_wasm_func_result_arity">
+        wasm_func_result_arity()
+        <a href="namespaces/default.html#function_wasm_func_result_arity" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1086</span>
+</aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility"></span>
+                <span class="phpdocumentor-signature__name">wasm_func_result_arity</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$func</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$func</span>
+                : <span class="phpdocumentor-signature__argument__return-type">resource</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>A <code class="prettyprint">wasm_func_t</code> resource</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+    
+</article>
+                    <article class="phpdocumentor-element -function - ">
     <h4 class="phpdocumentor-element__name" id="function_wasm_func_call">
         wasm_func_call()
         <a href="namespaces/default.html#function_wasm_func_call" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1089</span>
+    <span class="phpdocumentor-element-found-in__line">1093</span>
 </aside>
 
     
@@ -4786,9 +4912,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_func_as_extern" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1098</span>
+    <span class="phpdocumentor-element-found-in__line">1102</span>
 </aside>
 
     
@@ -4821,9 +4947,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_global_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1112</span>
+    <span class="phpdocumentor-element-found-in__line">1115</span>
 </aside>
 
     
@@ -4874,9 +5000,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_global_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1123</span>
+    <span class="phpdocumentor-element-found-in__line">1126</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete a global.</p>
@@ -4925,9 +5051,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_global_type" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1132</span>
+    <span class="phpdocumentor-element-found-in__line">1135</span>
 </aside>
 
     
@@ -4960,9 +5086,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_global_get" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1141</span>
+    <span class="phpdocumentor-element-found-in__line">1144</span>
 </aside>
 
     
@@ -4995,9 +5121,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_global_set" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1149</span>
+    <span class="phpdocumentor-element-found-in__line">1152</span>
 </aside>
 
     
@@ -5039,9 +5165,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_global_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1158</span>
+    <span class="phpdocumentor-element-found-in__line">1161</span>
 </aside>
 
     
@@ -5074,9 +5200,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_global_same" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1166</span>
+    <span class="phpdocumentor-element-found-in__line">1169</span>
 </aside>
 
     
@@ -5118,9 +5244,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_global_as_extern" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1175</span>
+    <span class="phpdocumentor-element-found-in__line">1178</span>
 </aside>
 
     
@@ -5153,9 +5279,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_extern_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1196</span>
+    <span class="phpdocumentor-element-found-in__line">1197</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete an extern.</p>
@@ -5189,15 +5315,15 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_extern_kind" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1205</span>
+    <span class="phpdocumentor-element-found-in__line">1204</span>
 </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wasm_extern_kind</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$extern</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
+                <span class="phpdocumentor-signature__name">wasm_extern_kind</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">resource&nbsp;</span><span class="phpdocumentor-signature__argument__name">$extern</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
 
         <section class="phpdocumentor-description"></section>
 
@@ -5224,9 +5350,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_extern_type" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1214</span>
+    <span class="phpdocumentor-element-found-in__line">1213</span>
 </aside>
 
     
@@ -5259,9 +5385,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_extern_as_func" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1225</span>
+    <span class="phpdocumentor-element-found-in__line">1224</span>
 </aside>
 
     
@@ -5309,9 +5435,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_extern_as_global" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1236</span>
+    <span class="phpdocumentor-element-found-in__line">1235</span>
 </aside>
 
     
@@ -5359,9 +5485,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_extern_as_table" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1247</span>
+    <span class="phpdocumentor-element-found-in__line">1246</span>
 </aside>
 
     
@@ -5409,9 +5535,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_extern_as_memory" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1258</span>
+    <span class="phpdocumentor-element-found-in__line">1257</span>
 </aside>
 
     
@@ -5459,9 +5585,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_instance_new" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1271</span>
+    <span class="phpdocumentor-element-found-in__line">1269</span>
 </aside>
 
     
@@ -5510,9 +5636,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_instance_delete" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1282</span>
+    <span class="phpdocumentor-element-found-in__line">1280</span>
 </aside>
 
         <p class="phpdocumentor-summary">Delete an instance.</p>
@@ -5561,9 +5687,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_instance_exports" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1289</span>
+    <span class="phpdocumentor-element-found-in__line">1287</span>
 </aside>
 
     
@@ -5596,9 +5722,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasm_instance_copy" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1298</span>
+    <span class="phpdocumentor-element-found-in__line">1296</span>
 </aside>
 
     
@@ -5631,9 +5757,9 @@ wasm_memorytype_delete($memorytype);
         <a href="namespaces/default.html#function_wasmer_version" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1317</span>
+    <span class="phpdocumentor-element-found-in__line">1315</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the version of the Wasmer C API.</p>
@@ -5660,9 +5786,9 @@ $version = wasmer_version();
         <a href="namespaces/default.html#function_wasmer_version_major" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1333</span>
+    <span class="phpdocumentor-element-found-in__line">1331</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the major version of the Wasmer C API.</p>
@@ -5689,9 +5815,9 @@ $major = wasmer_version_major();
         <a href="namespaces/default.html#function_wasmer_version_minor" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1349</span>
+    <span class="phpdocumentor-element-found-in__line">1347</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the minor version of the Wasmer C API.</p>
@@ -5718,9 +5844,9 @@ $minor = wasmer_version_minor();
         <a href="namespaces/default.html#function_wasmer_version_patch" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1365</span>
+    <span class="phpdocumentor-element-found-in__line">1363</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the patch version of the Wasmer C API.</p>
@@ -5747,9 +5873,9 @@ $patch = wasmer_version_patch();
         <a href="namespaces/default.html#function_wasmer_version_pre" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1383</span>
+    <span class="phpdocumentor-element-found-in__line">1381</span>
 </aside>
 
         <p class="phpdocumentor-summary">Return the pre-release label of the Wasmer C API.</p>
@@ -5777,16 +5903,16 @@ $pre = wasmer_version_pre();
         <a href="namespaces/default.html#function_wat2wasm" class="headerlink"><i class="fas fa-link"></i></a>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/wasmer_root.stub.php"><a href="files/src-wasmer-root-stub.html"><abbr title="src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="ext/src/wasmer_root.stub.php"><a href="files/ext-src-wasmer-root-stub.html"><abbr title="ext/src/wasmer_root.stub.php">wasmer_root.stub.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1394</span>
+    <span class="phpdocumentor-element-found-in__line">1390</span>
 </aside>
 
         <p class="phpdocumentor-summary">⚠️ This is a Wasmer-specific function.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                <span class="phpdocumentor-signature__name">wat2wasm</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$wat</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">resource</span></code>
+                <span class="phpdocumentor-signature__name">wat2wasm</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$wat</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
         <section class="phpdocumentor-description"></section>
 
@@ -5836,7 +5962,7 @@ $pre = wasmer_version_pre();
 </section>
             </div>
         </div>
-        <a href="files/src-wasmer-root-stub.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+        <a href="files/ext-src-wasmer-root-stub.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
 
     </main>
 

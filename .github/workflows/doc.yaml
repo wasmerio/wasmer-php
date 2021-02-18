@@ -18,8 +18,17 @@ jobs:
           php-version: 7.4
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: 7.4-composer-${{ hashFiles('**/composer.json') }}
       - name: Configure
         run: |
+          cd ext
           phpize
           ./configure
       - name: Build
@@ -38,4 +47,4 @@ jobs:
           name: documentation
           retention-days: 3
           path: |
-            ./.phpdoc/build
+            ./target/doc

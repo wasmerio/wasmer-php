@@ -2,9 +2,14 @@
     "name": "wasm/wasm",
     "description": "A complete and mature WebAssembly runtime for PHP based on Wasmer",
     "type": "library",
+    "require": {
+        "ext-wasm": "*"
+    },
     "require-dev": {
         "phpdocumentor/phpdocumentor": "@dev",
-        "friendsofphp/php-cs-fixer": "9999999-dev"
+        "phpdocumentor/flyfinder": "@dev",
+        "friendsofphp/php-cs-fixer": "@dev",
+        "phpunit/phpunit": "@dev"
     },
     "minimum-stability": "dev",
     "license": "MIT",
@@ -16,7 +21,19 @@
     ],
     "config": {
         "platform": {
-            "php": "7.3"
+            "ext-wasm": "1.0.0-beta1"
+        },
+        "cache-dir": "target/cache/composer"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wasm\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wasm\\Tests\\": "tests/unit",
+            "Wasm\\Examples\\": "tests/examples"
         }
     }
 }

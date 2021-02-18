@@ -45,7 +45,7 @@ To install the library, follow the classical:
 
 ```bash
 git clone https://github.com/wasmerio/wasmer-php
-cd wasmer-php
+cd wasmer-php/ext
 phpize
 ./configure --enable-wasmer
 make
@@ -57,8 +57,13 @@ make install
 
 # Examples
 
+<details>
+    <summary>Procedural API</summary>
+
 ```php
-<?php declare(strict_types=1);
+<?php 
+
+declare(strict_types=1);
 
 $engine = wasm_engine_new();
 $store = wasm_store_new($engine);
@@ -93,13 +98,59 @@ $results = wasm_func_call($run, new Wasm\Vec\Val());
 wasm_store_delete($store);
 wasm_engine_delete($engine);
 ```
+</details>
+
+<details>
+    <summary>Object-oriented API</summary>
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Wasm;
+
+require_once __DIR__.'/../vendor/autoload.php';
+
+$engine = Wasm\Engine::new();
+$store = Wasm\Store::new($engine);
+
+$wasm = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'hello.wasm');
+
+$module = Wasm\Module::new($store, $wasm);
+
+function hello_callback()
+{
+    echo 'Calling back...'.PHP_EOL;
+    echo '> Hello World!'.PHP_EOL;
+
+    return null;
+}
+
+$functype = Wasm\Functype::new(new Wasm\Vec\ValType(), new Wasm\Vec\ValType());
+$func = Wasm\Module\Func::new($store, $functype, 'hello_callback');
+
+$extern = $func->asExtern();
+$externs = new Wasm\Vec\Extern([$extern->inner()]);
+$instance = Wasm\Module\Instance::new($store, $module, $externs);
+
+$exports = $instance->exports();
+$run = $exports[0]->asFunc();
+
+$args = new Wasm\Vec\Val();
+$results = $run($args);
+```
+</details>
 
 This example covers the most basic Wasm use case: we take a Wasm module (in its text representation form), create
 an instance from it, get an exported function and run it.
 
-You can go through more advanced examples in the [dedicated directory][examples].
+You can go through more advanced examples in the dedicated directories:
+* [Procedural API]
+* [Object-oriented API]
 
-[examples]: ./examples
+[Object-oriented API]: examples
+[Procedural API]: ext/examples
 
 # Supported platforms and features
 
@@ -125,9 +176,9 @@ You can go through more advanced examples in the [dedicated directory][examples]
 
 | Compiler   | Status |
 |------------|:------:|
-| Cranelift  | ❌      |
+| Cranelift  | ✅      |
 | LLVM       | ❌      |
-| Singlepass | ✅      |
+| Singlepass | ❌      |
 
 | Engine      | Status |
 |-------------|:------:|

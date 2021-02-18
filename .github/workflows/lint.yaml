@@ -1,7 +1,6 @@
 name: Lint
 
 on:
-  # TODO(jubianchi): Remove this before merge
   pull_request:
   push:
     branches:

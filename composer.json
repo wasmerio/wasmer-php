@@ -30,6 +30,9 @@
             "Wasm\\": "src"
         }
     },
+    "replace": {
+        "php-wasm/php-wasm": "*"
+    },
     "autoload-dev": {
         "psr-4": {
             "Wasm\\Tests\\": "tests/unit",

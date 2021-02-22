@@ -3,7 +3,7 @@
     "description": "A complete and mature WebAssembly runtime for PHP based on Wasmer",
     "type": "library",
     "require": {
-        "ext-wasm": "*"
+        "ext-wasm": "^1.0.0"
     },
     "require-dev": {
         "phpdocumentor/phpdocumentor": "@dev",
@@ -21,7 +21,7 @@
     ],
     "config": {
         "platform": {
-            "ext-wasm": "1.0.0-beta1"
+            "ext-wasm": "1.0.0"
         },
         "cache-dir": "target/cache/composer"
     },

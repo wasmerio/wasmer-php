@@ -10,7 +10,7 @@
         <output>target/doc</output>
         <cache>target/cache/phpdocumentor</cache>
     </paths>
-    <version number="1.0.0-beta1">
+    <version number="1.0.0">
         <api format="php">
             <source dsn=".">
                 <path>ext/src</path>

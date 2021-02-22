@@ -24,7 +24,7 @@ final class Instance extends TestCase
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
 
-        self::assertIsObject(Module\Instance::new($store, $module, new Vec\Extern()));
+        self::assertIsObject(Wasm\Instance::new($store, $module, new Vec\Extern()));
     }
 
     /**
@@ -39,17 +39,17 @@ final class Instance extends TestCase
         $module = \wasm_module_new($store, $wasm);
         $instance = \wasm_instance_new($store, $module, new Vec\Extern());
 
-        self::assertIsObject(new Module\Instance($instance));
+        self::assertIsObject(new Wasm\Instance($instance));
 
         try {
-            new Module\Instance(42);
+            new Wasm\Instance(42);
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
         }
 
         try {
-            new Module\Instance(\wasm_config_new());
+            new Wasm\Instance(\wasm_config_new());
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
@@ -66,7 +66,7 @@ final class Instance extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
 
         self::assertNull($instance->__destruct());
         self::assertNull($instance->__destruct());
@@ -84,7 +84,7 @@ final class Instance extends TestCase
         $module = \wasm_module_new($store, $wasm);
         $instance = \wasm_instance_new($store, $module, new Vec\Extern());
 
-        self::assertSame((new Module\Instance($instance))->inner(), $instance);
+        self::assertSame((new Wasm\Instance($instance))->inner(), $instance);
     }
 
     /**
@@ -97,7 +97,7 @@ final class Instance extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
 
         self::assertIsObject($instance->exports());
     }

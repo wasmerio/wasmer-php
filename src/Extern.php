@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Wasm\Module;
+namespace Wasm;
 
-use Wasm\Exception;
 use Wasm\Type\ExternType;
 
 /**

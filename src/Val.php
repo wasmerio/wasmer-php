@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wasm\Module;
-
-use Wasm\Exception;
+namespace Wasm;
 
 /**
  * @api

@@ -30,16 +30,16 @@ final class Hello extends Example
         $module = Wasm\Module::new($store, $wasm);
 
         $functype = Wasm\Type\FuncType::new(new Wasm\Vec\ValType(), new Wasm\Vec\ValType());
-        $func = Wasm\Module\Func::new($store, $functype, [self::class, 'hello_callback']);
+        $func = Wasm\Func::new($store, $functype, [self::class, 'hello_callback']);
 
         // Instantiating module...
         $extern = $func->asExtern();
         $externs = new Wasm\Vec\Extern([$extern->inner()]);
-        $instance = Wasm\Module\Instance::new($store, $module, $externs);
+        $instance = Wasm\Instance::new($store, $module, $externs);
 
         // Extracting export...
         $exports = $instance->exports();
-        $run = (new Module\Extern($exports[0]))->asFunc();
+        $run = (new Wasm\Extern($exports[0]))->asFunc();
 
         // Calling export...
         $args = new Wasm\Vec\Val();

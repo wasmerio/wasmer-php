@@ -27,17 +27,17 @@ echo 'Compiling module...'.PHP_EOL;
 $module = Wasm\Module::new($store, $wasmBytes);
 
 echo 'Instantiating module...'.PHP_EOL;
-$instance = Wasm\Module\Instance::new($store, $module);
+$instance = Wasm\Instance::new($store, $module);
 
 // Extracting export...
 $exports = $instance->exports();
-$sum = (new Wasm\Module\Extern($exports[0]))->asFunc();
+$sum = (new Wasm\Extern($exports[0]))->asFunc();
 
-$firstArg = Wasm\Module\Val::newI32(1);
-$secondArg = Wasm\Module\Val::newI32(2);
+$firstArg = Wasm\Val::newI32(1);
+$secondArg = Wasm\Val::newI32(2);
 $args = new Wasm\Vec\Val([$firstArg->inner(), $secondArg->inner()]);
 
 echo 'Calling `sum` function...'.PHP_EOL;
 $result = $sum($args);
 
-echo 'Results of `sum`: '.((new Wasm\Module\Val($result[0]))->value()).PHP_EOL;
+echo 'Results of `sum`: '.((new Wasm\Val($result[0]))->value()).PHP_EOL;

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Wasm\Examples;
 
 use Wasm;
-use Wasm\Module\Extern;
-use Wasm\Module\Val;
 use Wasm\Wat;
 
 /**
@@ -38,28 +36,28 @@ final class Callback extends Example
             new Wasm\Vec\ValType([$arg->inner()]),
             new Wasm\Vec\ValType([$result->inner()])
         );
-        $print = Wasm\Module\Func::new($store, $printType, [self::class, 'print_callback']);
+        $print = Wasm\Func::new($store, $printType, [self::class, 'print_callback']);
 
         $result = Wasm\Type\ValType::new(Wasm\Type\ValType::KIND_I32);
         $closureType = Wasm\Type\FuncType::new(
             new Wasm\Vec\ValType(),
             new Wasm\Vec\ValType([$result->inner()])
         );
-        $closure = Wasm\Module\Func::new($store, $closureType, [self::class, 'closure']);
+        $closure = Wasm\Func::new($store, $closureType, [self::class, 'closure']);
 
         // Instantiating module...
         $printExtern = $print->asExtern();
         $closureExtern = $closure->asExtern();
         $externs = new Wasm\Vec\Extern([$printExtern->inner(), $closureExtern->inner()]);
-        $instance = Wasm\Module\Instance::new($store, $module, $externs);
+        $instance = Wasm\Instance::new($store, $module, $externs);
 
         // Extracting export...
         $exports = $instance->exports();
-        $run = (new Extern($exports[0]))->asFunc();
+        $run = (new Wasm\Extern($exports[0]))->asFunc();
 
         // Calling export...
-        $first = Wasm\Module\Val::newI32(3);
-        $second = Wasm\Module\Val::newI32(4);
+        $first = Wasm\Val::newI32(3);
+        $second = Wasm\Val::newI32(4);
         $args = new Wasm\Vec\Val([
             $first->inner(),
             $second->inner(),
@@ -68,7 +66,7 @@ final class Callback extends Example
         $results = $run($args);
 
         // Printing result...
-        $result = new Val($results[0]);
+        $result = new Wasm\Val($results[0]);
 
         self::assertEquals(49, $result->value());
     }

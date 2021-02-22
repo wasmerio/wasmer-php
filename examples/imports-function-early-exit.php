@@ -44,19 +44,19 @@ $module = Wasm\Module::new($store, $wasmBytes);
 
 // Create an import object with the expected function.
 $funcType = Wasm\Type\FuncType::new(new Wasm\Vec\ValType(), new Wasm\Vec\ValType());
-$func = Wasm\Module\Func::new($store, $funcType, 'earlyExit');
+$func = Wasm\Func::new($store, $funcType, 'earlyExit');
 $extern = $func->asExtern();
 $externs = new Wasm\Vec\Extern([$extern->inner()]);
 
 echo 'Instantiating module...'.PHP_EOL;
-$instance = Wasm\Module\Instance::new($store, $module, $externs);
+$instance = Wasm\Instance::new($store, $module, $externs);
 
 // Extracting export...
 $exports = $instance->exports();
-$run = (new Wasm\Module\Extern($exports[0]))->asFunc();
+$run = (new Wasm\Extern($exports[0]))->asFunc();
 
-$firstArg = Wasm\Module\Val::newI32(1);
-$secondArg = Wasm\Module\Val::newI32(7);
+$firstArg = Wasm\Val::newI32(1);
+$secondArg = Wasm\Val::newI32(7);
 $args = new Wasm\Vec\Val([$firstArg->inner(), $secondArg->inner()]);
 
 echo 'Calling `run` function...'.PHP_EOL;

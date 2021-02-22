@@ -30,11 +30,11 @@ echo 'Compiling module...'.PHP_EOL;
 $module = Wasm\Module::new($store, $wasmBytes);
 
 echo 'Instantiating module...'.PHP_EOL;
-$instance = Wasm\Module\Instance::new($store, $module);
+$instance = Wasm\Instance::new($store, $module);
 
 // Extracting export...
 $exports = $instance->exports();
-$divByZero = (new Wasm\Module\Extern($exports[0]))->asFunc();
+$divByZero = (new Wasm\Extern($exports[0]))->asFunc();
 
 echo 'Calling `div_by_zero` function...'.PHP_EOL;
 

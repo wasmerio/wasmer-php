@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Wasm\Examples;
 
 use Wasm;
-use Wasm\Module;
 use Wasm\Type;
 
 /**
@@ -37,14 +36,14 @@ final class Globl extends Example
         $var_f32_type = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_F32), Type\GlobalType::MUTABILITY_VAR);
         $var_i64_type = Type\GlobalType::new(Type\ValType::new(Type\ValType::KIND_I64), Type\GlobalType::MUTABILITY_VAR);
 
-        $val_f32_1 = Module\Val::newF32((float) 1);
-        $const_f32_import = Module\Globl::new($store, $const_f32_type, $val_f32_1);
-        $val_i64_2 = Module\Val::newI64(2);
-        $const_i64_import = Module\Globl::new($store, $const_i64_type, $val_i64_2);
-        $val_f32_3 = Module\Val::newF32((float) 3);
-        $var_f32_import = Module\Globl::new($store, $var_f32_type, $val_f32_3);
-        $val_i64_4 = Module\Val::newI64(4);
-        $var_i64_import = Module\Globl::new($store, $var_i64_type, $val_i64_4);
+        $val_f32_1 = Wasm\Val::newF32((float) 1);
+        $const_f32_import = Wasm\Globl::new($store, $const_f32_type, $val_f32_1);
+        $val_i64_2 = Wasm\Val::newI64(2);
+        $const_i64_import = Wasm\Globl::new($store, $const_i64_type, $val_i64_2);
+        $val_f32_3 = Wasm\Val::newF32((float) 3);
+        $var_f32_import = Wasm\Globl::new($store, $var_f32_type, $val_f32_3);
+        $val_i64_4 = Wasm\Val::newI64(4);
+        $var_i64_import = Wasm\Globl::new($store, $var_i64_type, $val_i64_4);
 
         // Instantiating module...
         $const_f32_extern = $const_f32_import->asExtern();
@@ -58,7 +57,7 @@ final class Globl extends Example
             $var_f32_extern->inner(),
             $var_i64_extern->inner(),
         ]);
-        $instance = Module\Instance::new($store, $module, $externs);
+        $instance = Wasm\Instance::new($store, $module, $externs);
 
         // Extracting export...
         $exports = $instance->exports();
@@ -140,37 +139,37 @@ final class Globl extends Example
         self::check_call($get_var_i64_export, 78);
     }
 
-    public static function check(Module\Val $val, int | float $expected): void
+    public static function check(Wasm\Val $val, int | float $expected): void
     {
         $actual = $val->value();
 
         self::assertTrue($actual === $expected, sprintf('%s !== %s', var_export($actual, true), var_export($expected, true)));
     }
 
-    public static function check_global(Module\Globl $global, int | float $expected): void
+    public static function check_global(Wasm\Globl $global, int | float $expected): void
     {
         self::check($global->get(), $expected);
     }
 
-    public static function check_call(Module\Func $func, $expected): void
+    public static function check_call(Wasm\Func $func, $expected): void
     {
         $args = new Wasm\Vec\Val();
         $results = $func($args);
 
-        self::check(Module\Val::new($results[0]), $expected);
+        self::check(Wasm\Val::new($results[0]), $expected);
     }
 
-    public static function get_export_global(Wasm\Vec\Extern $externs, int $i): Module\Globl
+    public static function get_export_global(Wasm\Vec\Extern $externs, int $i): Wasm\Globl
     {
         self::assertTrue(count($externs) > $i);
 
-        return (new Module\Extern($externs[$i]))->asGlobal();
+        return (new Wasm\Extern($externs[$i]))->asGlobal();
     }
 
-    public static function get_export_func(Wasm\Vec\Extern $externs, int $i): Module\Func
+    public static function get_export_func(Wasm\Vec\Extern $externs, int $i): Wasm\Func
     {
         self::assertTrue(count($externs) > $i);
 
-        return (new Module\Extern($externs[$i]))->asFunc();
+        return (new Wasm\Extern($externs[$i]))->asFunc();
     }
 }

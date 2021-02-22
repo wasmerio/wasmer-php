@@ -27,20 +27,20 @@ final class Extern extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
         $exports = $instance->exports();
 
-        self::assertIsObject(new Module\Extern($exports[0]));
+        self::assertIsObject(new Wasm\Extern($exports[0]));
 
         try {
-            new Module\Extern(42);
+            new Wasm\Extern(42);
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
         }
 
         try {
-            new Module\Extern(\wasm_config_new());
+            new Wasm\Extern(\wasm_config_new());
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
@@ -57,9 +57,9 @@ final class Extern extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
         $exports = $instance->exports();
-        $extern = new Module\Extern($exports[0]);
+        $extern = new Wasm\Extern($exports[0]);
 
         self::assertNull($extern->__destruct());
         self::assertNull($extern->__destruct());
@@ -75,10 +75,10 @@ final class Extern extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
         $exports = $instance->exports();
         $export = $exports[0];
-        $extern = new Module\Extern($export);
+        $extern = new Wasm\Extern($export);
 
         self::assertSame($extern->inner(), $export);
     }
@@ -93,9 +93,9 @@ final class Extern extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
         $exports = $instance->exports();
-        $extern = new Module\Extern($exports[0]);
+        $extern = new Wasm\Extern($exports[0]);
 
         self::assertIsObject($extern->asFunc());
     }
@@ -110,9 +110,9 @@ final class Extern extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
         $exports = $instance->exports();
-        $extern = new Module\Extern($exports[0]);
+        $extern = new Wasm\Extern($exports[0]);
 
         self::assertIsObject($extern->asGlobal());
     }
@@ -127,9 +127,9 @@ final class Extern extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
         $exports = $instance->exports();
-        $extern = new Module\Extern($exports[0]);
+        $extern = new Wasm\Extern($exports[0]);
 
         self::assertEquals(Type\ExternType::KIND_FUNC, $extern->kind());
     }
@@ -144,9 +144,9 @@ final class Extern extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
         $exports = $instance->exports();
-        $extern = new Module\Extern($exports[0]);
+        $extern = new Wasm\Extern($exports[0]);
 
         self::assertIsObject($extern->type());
     }

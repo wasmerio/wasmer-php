@@ -39,7 +39,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./.phpdoc/build
+          publish_dir: ./target/doc
       - name: Archive
         if: github.ref != 'refs/heads/master'
         uses: actions/upload-artifact@v2

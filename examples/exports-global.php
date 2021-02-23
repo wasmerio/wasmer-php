@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Wasm\Module\Val;
 use Wasm\Type\GlobalType;
 
 require_once __DIR__.'/../vendor/autoload.php';
@@ -31,12 +30,12 @@ echo 'Compiling module...'.PHP_EOL;
 $module = Wasm\Module::new($store, $wasmBytes);
 
 echo 'Instantiating module...'.PHP_EOL;
-$instance = Wasm\Module\Instance::new($store, $module);
+$instance = Wasm\Instance::new($store, $module);
 
 // Extracting export...
 $exports = $instance->exports();
-$one = (new Wasm\Module\Extern($exports[0]))->asGlobal();
-$some = (new Wasm\Module\Extern($exports[1]))->asGlobal();
+$one = (new Wasm\Extern($exports[0]))->asGlobal();
+$some = (new Wasm\Extern($exports[1]))->asGlobal();
 
 echo 'Getting globals types information...'.PHP_EOL;
 $oneType = $one->type();
@@ -46,10 +45,10 @@ echo '`one` type: '.(GlobalType::MUTABILITY_CONST === $oneType->mutability() ? '
 echo '`some` type: '.(GlobalType::MUTABILITY_CONST === $someType->mutability() ? 'CONST' : 'VAR').' '.$someType->content()->kind().PHP_EOL;
 
 echo 'Getting global values...'.PHP_EOL;
-$getOne = (new Wasm\Module\Extern($exports[2]))->asFunc();
+$getOne = (new Wasm\Extern($exports[2]))->asFunc();
 
 $results = $getOne();
-$oneValue = (new Val($results[0]))->value();
+$oneValue = (new Wasm\Val($results[0]))->value();
 
 $someValue = $some->get()->value();
 
@@ -69,13 +68,13 @@ try {
 }
 
 $results = $getOne();
-$oneValue = (new Val($results[0]))->value();
+$oneValue = (new Wasm\Val($results[0]))->value();
 
 echo '`one` value: '.$oneValue.PHP_EOL;
 
-$setSome = (new Wasm\Module\Extern($exports[4]))->asFunc();
+$setSome = (new Wasm\Extern($exports[4]))->asFunc();
 
-$arg = Wasm\Module\Val::newF32(21.0);
+$arg = Wasm\Val::newF32(21.0);
 $args = new Wasm\Vec\Val([$arg->inner()]);
 $setSome($args);
 

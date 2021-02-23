@@ -27,16 +27,16 @@ echo 'Compiling module...'.PHP_EOL;
 $module = Wasm\Module::new($store, $wasmBytes);
 
 echo 'Instantiating module...'.PHP_EOL;
-$instance = Wasm\Module\Instance::new($store, $module);
+$instance = Wasm\Instance::new($store, $module);
 
 // Extracting export...
 $exports = $instance->exports();
-$addOne = (new Wasm\Module\Extern($exports[0]))->asFunc();
+$addOne = (new Wasm\Extern($exports[0]))->asFunc();
 
-$arg = Wasm\Module\Val::newI32(1);
+$arg = Wasm\Val::newI32(1);
 $args = new Wasm\Vec\Val([$arg->inner()]);
 
 echo 'Calling `add_one` function...'.PHP_EOL;
 $result = $addOne($args);
 
-echo 'Results of `add_one`: '.((new Wasm\Module\Val($result[0]))->value()).PHP_EOL;
+echo 'Results of `add_one`: '.((new Wasm\Val($result[0]))->value()).PHP_EOL;

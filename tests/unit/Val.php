@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Wasm\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Wasm;
 use Wasm\Exception;
-use Wasm\Module;
 use Wasm\Type;
 
 /**
@@ -19,53 +19,53 @@ final class Val extends TestCase
      */
     public function new(): void
     {
-        $value = Module\Val::new(\wasm_val_i32(42));
+        $value = Wasm\Val::new(\wasm_val_i32(42));
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I32, $value->kind());
         self::assertEquals(42, $value->value());
 
-        $value = Module\Val::new(42);
+        $value = Wasm\Val::new(42);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I32, $value->kind());
         self::assertEquals(42, $value->value());
 
-        $value = Module\Val::new(PHP_INT_MAX);
+        $value = Wasm\Val::new(PHP_INT_MAX);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I64, $value->kind());
         self::assertEquals(PHP_INT_MAX, $value->value());
 
-        $value = Module\Val::new(-42);
+        $value = Wasm\Val::new(-42);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I32, $value->kind());
         self::assertEquals(-42, $value->value());
 
-        $value = Module\Val::new(PHP_INT_MIN);
+        $value = Wasm\Val::new(PHP_INT_MIN);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I64, $value->kind());
         self::assertEquals(PHP_INT_MIN, $value->value());
 
-        $value = Module\Val::new((float) 1);
+        $value = Wasm\Val::new((float) 1);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_F32, $value->kind());
         self::assertEquals((float) 1, $value->value());
 
-        $value = Module\Val::new(3.41e+38);
+        $value = Wasm\Val::new(3.41e+38);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_F64, $value->kind());
         self::assertEquals(3.41e+38, $value->value());
 
-        $value = Module\Val::new((float) -1);
+        $value = Wasm\Val::new((float) -1);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_F32, $value->kind());
         self::assertEquals((float) -1, $value->value());
 
-        $value = Module\Val::new(-3.41e+38);
+        $value = Wasm\Val::new(-3.41e+38);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_F64, $value->kind());
         self::assertEquals(-3.41e+38, $value->value());
 
         try {
-            self::assertIsObject(Module\Val::new('foo'));
+            self::assertIsObject(Wasm\Val::new('foo'));
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
@@ -77,18 +77,18 @@ final class Val extends TestCase
      */
     public function newI32(): void
     {
-        $value = Module\Val::newI32(42);
+        $value = Wasm\Val::newI32(42);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I32, $value->kind());
         self::assertEquals(42, $value->value());
 
-        $value = Module\Val::newI32(-42);
+        $value = Wasm\Val::newI32(-42);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I32, $value->kind());
         self::assertEquals(-42, $value->value());
 
         try {
-            self::assertIsObject(Module\Val::newI32(PHP_INT_MAX));
+            self::assertIsObject(Wasm\Val::newI32(PHP_INT_MAX));
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
@@ -100,12 +100,12 @@ final class Val extends TestCase
      */
     public function newI64(): void
     {
-        $value = Module\Val::newI64(PHP_INT_MAX);
+        $value = Wasm\Val::newI64(PHP_INT_MAX);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I64, $value->kind());
         self::assertEquals(PHP_INT_MAX, $value->value());
 
-        $value = Module\Val::newI64(PHP_INT_MIN);
+        $value = Wasm\Val::newI64(PHP_INT_MIN);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_I64, $value->kind());
         self::assertEquals(PHP_INT_MIN, $value->value());
@@ -116,18 +116,18 @@ final class Val extends TestCase
      */
     public function newF32(): void
     {
-        $value = Module\Val::newF32((float) 42);
+        $value = Wasm\Val::newF32((float) 42);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_F32, $value->kind());
         self::assertEquals((float) 42, $value->value());
 
-        $value = Module\Val::newF32((float) -42);
+        $value = Wasm\Val::newF32((float) -42);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_F32, $value->kind());
         self::assertEquals((float) -42, $value->value());
 
         try {
-            self::assertIsObject(Module\Val::newF32(3.41e+38));
+            self::assertIsObject(Wasm\Val::newF32(3.41e+38));
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
@@ -139,12 +139,12 @@ final class Val extends TestCase
      */
     public function newF64(): void
     {
-        $value = Module\Val::newF64(3.41e+38);
+        $value = Wasm\Val::newF64(3.41e+38);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_F64, $value->kind());
         self::assertEquals(3.41e+38, $value->value());
 
-        $value = Module\Val::newF64(-3.41e+38);
+        $value = Wasm\Val::newF64(-3.41e+38);
         self::assertIsObject($value);
         self::assertEquals(Type\ValType::KIND_F64, $value->kind());
         self::assertEquals(-3.41e+38, $value->value());
@@ -157,17 +157,17 @@ final class Val extends TestCase
     {
         $value = \wasm_val_i32(42);
 
-        self::assertIsObject(new Module\Val($value));
+        self::assertIsObject(new Wasm\Val($value));
 
         try {
-            new Module\Val(42);
+            new Wasm\Val(42);
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
         }
 
         try {
-            new Module\Val(\wasm_config_new());
+            new Wasm\Val(\wasm_config_new());
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
@@ -179,7 +179,7 @@ final class Val extends TestCase
      */
     public function destruct(): void
     {
-        $value = Module\Val::new(42);
+        $value = Wasm\Val::new(42);
 
         self::assertNull($value->__destruct());
         self::assertNull($value->__destruct());
@@ -192,6 +192,6 @@ final class Val extends TestCase
     {
         $value = \wasm_val_i32(42);
 
-        self::assertSame((new Module\Val($value))->inner(), $value);
+        self::assertSame((new Wasm\Val($value))->inner(), $value);
     }
 }

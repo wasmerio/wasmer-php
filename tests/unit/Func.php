@@ -26,7 +26,7 @@ final class Func extends TestCase
         $store = Wasm\Store::new($engine);
         $functype = Type\FuncType::new(new Vec\ValType(), new Vec\ValType());
 
-        self::assertIsObject(Module\Func::new($store, $functype, fn () => null));
+        self::assertIsObject(Wasm\Func::new($store, $functype, fn () => null));
     }
 
     /**
@@ -39,17 +39,17 @@ final class Func extends TestCase
         $functype = \wasm_functype_new(new Vec\ValType(), new Vec\ValType());
         $func = \wasm_func_new($store, $functype, fn () => null);
 
-        self::assertIsObject(new Module\Func($func));
+        self::assertIsObject(new Wasm\Func($func));
 
         try {
-            new Module\Func(42);
+            new Wasm\Func(42);
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
         }
 
         try {
-            new Module\Func(\wasm_config_new());
+            new Wasm\Func(\wasm_config_new());
 
             self::fail();
         } catch (Exception\InvalidArgumentException) {
@@ -64,7 +64,7 @@ final class Func extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $functype = Type\FuncType::new(new Vec\ValType(), new Vec\ValType());
-        $func = Module\Func::new($store, $functype, fn () => null);
+        $func = Wasm\Func::new($store, $functype, fn () => null);
 
         self::assertNull($func->__destruct());
         self::assertNull($func->__destruct());
@@ -80,7 +80,7 @@ final class Func extends TestCase
         $functype = \wasm_functype_new(new Vec\ValType(), new Vec\ValType());
         $func = \wasm_func_new($store, $functype, fn () => null);
 
-        self::assertSame((new Module\Func($func))->inner(), $func);
+        self::assertSame((new Wasm\Func($func))->inner(), $func);
     }
 
     /**
@@ -91,7 +91,7 @@ final class Func extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $functype = Type\FuncType::new(new Vec\ValType(), new Vec\ValType());
-        $func = Module\Func::new($store, $functype, fn () => null);
+        $func = Wasm\Func::new($store, $functype, fn () => null);
 
         self::assertEquals(0, $func->paramArity());
 
@@ -100,7 +100,7 @@ final class Func extends TestCase
         $params = new Vec\ValType([$inner]);
         $results = new Vec\ValType();
         $functype = Type\FuncType::new($params, $results);
-        $func = Module\Func::new($store, $functype, fn () => null);
+        $func = Wasm\Func::new($store, $functype, fn () => null);
 
         self::assertEquals(1, $func->paramArity());
     }
@@ -113,7 +113,7 @@ final class Func extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $functype = Type\FuncType::new(new Vec\ValType(), new Vec\ValType());
-        $func = Module\Func::new($store, $functype, fn () => null);
+        $func = Wasm\Func::new($store, $functype, fn () => null);
 
         self::assertEquals(0, $func->resultArity());
 
@@ -122,7 +122,7 @@ final class Func extends TestCase
         $params = new Vec\ValType();
         $results = new Vec\ValType([$inner]);
         $functype = Type\FuncType::new($params, $results);
-        $func = Module\Func::new($store, $functype, fn () => null);
+        $func = Wasm\Func::new($store, $functype, fn () => null);
 
         self::assertEquals(1, $func->resultArity());
     }
@@ -135,7 +135,7 @@ final class Func extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $functype = Type\FuncType::new(new Vec\ValType(), new Vec\ValType());
-        $func = Module\Func::new($store, $functype, fn () => null);
+        $func = Wasm\Func::new($store, $functype, fn () => null);
 
         self::assertIsObject($func->type());
     }
@@ -148,7 +148,7 @@ final class Func extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $functype = Type\FuncType::new(new Vec\ValType(), new Vec\ValType());
-        $func = Module\Func::new($store, $functype, fn () => null);
+        $func = Wasm\Func::new($store, $functype, fn () => null);
 
         self::assertIsObject($func->asExtern());
     }
@@ -163,9 +163,9 @@ final class Func extends TestCase
         $engine = Wasm\Engine::new();
         $store = Wasm\Store::new($engine);
         $module = Module::new($store, $wasm);
-        $instance = Module\Instance::new($store, $module, new Vec\Extern());
+        $instance = Wasm\Instance::new($store, $module, new Vec\Extern());
         $exports = $instance->exports();
-        $func = (new Module\Extern($exports[0]))->asFunc();
+        $func = (new Wasm\Extern($exports[0]))->asFunc();
 
         self::assertIsObject($func());
     }

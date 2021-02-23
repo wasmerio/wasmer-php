@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Wasm\Module;
+namespace Wasm;
 
-use Wasm\Exception;
-use Wasm\Store;
 use Wasm\Type\GlobalType;
 use Wasm\Type\ValType;
 

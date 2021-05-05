@@ -30,7 +30,7 @@ examples: all
 	fi;
 
 all: ## Build PHP module
-all: src/wasmer_root_arginfo.h src/wasmer_vec_arginfo.h  src/wasmer_exception_arginfo.h
+all: src/wasmer_root_arginfo.h src/wasmer_vec_arginfo.h src/wasmer_exception_arginfo.h src/wasmer_class_arginfo.h
 
 test: ## Run PHP module tests
 

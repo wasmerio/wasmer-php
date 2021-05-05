@@ -151,6 +151,13 @@ endif
 
 ext/configure: ext/Makefile
 
+.PHONY: ext/examples
 ext/test: export NO_INTERACTION = 1
 ext/all ext/examples ext/test: ext/configure
 	@cd ext; make $(subst ext/,,$@)
+
+ext/clean: ext/Makefile
+	mv ext/lib/libwasmer.so ext/lib/libwasmer.so.keep
+	@cd ext; make clean distclean
+	rm -rf ext/autom4te.cache ext/build ext/modules ext/config.h ext/config.h.in ext/config.nice ext/configure ext/configure.ac ext/run-tests.php
+	mv ext/lib/libwasmer.so.keep ext/lib/libwasmer.so

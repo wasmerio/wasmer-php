@@ -219,7 +219,7 @@ You can go through more advanced examples in the dedicated directories:
 | func     | ✅      |
 | global   | ✅      |
 | table    | 🧑‍💻      |
-| memory   | 🧑‍💻      |
+| memory   | ✅      |
 | extern   | ✅      |
 | instance | ✅      |
 

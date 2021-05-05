@@ -4,6 +4,12 @@
 
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 
+## **[Unreleased]**
+
+### Added
+
+* Introduce the `MemoryView` class to work with memory contents
+* Implement the memory API as a 1:1 binding on the C API
 
 ## **[1.0.0] - 2021-02-22**
 
@@ -83,5 +89,6 @@ wasm_func_call($run, new Wasm\Vec\Val());
 * Implement the `trap` API
 
 
+[Unreleased]: https://github.com/wasmerio/wasmer-php/tree/master/README.md
 [1.0.0]: https://github.com/wasmerio/wasmer-php/tree/1.0.0/README.md
 [1.0.0-beta1]: https://github.com/wasmerio/wasmer-php/tree/1.0.0-beta1/README.md

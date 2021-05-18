@@ -6,6 +6,9 @@
 
 ## **[Unreleased]**
 
+
+## **[1.1.0] - 2021-05-18**
+
 ### Added
 
 * Introduce the `MemoryView` class to work with memory contents
@@ -90,5 +93,6 @@ wasm_func_call($run, new Wasm\Vec\Val());
 
 
 [Unreleased]: https://github.com/wasmerio/wasmer-php/tree/master/README.md
+[1.1.0]: https://github.com/wasmerio/wasmer-php/tree/1.1.0/README.md
 [1.0.0]: https://github.com/wasmerio/wasmer-php/tree/1.0.0/README.md
 [1.0.0-beta1]: https://github.com/wasmerio/wasmer-php/tree/1.0.0-beta1/README.md

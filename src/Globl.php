@@ -104,7 +104,8 @@ final class Globl
                 ValType::KIND_I64 => Val::newI64($value),
                 ValType::KIND_F32 => Val::newF32((float) $value),
                 ValType::KIND_F64 => Val::newF64((float) $value),
-                default => throw new Exception\InvalidArgumentException(), };
+                default => throw new Exception\InvalidArgumentException(),
+            };
         }
 
         \wasm_global_set($this->inner, $value->inner());
@@ -135,7 +136,8 @@ final class Globl
             ValType::KIND_I64 => Val::newI64($val),
             ValType::KIND_F32 => Val::newF32((float) $val),
             ValType::KIND_F64 => Val::newF64((float) $val),
-            default => throw new Exception\InvalidArgumentException(), };
+            default => throw new Exception\InvalidArgumentException(),
+        };
 
         return new self(\wasm_global_new($store->inner(), $globaltype->inner(), $value->inner()));
     }

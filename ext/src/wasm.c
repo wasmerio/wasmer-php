@@ -14,6 +14,7 @@
 #include "wasmer_exception_arginfo.h"
 #include "wasmer_root_arginfo.h"
 #include "wasmer_vec_arginfo.h"
+#include "wasmer_class_arginfo.h"
 #include "macros.h"
 #include "wasm.h"
 
@@ -44,7 +45,9 @@ WASMER_RESOURCE_DECLARE(importtype)
 WASMER_VEC_CLASS_DECLARE(importtype)
 WASMER_RESOURCE_DECLARE_WITHOUT_DTOR(limits)
 static ZEND_RSRC_DTOR_FUNC(wasm_limits_dtor) {
-    efree(res->ptr);
+    if (res->ptr != NULL) {
+        efree(res->ptr);
+    }
 }
 WASMER_RESOURCE_DECLARE(memorytype)
 WASMER_VEC_CLASS_DECLARE(memorytype)
@@ -94,6 +97,22 @@ static ZEND_RSRC_DTOR_FUNC(wasm_val_dtor) {
     }
 }
 WASMER_VEC_CLASS_DECLARE(val)
+
+zend_class_entry *wasm_memory_view_ce;
+static zend_object_handlers wasm_memory_view_object_handlers;
+
+zend_object *wasm_memory_view_create(zend_class_entry *ce) {
+    wasm_memory_view_c *wasm_memory_view = zend_object_alloc(sizeof(wasm_memory_view_c), ce);
+
+    zend_object_std_init(&wasm_memory_view->std, ce);
+    wasm_memory_view->std.handlers = &wasm_memory_view_object_handlers;
+
+    return &wasm_memory_view->std;
+}
+
+void wasm_memory_view_free(zend_object *object) {
+    zend_object_std_dtor(object);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -146,6 +165,16 @@ PHP_MINIT_FUNCTION(wasm) {
     WASMER_RESOURCE_REGISTER(trap)
     WASMER_RESOURCE_REGISTER(val)
     WASMER_VEC_CLASS_REGISTER(Val, val)
+
+    INIT_NS_CLASS_ENTRY(ce, "Wasm", "MemoryView", class_Wasm_MemoryView_methods)
+    wasm_memory_view_ce = zend_register_internal_class(&ce);
+    wasm_memory_view_ce->ce_flags |= ZEND_ACC_FINAL;
+    wasm_memory_view_ce->create_object = wasm_memory_view_create;
+
+    memcpy(&wasm_memory_view_object_handlers, &std_object_handlers, sizeof(zend_object_handlers));
+    wasm_memory_view_object_handlers.offset = XtOffsetOf(struct wasm_memory_view_c, std);
+    wasm_memory_view_object_handlers.free_obj = wasm_memory_view_free;
+    wasm_memory_view_object_handlers.clone_obj = NULL;
 
     ///////////////////////////////////////////////////////////////////////////////
     // Type Representations

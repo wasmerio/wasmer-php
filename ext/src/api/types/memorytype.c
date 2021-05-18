@@ -21,8 +21,11 @@ PHP_FUNCTION (wasm_memorytype_new) {
 
     WASMER_FETCH_RESOURCE(limits)
 
+    wasmer_res *limits_res = WASMER_RES_P(limits_val);
+    limits_res->owned = false;
+
     wasmer_res *memorytype = emalloc(sizeof(wasmer_res));
-    memorytype->inner.memorytype = wasm_memorytype_new(Z_RES_P(limits_val)->ptr);
+    memorytype->inner.memorytype = wasm_memorytype_new(&WASMER_RES_INNER(limits_res, limits));
     memorytype->owned = true;
 
     zend_resource *memorytype_res = zend_register_resource(memorytype, le_wasm_memorytype);
@@ -39,8 +42,11 @@ PHP_FUNCTION (wasm_memorytype_limits) {
 
     WASMER_FETCH_RESOURCE(memorytype)
 
-    wasmer_res *wasm_limits = emalloc(sizeof(wasmer_res));
-    wasm_limits->inner.limits = *wasm_memorytype_limits(WASMER_RES_P_INNER(memorytype_val, memorytype));
+    wasm_limits_t *limits = wasm_memorytype_limits(WASMER_RES_P_INNER(memorytype_val, memorytype));
+
+    wasmer_res *wasm_limits = ecalloc(1, sizeof(wasmer_res));
+    wasm_limits->inner.limits = (wasm_limits_t) {.min = limits->min, .max = limits->max};
+    wasm_limits->owned = false;
 
     zend_resource *limits_res = zend_register_resource(wasm_limits, le_wasm_limits);
 

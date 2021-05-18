@@ -12,13 +12,14 @@ PHP_FUNCTION (wasm_limits_new) {
     zval *max_val;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 2, 2)
-            Z_PARAM_NUMBER(min_val)
-            Z_PARAM_NUMBER(max_val)
+            Z_PARAM_LONG(min_val)
+            Z_PARAM_LONG(max_val)
     ZEND_PARSE_PARAMETERS_END();
 
-    wasm_limits_t limits = {.min = zval_get_long(min_val), .max = zval_get_long(max_val)};
+    wasm_limits_t limits = {.min = min_val, .max = max_val};
     wasmer_res *wasm_limits = emalloc(sizeof(wasmer_res));
     wasm_limits->inner.limits = limits;
+    wasm_limits->owned = false;
 
     zend_resource *limits_res = zend_register_resource(wasm_limits, le_wasm_limits);
 

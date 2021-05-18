@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 7f167fdc4253fe8ac4a53d5e15d34c8d2421a2e6 */
+ * Stub hash: 765ae6775c3c8826c236ae1e44558f2eb9c10bbf */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_config_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -370,6 +370,40 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_wasm_global_as_extern arginfo_wasm_global_type
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_memory_new, 0, 0, 2)
+	ZEND_ARG_INFO(0, store)
+	ZEND_ARG_INFO(0, memorytype)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_memory_delete, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_INFO(0, memory)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_wasm_memory_type, 0, 0, 1)
+	ZEND_ARG_INFO(0, memory)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_memory_data_size, 0, 1, IS_LONG, 0)
+	ZEND_ARG_INFO(0, memory)
+ZEND_END_ARG_INFO()
+
+#define arginfo_wasm_memory_size arginfo_wasm_memory_data_size
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_memory_grow, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_INFO(0, memory)
+	ZEND_ARG_TYPE_INFO(0, delta, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO_EX(arginfo_wasm_memory_data, 0, 1, Wasm\\MemoryView, 0)
+	ZEND_ARG_INFO(0, memory)
+ZEND_END_ARG_INFO()
+
+#define arginfo_wasm_memory_copy arginfo_wasm_memory_type
+
+#define arginfo_wasm_memory_same arginfo_wasm_global_same
+
+#define arginfo_wasm_memory_as_extern arginfo_wasm_memory_type
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_wasm_extern_delete, 0, 1, _IS_BOOL, 0)
 	ZEND_ARG_INFO(0, extern)
 ZEND_END_ARG_INFO()
@@ -529,6 +563,16 @@ ZEND_FUNCTION(wasm_global_set);
 ZEND_FUNCTION(wasm_global_copy);
 ZEND_FUNCTION(wasm_global_same);
 ZEND_FUNCTION(wasm_global_as_extern);
+ZEND_FUNCTION(wasm_memory_new);
+ZEND_FUNCTION(wasm_memory_delete);
+ZEND_FUNCTION(wasm_memory_type);
+ZEND_FUNCTION(wasm_memory_data_size);
+ZEND_FUNCTION(wasm_memory_size);
+ZEND_FUNCTION(wasm_memory_grow);
+ZEND_FUNCTION(wasm_memory_data);
+ZEND_FUNCTION(wasm_memory_copy);
+ZEND_FUNCTION(wasm_memory_same);
+ZEND_FUNCTION(wasm_memory_as_extern);
 ZEND_FUNCTION(wasm_extern_delete);
 ZEND_FUNCTION(wasm_extern_kind);
 ZEND_FUNCTION(wasm_extern_type);
@@ -653,6 +697,16 @@ static const zend_function_entry ext_functions[] = {
 	ZEND_FE(wasm_global_copy, arginfo_wasm_global_copy)
 	ZEND_FE(wasm_global_same, arginfo_wasm_global_same)
 	ZEND_FE(wasm_global_as_extern, arginfo_wasm_global_as_extern)
+	ZEND_FE(wasm_memory_new, arginfo_wasm_memory_new)
+	ZEND_FE(wasm_memory_delete, arginfo_wasm_memory_delete)
+	ZEND_FE(wasm_memory_type, arginfo_wasm_memory_type)
+	ZEND_FE(wasm_memory_data_size, arginfo_wasm_memory_data_size)
+	ZEND_FE(wasm_memory_size, arginfo_wasm_memory_size)
+	ZEND_FE(wasm_memory_grow, arginfo_wasm_memory_grow)
+	ZEND_FE(wasm_memory_data, arginfo_wasm_memory_data)
+	ZEND_FE(wasm_memory_copy, arginfo_wasm_memory_copy)
+	ZEND_FE(wasm_memory_same, arginfo_wasm_memory_same)
+	ZEND_FE(wasm_memory_as_extern, arginfo_wasm_memory_as_extern)
 	ZEND_FE(wasm_extern_delete, arginfo_wasm_extern_delete)
 	ZEND_FE(wasm_extern_kind, arginfo_wasm_extern_kind)
 	ZEND_FE(wasm_extern_type, arginfo_wasm_extern_type)

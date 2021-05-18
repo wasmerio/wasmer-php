@@ -139,3 +139,13 @@ WASMER_CE_STRUCT_DECLARE(val)
  * Convert a zval* into a wasm_val_vec_c*
  */
 #define WASMER_VAL_VEC_P(zv) WASMER_DECLARE_CE_P(val, zv)
+
+typedef struct wasm_memory_view_c {
+    byte_t *data;
+    zend_object std;
+} wasm_memory_view_c;
+
+/**
+ * Convert a zval* into a wasm_memory_view_c*
+ */
+#define WASMER_MEMORY_VIEW_P(zv) (wasm_memory_view_c*)((char*)(Z_OBJ_P(zv)) - Z_OBJ_P(zv)->handlers->offset)

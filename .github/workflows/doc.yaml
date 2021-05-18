@@ -2,10 +2,13 @@ name: Documentation
 
 on:
   pull_request:
+    branches-ignore:
+      - '**'
   push:
-    branches:
-      - 'master'
-    tags:
+    branches-ignore:
+      - '**'
+    tags-ignore:
+      - '**'
 
 jobs:
   test:
@@ -15,7 +18,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.0
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Get Composer Cache Directory

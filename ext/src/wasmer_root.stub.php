@@ -25,7 +25,7 @@
  *
  * @throw Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_config_t` resource
+ * @return resource
  */
 function wasm_config_new()
 {
@@ -112,7 +112,7 @@ function wasm_config_set_engine($config, int $engine): bool
 /**
  * Create a new JIT engine with the default compiler.
  *
- * @return resource A `wasm_engine_t` resource
+ * @return resource
  *
  * @see wasm_engine_delete()
  */
@@ -125,7 +125,7 @@ function wasm_engine_new()
  *
  * @param resource $config A `wasm_config_t` resource
  *
- * @return resource A `wasm_engine_t` resource
+ * @return resource
  *
  * @see wasm_config_new()
  */
@@ -173,7 +173,7 @@ function wasm_engine_delete($engine): bool
  *
  * @param resource $engine A `wasm_engine_t` resource
  *
- * @return resource A `wasm_store_t` resource
+ * @return resource
  */
 function wasm_store_new($engine)
 {
@@ -211,7 +211,7 @@ function wasm_store_delete($store): bool
  * @param int $kind The kind of valuetype.
  *                  This must be one of `WASM_I32`, `WASM_F32`, `WASM_I64`, `WASM_F64`, `WASM_ANYREF` or `WASM_FUNCREF`.
  *
- * @return resource A `wasm_valtype_t` resource
+ * @return resource
  */
 function wasm_valtype_new(int $kind)
 {
@@ -317,7 +317,7 @@ function wasm_valtype_is_ref($valtype): bool
  *
  * @param resource $valtype The `wasm_valtype_t` resource to copy
  *
- * @return resource A `wasm_valtype_t` resource
+ * @return resource
  */
 function wasm_valtype_copy($valtype)
 {
@@ -335,8 +335,6 @@ function wasm_valtype_copy($valtype)
  *
  * @param int $kind The kind of valuetype.
  *                  This must be one of `WASM_I32`, `WASM_F32`, `WASM_I64`, `WASM_F64`, `WASM_ANYREF` or `WASM_FUNCREF`.
- *
- * @return bool `true` if the given kind is a numeric kind
  */
 function wasm_valkind_is_num(int $kind): bool
 {
@@ -354,8 +352,6 @@ function wasm_valkind_is_num(int $kind): bool
  *
  * @param int $kind The kind of valuetype.
  *                  This must be one of `WASM_I32`, `WASM_F32`, `WASM_I64`, `WASM_F64`, `WASM_ANYREF` or `WASM_FUNCREF`.
- *
- * @return bool `true` if the given kind is a reference kind
  */
 function wasm_valkind_is_ref(int $kind): bool
 {
@@ -378,7 +374,7 @@ function wasm_valkind_is_ref(int $kind): bool
  * wasm_functype_delete($functype);
  * ```
  *
- * @return resource A `wasm_functype_t` resource
+ * @return resource
  */
 function wasm_functype_new(Wasm\Vec\ValType $params, Wasm\Vec\ValType $results)
 {
@@ -409,7 +405,7 @@ function wasm_functype_results($functype): Wasm\Vec\ValType
 /**
  * @param resource $functype A `wasm_functype_t` resource
  *
- * @return resource A `wasm_functype_t` resource
+ * @return resource
  */
 function wasm_functype_copy($functype)
 {
@@ -417,7 +413,7 @@ function wasm_functype_copy($functype)
 /**
  * @param resource $functype A `wasm_functype_t` resource
  *
- * @return resource A `wasm_externtype_t` resource
+ * @return resource
  */
 function wasm_functype_as_externtype($functype)
 {
@@ -428,7 +424,7 @@ function wasm_functype_as_externtype($functype)
 /**
  * @param resource $valtype A `wasm_valtype_t` resource
  *
- * @return resource A `wasm_globaltype_t` resource
+ * @return resource
  */
 function wasm_globaltype_new($valtype, int $mutability)
 {
@@ -464,7 +460,7 @@ function wasm_globaltype_mutability($globaltype): int
 /**
  * @param resource $globaltype A `wasm_globaltype_t` resource
  *
- * @return resource A `wasm_globaltype_t` resource
+ * @return resource
  */
 function wasm_globaltype_copy($globaltype)
 {
@@ -472,7 +468,7 @@ function wasm_globaltype_copy($globaltype)
 /**
  * @param resource $globaltype A `wasm_globaltype_t` resource
  *
- * @return resource A `wasm_externtype_t` resource
+ * @return resource
  */
 function wasm_globaltype_as_externtype($globaltype)
 {
@@ -483,7 +479,7 @@ function wasm_globaltype_as_externtype($globaltype)
 /**
  * Create a new limits.
  *
- * @return resource A `wasm_limits_t` resource
+ * @return resource
  *
  * @see wasm_memorytype_new()
  * @see wasm_tabletype_new()
@@ -582,7 +578,7 @@ function wasm_tabletype_as_externtype($tabletype)
  *
  * @param resource $limits A `wasm_limits_t` resource
  *
- * @return resource A `wasm_memorytype_t` resource
+ * @return resource
  */
 function wasm_memorytype_new($limits)
 {
@@ -602,7 +598,7 @@ function wasm_memorytype_delete($memorytype): bool
 /**
  * @param resource $memorytype A `wasm_memorytype_t` resource
  *
- * @return resource A `wasm_limits_t` resource
+ * @return resource
  */
 function wasm_memorytype_limits($memorytype)
 {
@@ -611,7 +607,7 @@ function wasm_memorytype_limits($memorytype)
 /**
  * @param resource $memorytype A `wasm_memorytype_t` resource
  *
- * @return resource A `wasm_memorytype_t` resource
+ * @return resource
  */
 function wasm_memorytype_copy($memorytype)
 {
@@ -620,7 +616,7 @@ function wasm_memorytype_copy($memorytype)
 /**
  * @param resource $memorytype A `wasm_memorytype_t` resource
  *
- * @return resource A `wasm_externtype_t` resource
+ * @return resource
  */
 function wasm_memorytype_as_externtype($memorytype)
 {
@@ -647,7 +643,7 @@ function wasm_externtype_kind($externtype): int
  *
  * @throw Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_functype_t` resource
+ * @return resource
  */
 function wasm_externtype_as_functype($externtype)
 {
@@ -658,7 +654,7 @@ function wasm_externtype_as_functype($externtype)
  *
  * @throw Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_globaltype_t` resource
+ * @return resource
  */
 function wasm_externtype_as_globaltype($externtype)
 {
@@ -691,7 +687,7 @@ function wasm_externtype_as_memorytype($externtype)
 /**
  * @param resource $externtype A `wasm_externtype_t` resource
  *
- * @return resource A `wasm_importtype_t` resource
+ * @return resource
  */
 function wasm_importtype_new(string $module, string $name, $externtype)
 {
@@ -745,7 +741,7 @@ function wasm_importtype_copy($importtype)
 /**
  * @param resource $externtype A `wasm_externtype_t` resource
  *
- * @return resource A `wasm_exporttype_t` resource
+ * @return resource
  */
 function wasm_exporttype_new(string $name, $externtype)
 {
@@ -772,7 +768,7 @@ function wasm_exporttype_name($exporttype): string
 /**
  * @param resource $exporttype A `wasm_exporttype_t` resource
  *
- * @return resource A `wasm_externtype_t` resource
+ * @return resource
  */
 function wasm_exporttype_type($exporttype)
 {
@@ -781,7 +777,7 @@ function wasm_exporttype_type($exporttype)
 /**
  * @param resource $exporttype A `wasm_exporttype_t` resource
  *
- * @return resource A `wasm_exporttype_t` resource
+ * @return resource
  */
 function wasm_exporttype_copy($exporttype)
 {
@@ -818,35 +814,35 @@ function wasm_val_kind($val): int
 /**
  * @param resource $val A `wasm_eval_t` resource
  *
- * @return resource A `wasm_eval_t` resource
+ * @return resource
  */
 function wasm_val_copy($val)
 {
 }
 
 /**
- * @return resource A `wasm_eval_t` resource of kind WASM_I32
+ * @return resource
  */
 function wasm_val_i32(int $val)
 {
 }
 
 /**
- * @return resource A `wasm_eval_t` resource of kind WASM_I64
+ * @return resource
  */
 function wasm_val_i64(int $val)
 {
 }
 
 /**
- * @return resource A `wasm_eval_t` resource of kind WASM_F32
+ * @return resource
  */
 function wasm_val_f32(float $val)
 {
 }
 
 /**
- * @return resource A `wasm_eval_t` resource of kind WASM_F64
+ * @return resource
  */
 function wasm_val_f64(float $val)
 {
@@ -861,7 +857,7 @@ function wasm_val_f64(float $val)
 /**
  * @param resource $frame A `wasm_frame_t` resource
  *
- * @return resource A `wasm_frame_t` resource
+ * @return resource
  */
 function wasm_frame_copy($frame)
 {
@@ -904,7 +900,7 @@ function wasm_frame_module_offset($frame): int
  *
  * @throw \Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_trap_t` resource
+ * @return resource
  */
 function wasm_trap_new($store, string $message)
 {
@@ -920,7 +916,7 @@ function wasm_trap_delete($trap): bool
 /**
  * @param resource $trap A `wasm_trap_t` resource
  *
- * @return resource A `wasm_trap_t` resource
+ * @return resource
  */
 function wasm_trap_copy($trap)
 {
@@ -936,7 +932,7 @@ function wasm_trap_message($trap): string
 /**
  * @param resource $trap A `wasm_trap_t` resource
  *
- * @return resource A `wasm_fame_t` resource
+ * @return resource
  */
 function wasm_trap_origin($trap)
 {
@@ -960,7 +956,7 @@ function wasm_trap_trace($trap): Wasm\Vec\Frame
  *
  * @throw \Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_module_t` resource
+ * @return resource
  */
 function wasm_module_new($store, string $wasm)
 {
@@ -1012,7 +1008,7 @@ function wasm_module_serialize($module): string
  *
  * @throw \Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_module_t` resource
+ * @return resource
  */
 function wasm_module_deserialize($store, string $wasm)
 {
@@ -1035,7 +1031,7 @@ function wasm_module_set_name($module, string $name): bool
 /**
  * @param resource $module A `wasm_module_t` resource
  *
- * @return resource A `wasm_module_t` resource
+ * @return resource
  */
 function wasm_module_copy($module)
 {
@@ -1047,7 +1043,7 @@ function wasm_module_copy($module)
  * @param resource $store    A `wasm_store_t` resource
  * @param resource $functype A `wasm_functype_t` resource
  *
- * @return resource A `wasm_func_t` resource
+ * @return resource
  */
 function wasm_func_new($store, $functype, callable $func)
 {
@@ -1067,7 +1063,7 @@ function wasm_func_delete($func): bool
 /**
  * @param resource $func A `wasm_func_t` resource
  *
- * @return resource A `wasm_functype_t` resource
+ * @return resource
  */
 function wasm_func_type($func)
 {
@@ -1097,7 +1093,7 @@ function wasm_func_call($func, Wasm\Vec\Val $args): Wasm\Vec\Val
 /**
  * @param resource $func A `wasm_func_t` resource
  *
- * @return resource A `wasm_extern_t` resource
+ * @return resource
  */
 function wasm_func_as_extern($func)
 {
@@ -1110,7 +1106,7 @@ function wasm_func_as_extern($func)
  * @param resource $globaltype A `wasm_globaltype_t` resource
  * @param resource $val        A `wasm_val_t` resource
  *
- * @return resource A `wasm_global_t` resource
+ * @return resource
  */
 function wasm_global_new($store, $globaltype, $val)
 {
@@ -1130,7 +1126,7 @@ function wasm_global_delete($global): bool
 /**
  * @param resource $global A `wasm_global_t` resource
  *
- * @return resource A `wasm_globaltype_t` resource
+ * @return resource
  */
 function wasm_global_type($global)
 {
@@ -1139,7 +1135,7 @@ function wasm_global_type($global)
 /**
  * @param resource $global A `wasm_global_t` resource
  *
- * @return resource A `wasm_val_t` resource
+ * @return resource
  */
 function wasm_global_get($global)
 {
@@ -1156,7 +1152,7 @@ function wasm_global_set($global, $val): void
 /**
  * @param resource $global A `wasm_global_t` resource
  *
- * @return resource A `wasm_global_t` resource
+ * @return resource
  */
 function wasm_global_copy($global)
 {
@@ -1173,7 +1169,7 @@ function wasm_global_same($left, $right): bool
 /**
  * @param resource $global A `wasm_global_t` resource
  *
- * @return resource A `wasm_extern_t` resource
+ * @return resource
  */
 function wasm_global_as_extern($global)
 {
@@ -1185,7 +1181,89 @@ function wasm_global_as_extern($global)
 
 // Memory Instances
 
-// TODO(jubianchi): Add memory
+/**
+ * @param resource $store      A `wasm_store_t` resource
+ * @param resource $memorytype A `wasm_memorytype_t` resource
+ *
+ * @return resource
+ */
+function wasm_memory_new($store, $memorytype)
+{
+}
+
+/**
+ * Delete a memory.
+ *
+ * @param resource $memory A `wasm_memory_t` resource
+ *
+ * @see wasm_memory_new()
+ */
+function wasm_memory_delete($memory): bool
+{
+}
+
+/**
+ * @param resource $memory A `wasm_memory_t` resource
+ *
+ * @return resource
+ */
+function wasm_memory_type($memory)
+{
+}
+
+/**
+ * @param resource $memory A `wasm_memory_t` resource
+ */
+function wasm_memory_data_size($memory): int
+{
+}
+
+/**
+ * @param resource $memory A `wasm_memory_t` resource
+ */
+function wasm_memory_size($memory): int
+{
+}
+
+/**
+ * @param resource $memory A `wasm_memory_t` resource
+ */
+function wasm_memory_grow($memory, int $delta): bool
+{
+}
+
+/**
+ * @param resource $memory A `wasm_memory_t` resource
+ */
+function wasm_memory_data($memory): Wasm\MemoryView
+{
+}
+
+/**
+ * @param resource $memory A `wasm_memory_t` resource
+ *
+ * @return resource
+ */
+function wasm_memory_copy($memory)
+{
+}
+
+/**
+ * @param resource $left  A `wasm_memory_t` resource
+ * @param resource $right A `wasm_memory_t` resource
+ */
+function wasm_memory_same($left, $right): bool
+{
+}
+
+/**
+ * @param resource $memory A `wasm_memory_t` resource
+ *
+ * @return resource
+ */
+function wasm_memory_as_extern($memory)
+{
+}
 
 // Externals
 
@@ -1208,7 +1286,7 @@ function wasm_extern_kind($extern): int
 /**
  * @param resource $extern A `wasm_extern_t` resource
  *
- * @return resource A `wasm_externtype_t` resource
+ * @return resource
  */
 function wasm_extern_type($extern)
 {
@@ -1219,7 +1297,7 @@ function wasm_extern_type($extern)
  *
  * @throw Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_func_t` resource
+ * @return resource
  */
 function wasm_extern_as_func($extern)
 {
@@ -1230,7 +1308,7 @@ function wasm_extern_as_func($extern)
  *
  * @throw Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_global_t` resource
+ * @return resource
  */
 function wasm_extern_as_global($extern)
 {
@@ -1241,7 +1319,7 @@ function wasm_extern_as_global($extern)
  *
  * @throw Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_table_t` resource
+ * @return resource
  */
 function wasm_extern_as_table($extern)
 {
@@ -1252,7 +1330,7 @@ function wasm_extern_as_table($extern)
  *
  * @throw Wasm\Exception\RuntimeException
  *
- * @return resource A `wasm_memory_t` resource
+ * @return resource
  */
 function wasm_extern_as_memory($extern)
 {
@@ -1264,7 +1342,7 @@ function wasm_extern_as_memory($extern)
  * @param resource $store  A `wasm_store_t` resource
  * @param resource $module A `wasm_module_t` resource
  *
- * @return resource A `wasm_instance_t` resource
+ * @return resource
  */
 function wasm_instance_new($store, $module, Wasm\Vec\Extern $externs)
 {
@@ -1291,7 +1369,7 @@ function wasm_instance_exports($instance): Wasm\Vec\Extern
 /**
  * @param resource $instance A `wasm_instance_t` resource
  *
- * @return resource A `wasm_instance_t` resource
+ * @return resource
  */
 function wasm_instance_copy($instance)
 {

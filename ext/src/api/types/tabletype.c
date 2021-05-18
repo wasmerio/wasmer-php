@@ -27,8 +27,11 @@ PHP_FUNCTION (wasm_tabletype_new) {
     wasmer_res *valtype_res = WASMER_RES_P(valtype_val);
     valtype_res->owned = false;
 
+    wasmer_res *limits_res = WASMER_RES_P(limits_val);
+    limits_res->owned = false;
+
     wasmer_res *tabletype = emalloc(sizeof(wasmer_res));
-    tabletype->inner.tabletype = wasm_tabletype_new(WASMER_RES_INNER(valtype_res, valtype), Z_RES_P(limits_val)->ptr);
+    tabletype->inner.tabletype = wasm_tabletype_new(WASMER_RES_INNER(valtype_res, valtype), &WASMER_RES_INNER(limits_res, limits));
     tabletype->owned = true;
 
     zend_resource *tabletype_res = zend_register_resource(tabletype, le_wasm_tabletype);
@@ -63,8 +66,9 @@ PHP_FUNCTION (wasm_tabletype_limits) {
 
     WASMER_FETCH_RESOURCE(tabletype)
 
-    wasmer_res *wasm_limits = emalloc(sizeof(wasmer_res));
+    wasmer_res *wasm_limits = ecalloc(1, sizeof(wasmer_res));
     wasm_limits->inner.limits = *wasm_tabletype_limits(WASMER_RES_P_INNER(tabletype_val, tabletype));
+    wasm_limits->owned = false;
 
     zend_resource *limits_res = zend_register_resource(wasm_limits, le_wasm_limits);
 

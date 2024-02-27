@@ -17,5 +17,7 @@ if test "$PHP_WASM" != "no"; then
 
     PHP_NEW_EXTENSION(wasm, $WASMER_ALL_SOURCES, $ext_shared,, $WASMER_CFLAGS)
 
+    PHP_ADD_INCLUDE([PHP_EXT_SRCDIR()/include])
+
     PHP_ADD_MAKEFILE_FRAGMENT
 fi
